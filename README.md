@@ -1,9 +1,7 @@
-### _Università di Pisa -- Dipartimento di Informatica_
-_Corso di Laurea in Informatica_
-
 # **Progetto di Laboratorio di Sistemi Operativi**
+Università di Pisa - Dipartimento di Informatica - Corso di Laurea in Informatica, A.A. 2019-20
 
-Docenti: G. Prencipe (Corso A), M. Torquati (Corso B), A.A. 2019-20
+Docenti: G. Prencipe (Corso A), M. Torquati (Corso B)
 
 Data pubblicazione: 2 Maggio 2020
 
