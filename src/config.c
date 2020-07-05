@@ -32,9 +32,9 @@
 
 struct config* load(char* filename)
 {
-    char* rowBuf;
+    char* rowBuf, *idPtr;
     struct config* config;
-    int configFD, bytesRead;
+    int configFD, bytesRead, valueRead;
     off_t offset = 0;
 
     IS_NULL((config = (struct config*) malloc(sizeof(struct config))), UNABLE_TO_ALLOCATE_MESSAGE, return NULL);
@@ -43,26 +43,26 @@ struct config* load(char* filename)
 
     //da cambiare con readn al posto di read
     while ((bytesRead = readline(configFD, rowBuf, MAX_ROW_LENGTH, &offset)) > 0) {
-        printf("Riga letta: %s\n", rowBuf);
-        parseRow(rowBuf, bytesRead, config);
-        printf("\n");
+        valueRead = parseRow(rowBuf, bytesRead, config, &idPtr);
+        if (valueRead != -1)
+            printf("Config: %c -> %d\n", idPtr[0], valueRead);
     }
     IS_MINUS_1(bytesRead, UNABLE_TO_READ_FILE_MESSAGE, return NULL);
 
     return config;
 }
 
-void parseRow(char *row, int row_length, struct config *config)
+int parseRow(char *row, int row_length, struct config *config, char **idPtr)
 {
-    char *idPtr = NULL, *ptr = row, *endPtr;
+    char *ptr = row, *endPtr;
     size_t index = 0;
     int value;
 
     //Ignoro tutti gli spazi iniziali
     while (index < row_length && *ptr == ' ') { ptr++; index++; }
     //Se ho finito la riga oppure trovo un commento non vado avanti
-    if (index == row_length || *ptr == '#') return;
-    idPtr = ptr;    //Questa posizione è quella dell'id
+    if (index == row_length || *ptr == '#') return -1;
+    *idPtr = ptr;    //Questa posizione è quella dell'id
 
     //Vado avanti per cercare il carattere '='
     index++;
@@ -70,15 +70,14 @@ void parseRow(char *row, int row_length, struct config *config)
     //Ignoro tutti gli spazi
     while (index < row_length && *ptr == ' ') { ptr++; index++; }
     //Se ho finito la riga oppure se non ho trovato il carattere '=' oppure se trovo un commento, allora non vado avanti
-    if (index == row_length || *ptr != '=' || *ptr == '#') return;
+    if (index == row_length || *ptr != '=' || *ptr == '#') return -1;
     index++;
     ptr++;  //Da questa posizione inizia il numero
 
-    char id = idPtr[0];
     value = strtol(ptr, &endPtr, 10);
-    if (value == 0 && endPtr == ptr) return;    //Il numero è invalido
+    if (value == 0 && endPtr == ptr) return -1;    //Il numero è invalido
 
-    printf("Config: %c -> %d\n", id, value);
+    return value;
 }
 
 int validate(struct config* config)

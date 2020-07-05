@@ -20,6 +20,6 @@ struct config {
 
 struct config* load(char* filename);
 int validate(struct config* config);
-void parseRow(char* row, int row_length, struct config* config);
+int parseRow(char *row, int row_length, struct config *config, char **idPtr);
 
 #endif //CONFIGLOADER_H
