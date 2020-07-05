@@ -74,7 +74,8 @@
       <workItem from="1593797468904" duration="2546000" />
       <workItem from="1593809539974" duration="702000" />
       <workItem from="1593810868241" duration="4442000" />
-      <workItem from="1593874215004" duration="30607000" />
+      <workItem from="1593874215004" duration="30969000" />
+      <workItem from="1593963518123" duration="4126000" />
     </task>
     <servers />
   </component>
@@ -98,6 +99,10 @@
       <screen x="0" y="0" width="1536" height="864" />
     </state>
     <state x="515" y="235" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1536.864@0.0.1536.864" timestamp="1593814025759" />
+    <state x="500" y="180" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1593967578864">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state x="500" y="180" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1536.864@0.0.1536.864" timestamp="1593967578864" />
     <state x="531" y="221" key="FileChooserDialogImpl" timestamp="1593797803478">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
@@ -110,9 +115,9 @@
       <screen x="0" y="0" width="1536" height="864" />
     </state>
     <state x="426" y="197" width="672" height="677" key="run.anything.popup/0.0.1536.864@0.0.1536.864" timestamp="1593947179628" />
-    <state x="431" y="182" width="672" height="678" key="search.everywhere.popup" timestamp="1593938763826">
+    <state x="431" y="182" width="672" height="678" key="search.everywhere.popup" timestamp="1593963991998">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state x="431" y="182" width="672" height="678" key="search.everywhere.popup/0.0.1536.864@0.0.1536.864" timestamp="1593938763826" />
+    <state x="431" y="182" width="672" height="678" key="search.everywhere.popup/0.0.1536.864@0.0.1536.864" timestamp="1593963991998" />
   </component>
 </project>

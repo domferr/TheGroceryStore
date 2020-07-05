@@ -5,4 +5,4 @@ T=500 #massimo tempo per gli acquisti per un cliente
 P=80 #massimo numero di prodotti che acquisterà un cliente
 S=30 #ogni quanti millisecondi il cliente decide se spostarsi o meno
 S1=100 #valore soglia per chiusura di una cassa
-S2=30 #valore soglia per apertura di una cassa
+S2=25 #valore soglia per apertura di una cassa

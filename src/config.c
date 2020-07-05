@@ -9,11 +9,17 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+//Messaggi di errore
 #define UNABLE_TO_ALLOCATE_MESSAGE "Impossibile allocare memoria"
 #define UNABLE_TO_OPEN_FILE_MESSAGE "Impossibile aprire il file di configurazione"
 #define UNABLE_TO_READ_FILE_MESSAGE "Impossibile leggere il file di configurazione"
-#define MAX_ROW_LENGTH 128
-#define MIN_T 10
+#define UNABLE_TO_CLOSE_FILE_MESSAGE "Impossibile chiudere il file di configurazione"
+
+//Costanti
+#define MAX_ROW_LENGTH 128  //Massima dimensione del buffer per leggere una riga del file
+#define MIN_T 10    //Minimo valore per il parametro T
+
+//Macro utili
 #define IS_NULL(what, then)                                 \
         if (what == NULL) {                                 \
             perror(UNABLE_TO_ALLOCATE_MESSAGE);             \
@@ -28,26 +34,29 @@
     if (value <= upper_limit)                       \
         return 0;
 
+/**
+ * Esegue il parsing di una riga del file di configurazione. Una riga segue il formato id = valore e può contenere
+ * commenti. Un commento deve essere preceduto dal carattere '#'. Il parsing ignora i commenti e setta l'offset idOffset
+ * con la posizione dell'id e ritorna il valore ad esso corrispondente. Se la riga non è valida ritorna -1 ed l'offset
+ * idOffset non viene settato. Una riga è ritenuta non valida se non segue il formato specificato oppure se contiene solo
+ * un commento.
+ *
+ * @param row riga letta dal file di configurazione
+ * @param row_length lunghezza della riga letta
+ * @param idOffset viene settato con la posizione dell'id della riga letta
+ * @return il valore associato all'id letto dal file di configurazione. Ritorna -1 se la riga del file non segue il
+ * corretto formato o se contiene soltanto un commento.
+ */
 int parseRow(char *row, size_t row_length, off_t *idOffset);
 
-/**
- * Legge dati di configurazione dal path passato per argomento.
- *
- * @param filepath da quale file bisogna leggere la configurazione
- * @return struttura con la configurazione contenuta nel file
- */
-Config *load(char *filepath)
-{
-    char* rowBuf;
-    Config *config;
+int loadConfig(char *filepath, Config *config) {
     int configFD, bytesRead, valueRead;
     off_t offset = 0, idOffset = 0;
+    char* rowBuf;
 
-    IS_NULL((config = (Config*) malloc(sizeof(Config))), return NULL);
-    IS_MINUS_1((configFD = open(filepath, O_RDONLY)), UNABLE_TO_OPEN_FILE_MESSAGE, return NULL);
-    IS_NULL((rowBuf = (char*) malloc(sizeof(char)*MAX_ROW_LENGTH)), free(config); return NULL);
+    IS_NULL((rowBuf = (char*) malloc(sizeof(char) * MAX_ROW_LENGTH)), return -1);
+    IS_MINUS_1((configFD = open(filepath, O_RDONLY)), UNABLE_TO_OPEN_FILE_MESSAGE, free(rowBuf); return -1);
 
-    //da cambiare con readn al posto di read
     while ((bytesRead = readline(configFD, rowBuf, MAX_ROW_LENGTH, &offset)) > 0) {
         if ((valueRead = parseRow(rowBuf, bytesRead, &idOffset)) == -1)
             continue;
@@ -79,28 +88,15 @@ Config *load(char *filepath)
                 break;
 
         }
-        printf("Config: %c -> %d\n", rowBuf[idOffset], valueRead);
     }
+    free(rowBuf);
+    IS_MINUS_1(close(configFD), UNABLE_TO_CLOSE_FILE_MESSAGE, return -1);
+    IS_MINUS_1(bytesRead, UNABLE_TO_READ_FILE_MESSAGE, return -1);
 
-    IS_MINUS_1(bytesRead, UNABLE_TO_READ_FILE_MESSAGE, return NULL);
-    return config;
+    return 1;
 }
 
-/**
- * Esegue il parsing di una riga del file di configurazione. Una riga segue il formato id = valore e può contenere
- * commenti. Un commento deve essere preceduto dal carattere '#'. Il parsing ignora i commenti e setta l'offset idOffset
- * con la posizione dell'id e ritorna il valore ad esso corrispondente. Se la riga non è valida ritorna -1 ed l'offset
- * idOffset non viene settato. Una riga è ritenuta non valida se non segue il formato specificato oppure se contiene solo
- * un commento.
- *
- * @param row riga letta dal file di configurazione
- * @param row_length lunghezza della riga letta
- * @param idOffset viene settato con la posizione dell'id della riga letta
- * @return il valore associato all'id letto dal file di configurazione. Ritorna -1 se la riga del file non segue il
- * corretto formato o se contiene soltanto un commento.
- */
-int parseRow(char *row, size_t row_length, off_t *idOffset)
-{
+int parseRow(char *row, size_t row_length, off_t *idOffset) {
     char *ptr = row, *endPtr;
     size_t index = 0;
     int value;
@@ -126,16 +122,7 @@ int parseRow(char *row, size_t row_length, off_t *idOffset)
     return value;
 }
 
-/**
- * Ritorna 1 se la struttura di configurazione è valida, 0 altrimenti. Una struttura di configurazione è
- * definita valida se e soltanto se tutti i parametri non sono negativi o pari a zero e vale che t > MIN_T
- * ma anche la disuguaglianza 0 < E < C.
- *
- * @param config
- * @return
- */
-int validate(Config *config)
-{
+int isValidConfig(Config *config) {
     //Deve valere: K > 0
     CHECK_LESS_OR_EQUAL(config->k, 0);
     //Deve valere: P > 0
@@ -153,4 +140,9 @@ int validate(Config *config)
     CHECK_LESS_OR_EQUAL(config->t, MIN_T);
 
     return 1;
+}
+
+void printConfig(Config *config) {
+    printf("{K: %d, C: %d, E: %d, T: %d, P: %d, S: %d, S1: %d, S2: %d}\n",
+            config->k, config->c, config->e, config->t, config->p, config->s, config->s1, config->s2);
 }
