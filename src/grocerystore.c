@@ -17,7 +17,8 @@ char* parseArgs(int argc, char **args);
 int main(int argc, char** args) {
     char* configFile = parseArgs(argc, args);
     printf("Reading configuration file %s\n", configFile);
-    load(configFile);
+    Config *config = load(configFile);
+    printf("S2 vale %d\n", config->s2);
     return 0;
 }
 

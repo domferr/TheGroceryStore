@@ -5,7 +5,7 @@
 #ifndef CONFIGLOADER_H
 #define CONFIGLOADER_H
 
-#define MIN_T 10
+#include <sys/types.h>
 
 struct config {
     int k;  //numero di thread attivi come cassieri
@@ -18,8 +18,9 @@ struct config {
     int s2; //valore soglia per apertura di una cassa
 };
 
-struct config* load(char* filename);
-int validate(struct config* config);
-int parseRow(char *row, int row_length, struct config *config, char **idPtr);
+typedef struct config Config;
+
+Config *load(char *filepath);
+int validate(Config *config);
 
 #endif //CONFIGLOADER_H

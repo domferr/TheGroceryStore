@@ -2,7 +2,10 @@
 CC			= gcc -std=c99
 AR      	= ar
 # flags passati al compilatore per debugging e warning e altro
-CFLAGS		= -g -Wall -pedantic
+CFLAGS		= -g -Wall -pedantic -Wextra \
+                                           -Wformat=2 -Wno-unused-parameter -Wshadow \
+                                           -Wwrite-strings -Wstrict-prototypes -Wold-style-definition \
+                                           -Wredundant-decls -Wnested-externs -Wmissing-include-dirs
 ARFLAGS 	= rvs
 INCLUDES 	= -I.
 LDFLAGS 	= -L.
