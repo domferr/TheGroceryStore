@@ -5,6 +5,7 @@
 #include "scfiles.h"
 #include <sys/types.h>
 #include <unistd.h>
+
 /**
  * Legge "n" bytes da un descrittore di bytes.
  * (tratto da “Advanced Programming In the UNIX Environment” by W. Richard Stevens

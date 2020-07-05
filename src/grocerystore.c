@@ -9,6 +9,8 @@
 #include <stdlib.h>
 
 #define DEFAULT_CONFIG_FILE "./config.txt"
+#define ARG_CONFIG_FILE "-c"
+#define CONFIG_FILE_NOT_VALID_MESSAGE "Il file di configurazione non è valido"
 
 char *parseArgs(int argc, char **args);
 
@@ -22,11 +24,10 @@ int main(int argc, char** args) {
         return -1;
     }
 
-
     if (isValidConfig(config))
         printConfig(config);
     else
-        printf("Il file di configurazione non è valido\n");
+        printf(CONFIG_FILE_NOT_VALID_MESSAGE"\n");
 
     free(config);
     return 0;
@@ -43,7 +44,7 @@ int main(int argc, char** args) {
 char *parseArgs(int argc, char **args)
 {
     int i = 1;
-    while(i < argc && strcmp(args[i], "-c") != 0) {
+    while(i < argc && strcmp(args[i], ARG_CONFIG_FILE) != 0) {
         i++;
     }
     i++;
