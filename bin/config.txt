@@ -1,0 +1,6 @@
+      K=2 #commento staccato
+C         =20
+E=     5
+    T    =   500
+P=80
+S=30#commento attaccato
