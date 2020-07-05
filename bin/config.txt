@@ -1,8 +1,8 @@
-      K=2 #numero di thread attivi come cassieri
-C         =20 #numero di thread attivi come clienti all'interno del supermercato
-E=     5 #quanto è grande il gruppo di clienti che entra nel supermercato.
-    T    =   500 #massimo tempo per gli acquisti per un cliente
+K=2 #numero di thread attivi come cassieri
+C=20 #numero di thread attivi come clienti all'interno del supermercato
+E=5 #quanto è grande il gruppo di clienti che entra nel supermercato.
+T=500 #massimo tempo per gli acquisti per un cliente
 P=80 #massimo numero di prodotti che acquisterà un cliente
 S=30 #ogni quanti millisecondi il cliente decide se spostarsi o meno
 S1=100 #valore soglia per chiusura di una cassa
-S2   =30#valore soglia per apertura di una cassa
+S2=30 #valore soglia per apertura di una cassa

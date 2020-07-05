@@ -1,12 +1,15 @@
-//
-// Created by Domenico on 03/07/2020.
-//
+/**
+ *
+ */
 
-#ifndef CONFIGLOADER_H
-#define CONFIGLOADER_H
+#ifndef CONFIG_H
+#define CONFIG_H
 
 #include <sys/types.h>
 
+/**
+ * Struttura dati che contiene tutti i parametri di configurazione
+ */
 struct config {
     int k;  //numero di thread attivi come cassieri
     int c;  //numero di thread attivi come clienti all'interno del supermercato
@@ -20,7 +23,22 @@ struct config {
 
 typedef struct config Config;
 
+/**
+ * Legge dati di configurazione dal path passato per argomento.
+ *
+ * @param filepath da quale file bisogna leggere la configurazione
+ * @return struttura con la configurazione contenuta nel file
+ */
 Config *load(char *filepath);
+
+/**
+ * Ritorna 1 se la struttura di configurazione è valida, 0 altrimenti. Una struttura di configurazione è
+ * definita valida se e soltanto se tutti i parametri non sono negativi o pari a zero e vale che t > MIN_T
+ * ma anche la disuguaglianza 0 < E < C.
+ *
+ * @param config
+ * @return
+ */
 int validate(Config *config);
 
-#endif //CONFIGLOADER_H
+#endif //CONFIG_H
