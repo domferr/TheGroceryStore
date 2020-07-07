@@ -44,7 +44,14 @@ int main(int argc, char** args) {
     addAtStart(queue, (&prova));
     addAtStart(queue, (&prova2));
     addAtStart(queue, (&prova3));
-    applyFromLast(queue, &print);
+    applyFromFirst(queue, &print);
+    int rimosso = *((int*)((void*)removeFromStart(queue)));
+    printf("%d ", rimosso);
+    rimosso = *((int*)((void*)removeFromStart(queue)));
+    printf("%d ", rimosso);
+    rimosso = *((int*)((void*)removeFromStart(queue)));
+    printf("%d ", rimosso);
+    applyFromFirst(queue, &print);
 
     free(config);
     return 0;

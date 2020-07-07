@@ -67,6 +67,29 @@ int addAtStart(queue_t *queue, void *elem) {
     return 0;
 }
 
+void *removeFromStart(queue_t *queue) {
+    void *headElem;
+    node_t *headNode;
+    node_t *headNextNode;
+
+    pthread_mutex_lock(&(queue->mtx));
+    if (queue->head != NULL) {
+        headNode = (queue->head);
+        headNextNode = (queue->head)->next;
+        headElem = (queue->head)->elem;
+        queue->head = headNextNode;
+        if (queue->size == 1) {
+            queue->tail = NULL;
+        } else {
+            headNextNode->prev = NULL;
+        }
+        (queue->size)--;
+        free(headNode);
+    }
+    pthread_mutex_unlock(&(queue->mtx));
+    return headElem;
+}
+
 void applyFromFirst(queue_t *queue, void (*jobFun)(void*)) {
     pthread_mutex_lock(&(queue->mtx));
     recursiveToNext(queue->head, jobFun);

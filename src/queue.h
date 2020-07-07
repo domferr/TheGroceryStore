@@ -49,6 +49,14 @@ queue_t *queue_create(void);
 int addAtStart(queue_t *queue, void *elem);
 
 /**
+ * Rimuove dalla coda l'elemento in testa e lo ritorna al chiamante.
+ *
+ * @param queue coda dalla quale rimuovere la testa
+ * @return elemento che si trovava in testa
+ */
+void *removeFromStart(queue_t *queue);
+
+/**
  * Partendo dalla testa e scorrendo la coda fino alla sua coda, chiama la funzione passata per argomento.
  * Alla funzione viene passato l'elemento stesso.
  *
