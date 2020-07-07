@@ -46,6 +46,13 @@ queue_t *queue_create(void) {
     return queue;
 }
 
+void queue_destroy(queue_t *queue) {
+    clear(queue);
+    pthread_mutex_destroy(&(queue->mtx));
+    pthread_cond_destroy(&(queue->empty));
+    free(queue);
+}
+
 int addAtStart(queue_t *queue, void *elem) {
     node_t *node = (node_t*) malloc(sizeof(node_t));
     if (node == NULL)
@@ -62,6 +69,8 @@ int addAtStart(queue_t *queue, void *elem) {
     }
 
     queue->head = node;
+    if (queue->size == 0)
+        pthread_cond_signal(&(queue->empty));
     (queue->size)++;
     pthread_mutex_unlock(&(queue->mtx));
     return 0;
@@ -88,6 +97,20 @@ void *removeFromStart(queue_t *queue) {
     }
     pthread_mutex_unlock(&(queue->mtx));
     return headElem;
+}
+
+void clear(queue_t *queue) {
+    node_t *curr;
+    node_t *next;
+    pthread_mutex_lock(&(queue->mtx));
+    curr = queue->head;
+    while(curr != NULL) {
+        next = curr->next;
+        free(curr);
+        curr = next;
+    }
+    queue->size = 0;
+    pthread_mutex_unlock(&(queue->mtx));
 }
 
 void applyFromFirst(queue_t *queue, void (*jobFun)(void*)) {

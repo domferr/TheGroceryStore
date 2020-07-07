@@ -32,12 +32,14 @@ int main(int argc, char** args) {
     else
         printf(CONFIG_FILE_NOT_VALID_MESSAGE"\n");
 
-    executors_pool_t *clients = executors_pool_create(config->c);
+    /*executors_pool_t *clients = executors_pool_create(config->c);
     if (clients == NULL)
         perror("Spawn clients");
+    */
     queue_t *queue = queue_create();
     if (queue == NULL)
         perror("queue_create");
+
     int prova = 20;
     int prova2 = 30;
     int prova3 = 40;
@@ -45,14 +47,15 @@ int main(int argc, char** args) {
     addAtStart(queue, (&prova2));
     addAtStart(queue, (&prova3));
     applyFromFirst(queue, &print);
-    int rimosso = *((int*)((void*)removeFromStart(queue)));
+    /*int rimosso = *((int*)((void*)removeFromStart(queue)));
     printf("%d ", rimosso);
     rimosso = *((int*)((void*)removeFromStart(queue)));
     printf("%d ", rimosso);
     rimosso = *((int*)((void*)removeFromStart(queue)));
-    printf("%d ", rimosso);
-    applyFromFirst(queue, &print);
+    printf("%d ", rimosso);*/
 
+    applyFromFirst(queue, &print);
+    queue_destroy(queue);
     free(config);
     return 0;
 }

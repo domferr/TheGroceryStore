@@ -39,6 +39,14 @@ typedef struct {
 queue_t *queue_create(void);
 
 /**
+ * Coda da distruggere. Dopo la chiamata di questa funzione, la coda non può essere riutilizzata ed il suo puntatore
+ * avrà perso di significato in quanto la memoria allocata per la coda viene totalmente ripulita.
+ *
+ * @param queue coda da distruggere
+ */
+void queue_destroy(queue_t *queue);
+
+/**
  * Aggiunge in testa alla coda passata per argomento l'elemento specificato.
  * Ritorna 0 se l'aggiunta è avvenuta con successo, -1 in caso di errore.
  *
@@ -55,6 +63,12 @@ int addAtStart(queue_t *queue, void *elem);
  * @return elemento che si trovava in testa
  */
 void *removeFromStart(queue_t *queue);
+
+/**
+ * Elimina tutti gli elementi dalla coda e dalla memoria. Dopo la chiamata di questa funzione, la coda ha 0 elementi.
+ * @param queue coda da azzerare
+ */
+void clear(queue_t *queue);
 
 /**
  * Partendo dalla testa e scorrendo la coda fino alla sua coda, chiama la funzione passata per argomento.
