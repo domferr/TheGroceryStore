@@ -3,10 +3,10 @@
 
 #include <pthread.h>
 
-typedef struct {
-    void *value;
-    struct threads *next;
-    struct threads *prev;
+typedef struct node_t {
+    void *elem;
+    struct node_t *next;
+    struct node_t *prev;
 } node_t;
 
 typedef struct {
@@ -17,6 +17,9 @@ typedef struct {
     pthread_cond_t empty;
 } queue_t;
 
-int queue_create(queue_t *queue);
+queue_t *queue_create();
+int addAtStart(queue_t *queue, void *elem);
+void fromFirst(queue_t *queue, void (*jobFun)(void*));
+void fromLast(queue_t *queue, void (*jobFun)(void*));
 
 #endif //QUEUE_H

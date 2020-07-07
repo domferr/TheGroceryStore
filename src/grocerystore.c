@@ -15,6 +15,7 @@
 #define CONFIG_FILE_NOT_VALID_MESSAGE "Il file di configurazione non è valido"
 
 char *parseArgs(int argc, char **args);
+void print(void *elem);
 
 //grocerystore -c pathtoconfigfile
 int main(int argc, char** args) {
@@ -34,11 +35,24 @@ int main(int argc, char** args) {
     executors_pool_t *clients = executors_pool_create(config->c);
     if (clients == NULL)
         perror("Spawn clients");
-    queue_t *queue;
-    if (queue_create(queue) != 0)
+    queue_t *queue = queue_create();
+    if (queue == NULL)
         perror("queue_create");
+    int prova = 20;
+    int prova2 = 30;
+    int prova3 = 40;
+    addAtStart(queue, (&prova));
+    addAtStart(queue, (&prova2));
+    addAtStart(queue, (&prova3));
+    fromLast(queue, &print);
+
     free(config);
     return 0;
+}
+
+void print(void *elem) {
+    int *value = (void*) elem;
+    printf("%d\n", *value);
 }
 
 /**
