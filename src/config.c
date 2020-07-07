@@ -47,7 +47,31 @@
  * @return il valore associato all'id letto dal file di configurazione. Ritorna -1 se la riga del file non segue il
  * corretto formato o se contiene soltanto un commento.
  */
-int parseRow(char *row, size_t row_length, off_t *idOffset);
+static int parseRow(char *row, size_t row_length, off_t *idOffset) {
+    char *ptr = row, *endPtr;
+    size_t index = 0;
+    int value;
+
+    //Ignoro tutti gli spazi iniziali
+    while (index < row_length && *ptr == ' ') { ptr++; index++; }
+    //Se ho finito la riga oppure trovo un commento non vado avanti
+    if (index == row_length || *ptr == '#') return -1;  //La riga contiene solo un commento oppure è vuota
+    *idOffset = index;    //Questa posizione è quella dell'id
+
+    index++;
+    ptr++;
+    //Vado avanti per cercare il carattere '='
+    while (index < row_length && *ptr != '=' && *ptr != '#') { ptr++; index++; }
+    //Se ho finito la riga oppure se trovo un commento, allora non vado avanti
+    if (index == row_length || *ptr == '#') return -1;
+    index++;
+    ptr++;  //Da questa posizione inizia il numero
+
+    value = strtol(ptr, &endPtr, 10);
+    if (value == 0 && endPtr == ptr) return -1;    //Il numero è invalido
+
+    return value;
+}
 
 int loadConfig(char *filepath, Config *config) {
     int configFD, bytesRead, valueRead;
@@ -94,32 +118,6 @@ int loadConfig(char *filepath, Config *config) {
     IS_MINUS_1(bytesRead, UNABLE_TO_READ_FILE_MESSAGE, return -1);
 
     return 1;
-}
-
-int parseRow(char *row, size_t row_length, off_t *idOffset) {
-    char *ptr = row, *endPtr;
-    size_t index = 0;
-    int value;
-
-    //Ignoro tutti gli spazi iniziali
-    while (index < row_length && *ptr == ' ') { ptr++; index++; }
-    //Se ho finito la riga oppure trovo un commento non vado avanti
-    if (index == row_length || *ptr == '#') return -1;  //La riga contiene solo un commento oppure è vuota
-    *idOffset = index;    //Questa posizione è quella dell'id
-
-    index++;
-    ptr++;
-    //Vado avanti per cercare il carattere '='
-    while (index < row_length && *ptr != '=' && *ptr != '#') { ptr++; index++; }
-    //Se ho finito la riga oppure se trovo un commento, allora non vado avanti
-    if (index == row_length || *ptr == '#') return -1;
-    index++;
-    ptr++;  //Da questa posizione inizia il numero
-
-    value = strtol(ptr, &endPtr, 10);
-    if (value == 0 && endPtr == ptr) return -1;    //Il numero è invalido
-
-    return value;
 }
 
 int isValidConfig(Config *config) {

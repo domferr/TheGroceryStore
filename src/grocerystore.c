@@ -3,6 +3,7 @@
  */
 
 #include "config.h"
+#include "executorspool.h"
 #include <stdio.h>
 #include <signal.h>
 #include <string.h>
@@ -28,6 +29,10 @@ int main(int argc, char** args) {
         printConfig(config);
     else
         printf(CONFIG_FILE_NOT_VALID_MESSAGE"\n");
+
+    executors_pool_t *clients = newPool(config->c);
+    if (clients == NULL)
+        perror("Spawn clients");
 
     free(config);
     return 0;
