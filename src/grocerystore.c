@@ -44,7 +44,7 @@ int main(int argc, char** args) {
     addAtStart(queue, (&prova));
     addAtStart(queue, (&prova2));
     addAtStart(queue, (&prova3));
-    fromLast(queue, &print);
+    applyFromLast(queue, &print);
 
     free(config);
     return 0;
@@ -70,5 +70,5 @@ char *parseArgs(int argc, char **args)
         i++;
     }
     i++;
-    return i < argc ? args[i]:DEFAULT_CONFIG_FILE;
+    return i < argc ? args[i]:(char *)DEFAULT_CONFIG_FILE;
 }

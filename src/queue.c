@@ -1,16 +1,31 @@
-//
-// Created by Domenico on 07/07/2020.
-//
+/**
+ * Implementazione di una unbounded queue le cui operazioni sono thread-safe.
+ */
 
 #include "queue.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <pthread.h>
 
+/**
+ * Attraversa la coda in maniera ricorsiva partendo dal nodo passato per argomento e continuando per i suoi successivi.
+ * Per ogni nodo, chiama la funzione passandogli il nodo stesso.
+ *
+ * @param node il nodo da cui partire
+ * @param jobFun la funzione da chiamare per ogni nodo
+ */
 static void recursiveToNext(node_t *node, void (*jobFun)(void*));
+
+/**
+ * Attraversa la coda in maniera ricorsiva partendo dal nodo passato per argomento e continuando per i suoi precedenti.
+ * Per ogni nodo, chiama la funzione passandogli il nodo stesso.
+ *
+ * @param node il nodo da cui partire
+ * @param jobFun la funzione da chiamare per ogni nodo
+ */
 static void recursiveToPrev(node_t *node, void (*jobFun)(void*));
 
-queue_t *queue_create() {
+queue_t *queue_create(void) {
     queue_t *queue = (queue_t*) malloc(sizeof(queue_t));
     if (queue == NULL) {
         return NULL;
@@ -52,13 +67,13 @@ int addAtStart(queue_t *queue, void *elem) {
     return 0;
 }
 
-void fromFirst(queue_t *queue, void (*jobFun)(void*)) {
+void applyFromFirst(queue_t *queue, void (*jobFun)(void*)) {
     pthread_mutex_lock(&(queue->mtx));
     recursiveToNext(queue->head, jobFun);
     pthread_mutex_unlock(&(queue->mtx));
 }
 
-void fromLast(queue_t *queue, void (*jobFun)(void*)) {
+void applyFromLast(queue_t *queue, void (*jobFun)(void*)) {
     pthread_mutex_lock(&(queue->mtx));
     recursiveToPrev(queue->tail, jobFun);
     pthread_mutex_unlock(&(queue->mtx));
