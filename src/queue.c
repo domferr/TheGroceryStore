@@ -122,6 +122,29 @@ void *removeFromStart(queue_t *queue) {
     return headElem;
 }
 
+void *removeFromEnd(queue_t *queue) {
+    void *tailElem;
+    node_t *tailNode;
+    node_t *tailPrevNode;
+
+    pthread_mutex_lock(&(queue->mtx));
+    if (queue->tail != NULL) {
+        tailNode = (queue->tail);
+        tailPrevNode = (queue->tail)->prev;
+        tailElem = (queue->tail)->elem;
+        queue->tail = tailPrevNode;
+        if (queue->size == 1) {
+            queue->head = NULL;
+        } else {
+            tailPrevNode->next = NULL;
+        }
+        (queue->size)--;
+        free(tailNode);
+    }
+    pthread_mutex_unlock(&(queue->mtx));
+    return tailElem;
+}
+
 void clear(queue_t *queue) {
     node_t *curr;
     node_t *next;

@@ -73,6 +73,7 @@ int addAtEnd(queue_t *queue, void *elem);
  * @return elemento che si trovava in testa
  */
 void *removeFromStart(queue_t *queue);
+void *removeFromEnd(queue_t *queue);
 
 /**
  * Elimina tutti gli elementi dalla coda e dalla memoria. Dopo la chiamata di questa funzione, la coda ha 0 elementi.

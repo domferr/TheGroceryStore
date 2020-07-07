@@ -46,14 +46,15 @@ int main(int argc, char** args) {
     addAtEnd(queue, (&prova));
     addAtEnd(queue, (&prova2));
     addAtEnd(queue, (&prova3));
-    applyFromLast(queue, &print);
-    /*int rimosso = *((int*)((void*)removeFromStart(queue)));
+    applyFromFirst(queue, &print);
+    int rimosso = *((int*)((void*)removeFromEnd(queue)));
     printf("%d ", rimosso);
     rimosso = *((int*)((void*)removeFromStart(queue)));
     printf("%d ", rimosso);
-    rimosso = *((int*)((void*)removeFromStart(queue)));
-    printf("%d ", rimosso);*/
+    rimosso = *((int*)((void*)removeFromEnd(queue)));
+    printf("%d ", rimosso);
 
+    applyFromLast(queue, &print);
     queue_destroy(queue);
     free(config);
     return 0;
@@ -61,7 +62,7 @@ int main(int argc, char** args) {
 
 void print(void *elem) {
     int *value = (void*) elem;
-    printf("%d\n", *value);
+    printf("%d -> ", *value);
 }
 
 /**
