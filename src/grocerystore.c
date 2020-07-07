@@ -4,6 +4,7 @@
 
 #include "config.h"
 #include "executorspool.h"
+#include "queue.h"
 #include <stdio.h>
 #include <signal.h>
 #include <string.h>
@@ -33,7 +34,9 @@ int main(int argc, char** args) {
     executors_pool_t *clients = executors_pool_create(config->c);
     if (clients == NULL)
         perror("Spawn clients");
-
+    queue_t *queue;
+    if (queue_create(queue) != 0)
+        perror("queue_create");
     free(config);
     return 0;
 }
