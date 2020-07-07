@@ -1,22 +1,19 @@
-//
-// Created by Domenico on 07/07/2020.
-//
-
 #ifndef EXECUTOR_H
 #define EXECUTOR_H
 
 #include <pthread.h>
 
 typedef struct {
-    pthread_t tid;
-    pthread_mutex_t mtx;
-    pthread_cond_t noJob;
-    int hasJob;
     void *(*jobFun)(void*);
     void *funArgs;
+} job_t;
+
+typedef struct {
+    pthread_t tid;
+    job_t *job;
 } executor_t;
 
 int executor_create(executor_t *executor);
-int execJob(executor_t *executor, void *(*jobFun)(void *), void *funArgs);
+int execJob(executor_t *executor, job_t *job);
 
 #endif //EXECUTOR_H

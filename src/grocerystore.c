@@ -30,7 +30,7 @@ int main(int argc, char** args) {
     else
         printf(CONFIG_FILE_NOT_VALID_MESSAGE"\n");
 
-    executors_pool_t *clients = newPool(config->c);
+    executors_pool_t *clients = executors_pool_create(config->c);
     if (clients == NULL)
         perror("Spawn clients");
 
