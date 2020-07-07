@@ -43,10 +43,10 @@ int main(int argc, char** args) {
     int prova = 20;
     int prova2 = 30;
     int prova3 = 40;
-    addAtStart(queue, (&prova));
-    addAtStart(queue, (&prova2));
-    addAtStart(queue, (&prova3));
-    applyFromFirst(queue, &print);
+    addAtEnd(queue, (&prova));
+    addAtEnd(queue, (&prova2));
+    addAtEnd(queue, (&prova3));
+    applyFromLast(queue, &print);
     /*int rimosso = *((int*)((void*)removeFromStart(queue)));
     printf("%d ", rimosso);
     rimosso = *((int*)((void*)removeFromStart(queue)));
@@ -54,7 +54,6 @@ int main(int argc, char** args) {
     rimosso = *((int*)((void*)removeFromStart(queue)));
     printf("%d ", rimosso);*/
 
-    applyFromFirst(queue, &print);
     queue_destroy(queue);
     free(config);
     return 0;

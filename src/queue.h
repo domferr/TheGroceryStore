@@ -57,6 +57,16 @@ void queue_destroy(queue_t *queue);
 int addAtStart(queue_t *queue, void *elem);
 
 /**
+ * Aggiunge alla fine della coda passata per argomento l'elemento specificato.
+ * Ritorna 0 se l'aggiunta è avvenuta con successo, -1 in caso di errore.
+ *
+ * @param queue coda da modificare
+ * @param elem elemento da aggiungere in coda
+ * @return 0 se l'aggiunta è avvenuta con successo, -1 altrimenti.
+ */
+int addAtEnd(queue_t *queue, void *elem);
+
+/**
  * Rimuove dalla coda l'elemento in testa e lo ritorna al chiamante.
  *
  * @param queue coda dalla quale rimuovere la testa

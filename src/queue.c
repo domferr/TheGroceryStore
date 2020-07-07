@@ -76,6 +76,29 @@ int addAtStart(queue_t *queue, void *elem) {
     return 0;
 }
 
+int addAtEnd(queue_t *queue, void *elem) {
+    node_t *node = (node_t*) malloc(sizeof(node_t));
+    if (node == NULL)
+        return -1;
+    node->elem = elem;
+    node->next = NULL;
+
+    pthread_mutex_lock(&(queue->mtx));
+    node->prev = queue->tail;
+    if (queue->tail == NULL) {
+        queue->head = node;
+    } else {
+        (queue->tail)->next = node;
+    }
+
+    queue->tail = node;
+    if (queue->size == 0)
+        pthread_cond_signal(&(queue->empty));
+    (queue->size)++;
+    pthread_mutex_unlock(&(queue->mtx));
+    return 0;
+}
+
 void *removeFromStart(queue_t *queue) {
     void *headElem;
     node_t *headNode;
