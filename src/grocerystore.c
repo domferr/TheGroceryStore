@@ -73,8 +73,7 @@ void print(void *elem) {
  * @return il path del file di configurazione indicato dall'utente oppure il path di default se l'utente non lo ha
  * specificato
  */
-char *parseArgs(int argc, char **args)
-{
+char *parseArgs(int argc, char **args) {
     int i = 1;
     while(i < argc && strcmp(args[i], ARG_CONFIG_FILE) != 0) {
         i++;

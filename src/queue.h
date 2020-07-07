@@ -4,6 +4,9 @@
  * lo precede. Quando non vi è un successore, il puntatore del successore è nullo. Quando non vi è un precedessore,
  * il puntatore del predecessore è nullo. La coda fornisce operazioni di aggiunta, rimozione e scorrimento. Tutte le
  * operazioni vengono svolte in mutua esclusione.
+ *
+ * Esempio di coda FIFO: aggiungere in coda con la funzione addAtStart() e prendere dalla coda con la funzione removeFromEnd()
+ * Esempio di coda LIFO: aggiungere in coda con la funzione addAtStart() e prendere dalla coda con la funzione removeFromStart()
  */
 
 #ifndef QUEUE_H
@@ -73,6 +76,13 @@ int addAtEnd(queue_t *queue, void *elem);
  * @return elemento che si trovava in testa
  */
 void *removeFromStart(queue_t *queue);
+
+/**
+ * Rimuove dalla coda l'ultimo elemento e lo ritorna al chiamante.
+ *
+ * @param queue coda dalla quale rimuovere l'ultimo elemento
+ * @return elemento che si trovava in coda
+ */
 void *removeFromEnd(queue_t *queue);
 
 /**
