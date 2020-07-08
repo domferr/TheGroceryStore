@@ -44,7 +44,8 @@ void thread_pool_free(thread_pool_t *pool);
 /**
  * Crea un nuovo thread nel thread pool che eseguirà la funzione specificata (passando gli argomenti specificati).
  * Ritorna 0 se la creazione avviene con successo, -1 altrimenti. Il nuovo thread viene creato se e solo se c'è abbastanza
- * spazio nel thread pool
+ * spazio nel thread pool.
+ *
  * @param pool thread pool nel quale aggiungere il nuovo thread
  * @param fun la funzione che il nuovo thread deve eseguire
  * @param args gli argomenti della funzione che il nuovo thread deve eseguire
