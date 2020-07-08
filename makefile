@@ -26,5 +26,5 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.c
 
 all: $(TARGETS)
 
-grocerystore: $(OBJDIR)/grocerystore.o $(OBJDIR)/config.o $(OBJDIR)/scfiles.o $(OBJDIR)/executor.o $(OBJDIR)/executorspool.o $(OBJDIR)/queue.o
+grocerystore: $(OBJDIR)/grocerystore.o $(OBJDIR)/config.o $(OBJDIR)/scfiles.o $(OBJDIR)/threadpool.o $(OBJDIR)/queue.o $(OBJDIR)/client.o
 	$(CC) $(CFLAGS) $(INCLUDES) $(LDFLAGS) -o $(BINDIR)/$@ $^ $(LIBS)

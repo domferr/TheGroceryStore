@@ -3,8 +3,8 @@
  */
 
 #include "config.h"
-#include "executorspool.h"
-#include "queue.h"
+#include "threadpool.h"
+#include "client.h"
 #include <stdio.h>
 #include <signal.h>
 #include <string.h>
@@ -15,7 +15,6 @@
 #define CONFIG_FILE_NOT_VALID_MESSAGE "Il file di configurazione non è valido"
 
 char *parseArgs(int argc, char **args);
-void print(void *elem);
 
 //grocerystore -c pathtoconfigfile
 int main(int argc, char** args) {
@@ -32,38 +31,18 @@ int main(int argc, char** args) {
     else
         printf(CONFIG_FILE_NOT_VALID_MESSAGE"\n");
 
-    /*executors_pool_t *clients = executors_pool_create(config->c);
+    thread_pool_t *clients = thread_pool_create(config->c);
     if (clients == NULL)
         perror("Spawn clients");
-    */
-    queue_t *queue = queue_create();
-    if (queue == NULL)
-        perror("queue_create");
+    if (thread_create(clients, &client, NULL) != 0)
+        perror("thread_create");
 
-    int prova = 20;
-    int prova2 = 30;
-    int prova3 = 40;
-    addAtEnd(queue, (&prova));
-    addAtEnd(queue, (&prova2));
-    addAtEnd(queue, (&prova3));
-    applyFromFirst(queue, &print);
-    int rimosso = *((int*)((void*)removeFromEnd(queue)));
-    printf("%d ", rimosso);
-    rimosso = *((int*)((void*)removeFromStart(queue)));
-    printf("%d ", rimosso);
-    rimosso = *((int*)((void*)removeFromEnd(queue)));
-    printf("%d ", rimosso);
-
-    applyFromLast(queue, &print);
-    queue_destroy(queue);
+    thread_pool_join(clients);
+    thread_pool_free(clients);
     free(config);
     return 0;
 }
 
-void print(void *elem) {
-    int *value = (void*) elem;
-    printf("%d -> ", *value);
-}
 
 /**
  * Esegue il parsing degli argomenti passati al programma via linea di comando. Ritorna il path del file
