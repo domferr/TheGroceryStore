@@ -36,6 +36,10 @@ int main(int argc, char** args) {
         perror("Spawn clients");
     if (thread_create(clients, &client, NULL) != 0)
         perror("thread_create");
+    if (thread_create(clients, &client, NULL) != 0)
+        perror("thread_create");
+    if (thread_create(clients, &client, NULL) != 0)
+        perror("thread_create");
 
     thread_pool_join(clients);
     thread_pool_free(clients);

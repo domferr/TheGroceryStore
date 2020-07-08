@@ -1,7 +1,5 @@
 #include "threadpool.h"
-#include "executor.h"
 #include <pthread.h>
-#include <errno.h>
 #include <stdlib.h>
 #include <unistd.h>
 
@@ -31,7 +29,6 @@ void thread_pool_join(thread_pool_t *pool) {
     void *retval;
     pthread_mutex_lock(&(pool->mtx));
     for (i = 0; i < pool->size; ++i) {
-        //TODO dire ai thread di terminare o aspettare che termino
         pthread_join(pool->threads[i], &retval);
     }
     pthread_mutex_unlock(&(pool->mtx));
