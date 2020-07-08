@@ -5,6 +5,7 @@
 #include "config.h"
 #include "threadpool.h"
 #include "client.h"
+#include "cashier.h"
 #include <stdio.h>
 #include <signal.h>
 #include <string.h>
@@ -34,15 +35,30 @@ int main(int argc, char** args) {
     thread_pool_t *clients = thread_pool_create(config->c);
     if (clients == NULL)
         perror("Spawn clients");
-    if (thread_create(clients, &client, NULL) != 0)
+
+    thread_pool_t *cashiers = thread_pool_create(config->k);
+    if (cashiers == NULL)
+        perror("Spawn cashiers");
+
+    cashier_t *ca1 = alloc_cashier(1000);
+    if (ca1 == NULL) {
+        perror("alloc_cashier");
+        return 0;
+    }
+    if (thread_create(cashiers, &cashier, ca1) != 0)
+        perror("thread_create");
+    /*if (thread_create(clients, &client, NULL) != 0)
         perror("thread_create");
     if (thread_create(clients, &client, NULL) != 0)
         perror("thread_create");
     if (thread_create(clients, &client, NULL) != 0)
-        perror("thread_create");
+        perror("thread_create");*/
 
     thread_pool_join(clients);
     thread_pool_free(clients);
+    thread_pool_join(cashiers);
+    thread_pool_free(cashiers);
+    free_cashier(ca1);
     free(config);
     return 0;
 }

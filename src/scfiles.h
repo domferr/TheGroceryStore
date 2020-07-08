@@ -1,7 +1,3 @@
-//
-// Created by Domenico on 04/07/2020.
-//
-
 #ifndef SCFILES_H
 #define SCFILES_H
 #include <sys/types.h>

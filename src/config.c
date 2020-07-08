@@ -1,7 +1,3 @@
-/**
- *
- */
-
 #include "config.h"
 #include "scfiles.h"
 #include <stdio.h>

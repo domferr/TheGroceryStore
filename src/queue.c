@@ -105,19 +105,22 @@ void *removeFromStart(queue_t *queue) {
     node_t *headNextNode;
 
     pthread_mutex_lock(&(queue->mtx));
-    if (queue->head != NULL) {
-        headNode = (queue->head);
-        headNextNode = (queue->head)->next;
-        headElem = (queue->head)->elem;
-        queue->head = headNextNode;
-        if (queue->size == 1) {
-            queue->tail = NULL;
-        } else {
-            headNextNode->prev = NULL;
-        }
-        (queue->size)--;
-        free(headNode);
+    while (queue->size == 0) {
+        pthread_cond_wait(&(queue->empty), &(queue->mtx));
     }
+
+    headNode = (queue->head);
+    headNextNode = (queue->head)->next;
+    headElem = (queue->head)->elem;
+    queue->head = headNextNode;
+    if (queue->size == 1) {
+        queue->tail = NULL;
+    } else {
+        headNextNode->prev = NULL;
+    }
+    (queue->size)--;
+    free(headNode);
+
     pthread_mutex_unlock(&(queue->mtx));
     return headElem;
 }
@@ -128,19 +131,22 @@ void *removeFromEnd(queue_t *queue) {
     node_t *tailPrevNode;
 
     pthread_mutex_lock(&(queue->mtx));
-    if (queue->tail != NULL) {
-        tailNode = (queue->tail);
-        tailPrevNode = (queue->tail)->prev;
-        tailElem = (queue->tail)->elem;
-        queue->tail = tailPrevNode;
-        if (queue->size == 1) {
-            queue->head = NULL;
-        } else {
-            tailPrevNode->next = NULL;
-        }
-        (queue->size)--;
-        free(tailNode);
+    while (queue->size == 0) {
+        pthread_cond_wait(&(queue->empty), &(queue->mtx));
     }
+
+    tailNode = (queue->tail);
+    tailPrevNode = (queue->tail)->prev;
+    tailElem = (queue->tail)->elem;
+    queue->tail = tailPrevNode;
+    if (queue->size == 1) {
+        queue->head = NULL;
+    } else {
+        tailPrevNode->next = NULL;
+    }
+    (queue->size)--;
+    free(tailNode);
+
     pthread_mutex_unlock(&(queue->mtx));
     return tailElem;
 }

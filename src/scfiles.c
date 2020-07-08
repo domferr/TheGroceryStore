@@ -1,7 +1,3 @@
-//
-// Created by Domenico on 04/07/2020.
-//
-
 #include "scfiles.h"
 #include <sys/types.h>
 #include <unistd.h>
