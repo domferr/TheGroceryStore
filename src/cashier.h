@@ -20,6 +20,8 @@ typedef struct {
 
 typedef struct {
     int products;
+    pthread_cond_t waiting;
+    pthread_mutex_t mutex;
 } client_in_queue;
 
 void *cashier(void *args);

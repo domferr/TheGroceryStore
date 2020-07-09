@@ -24,13 +24,12 @@ struct config {
 typedef struct config Config;
 
 /**
- * Legge dati di configurazione dal path passato per argomento e setta la struttura di configurazione specificata.
+ * Legge dati di configurazione dal path passato per argomento e ritorna la struttura di configurazione equivalente.
  *
- * @param filepath da quale file bisogna leggere la configurazione
- * @param config struttura di configurazione che viene settata con i parametri presenti nel file di configurazione
+ * @param filepath file dal quale bisogna leggere la configurazione
  * @return struttura con la configurazione contenuta nel file
  */
-int loadConfig(char *filepath, Config *config);
+Config *loadConfig(char *filepath);
 
 /**
  * Ritorna 1 se la struttura di configurazione è valida, 0 altrimenti. Una struttura di configurazione è

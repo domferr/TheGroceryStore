@@ -9,12 +9,12 @@
 #define NSMULTIPLIER 1000000
 
 static void doService(int products, long service_time);
+static void removeAllClients(queue_t *queue);
 
 void *cashier(void *args) {
     int thread_running = 1;
     cashier_t *ca = (cashier_t*) args;
     queue_t *queue = ca->queue;
-
     while(thread_running) {
         client_in_queue *client = (client_in_queue*) removeFromEnd(queue);
         if (client != NULL) {
@@ -24,13 +24,16 @@ void *cashier(void *args) {
 
         //TODO cosa fare se non ci sono clienti in coda ma devi comunque terminare
         pthread_mutex_lock(&(ca->mutex));
+        if (ca->state == PAUSE)
+            removeAllClients(queue);
         while (ca->state == PAUSE) {
             pthread_cond_wait(&(ca->paused), &(ca->mutex));
         }
-        if (ca->state == STOP)
+        if (ca->state == STOP) {
             thread_running = 0;
-        else if (ca->state == RUN)
+        } else if (ca->state == RUN) {
             thread_running = 1;
+        }
         pthread_mutex_unlock(&(ca->mutex));
     }
 
@@ -75,4 +78,8 @@ static void doService(int products, long service_time) {
     long ms = service_time + (long)(2*products);
     sleep_value.tv_nsec = ms * NSMULTIPLIER;
     nanosleep(&sleep_value, NULL);
+}
+
+static void removeAllClients(queue_t *queue) {
+
 }

@@ -69,13 +69,16 @@ static int parseRow(char *row, size_t row_length, off_t *idOffset) {
     return value;
 }
 
-int loadConfig(char *filepath, Config *config) {
+Config *loadConfig(char *filepath) {
+    Config *config = (Config*) malloc(sizeof(Config));
+    if (config == NULL)
+        return NULL;
     int configFD, bytesRead, valueRead;
     off_t offset = 0, idOffset = 0;
     char* rowBuf;
 
-    IS_NULL((rowBuf = (char*) malloc(sizeof(char) * MAX_ROW_LENGTH)), return -1);
-    IS_MINUS_1((configFD = open(filepath, O_RDONLY)), UNABLE_TO_OPEN_FILE_MESSAGE, free(rowBuf); return -1);
+    IS_NULL((rowBuf = (char*) malloc(sizeof(char) * MAX_ROW_LENGTH)), free(config); return NULL);
+    IS_MINUS_1((configFD = open(filepath, O_RDONLY)), UNABLE_TO_OPEN_FILE_MESSAGE, free(config); free(rowBuf); return NULL);
 
     while ((bytesRead = readline(configFD, rowBuf, MAX_ROW_LENGTH, &offset)) > 0) {
         if ((valueRead = parseRow(rowBuf, bytesRead, &idOffset)) == -1)
@@ -110,10 +113,10 @@ int loadConfig(char *filepath, Config *config) {
         }
     }
     free(rowBuf);
-    IS_MINUS_1(close(configFD), UNABLE_TO_CLOSE_FILE_MESSAGE, return -1);
-    IS_MINUS_1(bytesRead, UNABLE_TO_READ_FILE_MESSAGE, return -1);
+    IS_MINUS_1(close(configFD), UNABLE_TO_CLOSE_FILE_MESSAGE, free(config); return NULL);
+    IS_MINUS_1(bytesRead, UNABLE_TO_READ_FILE_MESSAGE, free(config); return NULL);
 
-    return 1;
+    return config;
 }
 
 int isValidConfig(Config *config) {
