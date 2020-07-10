@@ -50,6 +50,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="cf.first.check.clang-format" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -58,6 +59,11 @@
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="settings.editor.selected.configurable" value="CPPToolchains" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Domenico\Documents\GitHub\TheGroceryStore" />
+    </key>
   </component>
   <component name="RunAnythingCache">
     <option name="myCommands">
@@ -83,7 +89,9 @@
       <workItem from="1593963518123" duration="7004000" />
       <workItem from="1593977834517" duration="7664000" />
       <workItem from="1594129663579" duration="24110000" />
-      <workItem from="1594202979034" duration="23860000" />
+      <workItem from="1594202979034" duration="29357000" />
+      <workItem from="1594314443307" duration="10098000" />
+      <workItem from="1594371543302" duration="14982000" />
     </task>
     <servers />
   </component>
@@ -103,18 +111,22 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="515" y="235" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1594144494790">
+    <state x="602" y="288" key="#Other_File_Types" timestamp="1594396108464">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state x="515" y="235" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1536.864@0.0.1536.864" timestamp="1594144494790" />
-    <state x="500" y="180" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1593967578864">
+    <state x="602" y="288" key="#Other_File_Types/0.0.1536.864@0.0.1536.864" timestamp="1594396108464" />
+    <state x="515" y="235" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1594396093092">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state x="500" y="180" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1536.864@0.0.1536.864" timestamp="1593967578864" />
-    <state x="531" y="221" key="FileChooserDialogImpl" timestamp="1593797803478">
+    <state x="515" y="235" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1536.864@0.0.1536.864" timestamp="1594396093092" />
+    <state x="500" y="180" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1594400437704">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state x="531" y="221" key="FileChooserDialogImpl/0.0.1536.864@0.0.1536.864" timestamp="1593797803478" />
+    <state x="500" y="180" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1536.864@0.0.1536.864" timestamp="1594400437704" />
+    <state x="531" y="221" key="FileChooserDialogImpl" timestamp="1594396051240">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state x="531" y="221" key="FileChooserDialogImpl/0.0.1536.864@0.0.1536.864" timestamp="1594396051240" />
     <state x="279" y="78" key="SettingsEditor" timestamp="1593811241737">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
@@ -123,9 +135,9 @@
       <screen x="0" y="0" width="1536" height="864" />
     </state>
     <state x="426" y="197" width="672" height="677" key="run.anything.popup/0.0.1536.864@0.0.1536.864" timestamp="1594231008414" />
-    <state x="431" y="182" width="672" height="678" key="search.everywhere.popup" timestamp="1594289243400">
+    <state x="431" y="182" width="672" height="678" key="search.everywhere.popup" timestamp="1594398040555">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state x="431" y="182" width="672" height="678" key="search.everywhere.popup/0.0.1536.864@0.0.1536.864" timestamp="1594289243400" />
+    <state x="431" y="182" width="672" height="678" key="search.everywhere.popup/0.0.1536.864@0.0.1536.864" timestamp="1594398040555" />
   </component>
 </project>

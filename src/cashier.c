@@ -1,4 +1,3 @@
-#define _POSIX_C_SOURCE 199309L
 #include "cashier.h"
 #include "queue.h"
 #include <stdlib.h>
@@ -8,36 +7,59 @@
 
 #define NSMULTIPLIER 1000000
 
-static void doService(int products, long service_time);
-static void removeAllClients(queue_t *queue);
-
-void *cashier(void *args) {
+void *cashier_fun(void *args) {
     int thread_running = 1;
+    struct timespec sleep_value = {0};
+    long ms;
     cashier_t *ca = (cashier_t*) args;
     queue_t *queue = ca->queue;
     while(thread_running) {
+        //prendo il cliente dalla coda
         client_in_queue *client = (client_in_queue*) removeFromEnd(queue);
-        if (client != NULL) {
-            printf("Cassiere: Servo un cliente\n");
-            doService(client->products, ca->service_time);
-        }
+        if (client == NULL) return NULL;    //TODO chiamare perror() oppure no?
+
+        pthread_mutex_lock(&(client->mutex));
+        ms = ca->service_time + 2*client->products;
+        sleep_value.tv_nsec = ms * NSMULTIPLIER;
+        pthread_mutex_unlock(&(client->mutex));
+
+        printf("Cassiere: Servo un cliente\n");
+        nanosleep(&sleep_value, NULL);
+
+        pthread_mutex_lock(&(client->mutex));
+        client->done = 1;
+        pthread_cond_signal(&(client->waiting));
+        pthread_mutex_unlock(&(client->mutex));
 
         //TODO cosa fare se non ci sono clienti in coda ma devi comunque terminare
         pthread_mutex_lock(&(ca->mutex));
-        if (ca->state == PAUSE)
-            removeAllClients(queue);
         while (ca->state == PAUSE) {
             pthread_cond_wait(&(ca->paused), &(ca->mutex));
         }
-        if (ca->state == STOP) {
-            thread_running = 0;
-        } else if (ca->state == RUN) {
-            thread_running = 1;
-        }
+        thread_running = ca->state != STOP;
         pthread_mutex_unlock(&(ca->mutex));
     }
 
     return 0;
+}
+
+void run_cashier(cashier_t *ca) {
+    pthread_mutex_lock(&(ca->mutex));
+    ca->state = RUN;
+    pthread_cond_signal(&(ca->paused));
+    pthread_mutex_unlock(&(ca->mutex));
+}
+
+void pause_cashier(cashier_t *ca) {
+    pthread_mutex_lock(&(ca->mutex));
+    ca->state = PAUSE;
+    pthread_mutex_unlock(&(ca->mutex));
+}
+
+void stop_cashier(cashier_t *ca) {
+    pthread_mutex_lock(&(ca->mutex));
+    ca->state = STOP;
+    pthread_mutex_unlock(&(ca->mutex));
 }
 
 cashier_t *alloc_cashier(long service_time) {
@@ -71,15 +93,4 @@ void free_cashier(cashier_t *ca) {
     pthread_cond_destroy(&(ca->paused));
     queue_destroy(ca->queue);
     free(ca);
-}
-
-static void doService(int products, long service_time) {
-    struct timespec sleep_value = {0};
-    long ms = service_time + (long)(2*products);
-    sleep_value.tv_nsec = ms * NSMULTIPLIER;
-    nanosleep(&sleep_value, NULL);
-}
-
-static void removeAllClients(queue_t *queue) {
-
 }

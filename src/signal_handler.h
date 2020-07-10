@@ -2,11 +2,13 @@
 #define SIGNAL_HANDLER_H
 
 #include <signal.h>
+#include "grocerystore.h"
 
 typedef struct {
     sigset_t set;
+    grocerystore_t *gs;
 } signal_handler_t;
 
-void *signal_handler_fun(void *arg);
+void *thread_handler_fun(void *arg);
 
 #endif //SIGNAL_HANDLER_H

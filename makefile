@@ -12,7 +12,8 @@ LIBS    	= -lpthread
 SRCDIR  	= src
 OBJDIR   	= obj
 BINDIR   	= bin
-OBJS		= 	$(OBJDIR)/grocerystore.o	\
+OBJS		= 	$(OBJDIR)/main.o	\
+			 	$(OBJDIR)/grocerystore.o	\
 				$(OBJDIR)/config.o			\
 				$(OBJDIR)/scfiles.o			\
 				$(OBJDIR)/threadpool.o		\

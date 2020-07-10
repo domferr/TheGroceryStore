@@ -9,7 +9,6 @@ enum state {
     PAUSE, //servi il cliente e rimani in attesa di essere riattivato
     STOP //servi il cliente e termina
 };
-
 typedef struct {
     queue_t *queue;
     long service_time;  //milliseconds
@@ -20,12 +19,16 @@ typedef struct {
 
 typedef struct {
     int products;
-    pthread_cond_t waiting;
     pthread_mutex_t mutex;
+    pthread_cond_t waiting;
+    int done;
 } client_in_queue;
 
-void *cashier(void *args);
+void *cashier_fun(void *args);
 cashier_t *alloc_cashier(long service_time);
 void free_cashier(cashier_t *ca);
+void run_cashier(cashier_t *ca);
+void pause_cashier(cashier_t *ca);
+void stop_cashier(cashier_t *ca);
 
 #endif //CASHIER_H
