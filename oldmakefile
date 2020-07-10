@@ -1,3 +1,4 @@
+# compilatore
 CC			= gcc -std=c99
 # flags passati al compilatore per debugging e warning e altro
 CFLAGS		= -g -Wall -pedantic -Wextra \
@@ -9,23 +10,12 @@ LDFLAGS 	= -L.
 # librerie da linkare
 LIBS    	= -lpthread
 
+TARGETS		= grocerystore
 SRCDIR  	= src
 OBJDIR   	= obj
 BINDIR   	= bin
-OBJS		= 	$(OBJDIR)/grocerystore.o	\
-				$(OBJDIR)/config.o			\
-				$(OBJDIR)/scfiles.o			\
-				$(OBJDIR)/threadpool.o		\
-				$(OBJDIR)/queue.o			\
-				$(OBJDIR)/client.o			\
-				$(OBJDIR)/cashier.o			\
-				$(OBJDIR)/signal_handler.o	\
-
-TARGETS		= 	$(BINDIR)/grocerystore
 
 .PHONY: all
-
-all: $(TARGETS)
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c $(SRCDIR)/%.h
 	$(CC) $(CFLAGS) -c -o $@ $<
@@ -33,5 +23,7 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.c $(SRCDIR)/%.h
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-$(BINDIR)/grocerystore: $(OBJS)
-	$(CC) $(CFLAGS) $(INCLUDES) $(LDFLAGS) -o $@ $^ $(LIBS)
+all: $(TARGETS)
+
+grocerystore: $(OBJDIR)/grocerystore.o $(OBJDIR)/config.o $(OBJDIR)/scfiles.o $(OBJDIR)/threadpool.o $(OBJDIR)/queue.o $(OBJDIR)/client.o $(OBJDIR)/cashier.o $(OBJDIR)/signal_handler.o
+	$(CC) $(CFLAGS) $(INCLUDES) $(LDFLAGS) -o $(BINDIR)/$@ $^ $(LIBS)
