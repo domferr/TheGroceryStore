@@ -21,7 +21,7 @@
 
 char *parseArgs(int argc, char **args);
 int setup_signal_handling(pthread_t *handler, grocerystore_t *gs);
-thread_pool_t *clients_create(grocerystore_t *gs, int size);
+thread_pool_t *clients_create(grocerystore_t *gs, int size, int t, int p);
 
 //grocerystore -c pathtoconfigfile
 int main(int argc, char** args) {
@@ -41,7 +41,7 @@ int main(int argc, char** args) {
         return -1;
     }
 
-    gs = grocerystore_create(config->e);
+    gs = grocerystore_create(config->c);
     if (gs == NULL)  {
         free(config);
         return -1;
@@ -53,7 +53,7 @@ int main(int argc, char** args) {
         return -1;
     }
 
-    thread_pool_t *clients = clients_create(gs, config->c);
+    thread_pool_t *clients = clients_create(gs, config->c, config->t, config->p);
     if (clients == NULL) {
         perror("clients_create");
         free(gs);
@@ -62,7 +62,7 @@ int main(int argc, char** args) {
     }
     printf("Supermercato aperto!\n");
     gs_state ending_state = doBusiness(gs, config->c, config->e);
-    printf("Chiusura del supermercato...\n");
+    printf("\rChiusura del supermercato...\n");
     if (ending_state == closed_fast) {
         printf("Tutti i clienti in coda verranno fatti uscire senza essere serviti\n");
     }
@@ -73,6 +73,7 @@ int main(int argc, char** args) {
         printf("E' avvenuto un problema inaspettato. Non sarà possibile avere i log dei clienti\n");
     }
     thread_pool_free(clients);
+    free(clients_logs);
     free(gs);
     free(config);
     return 0;
@@ -124,7 +125,7 @@ int setup_signal_handling(pthread_t *handler, grocerystore_t *gs) {
     return 0;
 }
 
-thread_pool_t *clients_create(grocerystore_t *gs, int size) {
+thread_pool_t *clients_create(grocerystore_t *gs, int size, int t, int p) {
     int i;
     thread_pool_t *clients = thread_pool_create(size);
     if (clients == NULL) {
@@ -132,7 +133,7 @@ thread_pool_t *clients_create(grocerystore_t *gs, int size) {
         return NULL;
     }
     for (i = 0; i < size; ++i) {
-        client_t *client = alloc_client(i, gs);
+        client_t *client = alloc_client(i, gs, t, p);
         if (client == NULL) {
             thread_pool_free(clients);
             return NULL;

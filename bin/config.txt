@@ -1,5 +1,5 @@
 K=2 #numero di thread attivi come cassieri
-C=6 #numero di thread attivi come clienti all'interno del supermercato
+C=20 #numero di thread attivi come clienti all'interno del supermercato
 E=5 #quanto è grande il gruppo di clienti che entra nel supermercato.
 T=500 #massimo tempo per gli acquisti per un cliente
 P=80 #massimo numero di prodotti che acquisterà un cliente

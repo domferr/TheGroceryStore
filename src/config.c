@@ -13,7 +13,6 @@
 
 //Costanti
 #define MAX_ROW_LENGTH 128  //Massima dimensione del buffer per leggere una riga del file
-#define MIN_T 10    //Minimo valore per il parametro T
 
 //Macro utili
 #define IS_NULL(what, then)                                 \

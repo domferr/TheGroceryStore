@@ -47,8 +47,8 @@ void *thread_handler_fun(void *arg) {
     pthread_mutex_lock(&(gs->mutex));
     gs->state = closed;
     gs->can_enter = 0;
-    pthread_cond_broadcast(&(gs->entrance));
-    pthread_cond_signal(&(gs->exit));
+    pthread_cond_broadcast(&(gs->entrance));    //Sveglio tutti i thread che aspettano di entrare
+    pthread_cond_signal(&(gs->exit));   //Sveglio il gestore delle entrate
     pthread_mutex_unlock(&(gs->mutex));
     free(arg);
 #ifdef DEBUGSIGHANDLER
