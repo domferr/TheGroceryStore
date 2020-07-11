@@ -24,7 +24,7 @@ OBJS		= 	$(OBJDIR)/main.o			\
 
 TARGETS		= 	$(BINDIR)/grocerystore
 
-.PHONY: all
+.PHONY: all clean cleanall
 
 all: $(TARGETS)
 
@@ -36,3 +36,9 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.c
 
 $(BINDIR)/grocerystore: $(OBJS)
 	$(CC) $(CFLAGS) $(INCLUDES) $(LDFLAGS) -o $@ $^ $(LIBS)
+
+clean		:
+	rm -f $(TARGETS)
+
+cleanall	: clean
+	\rm -f $(OBJDIR)/*.o *~ *.a
