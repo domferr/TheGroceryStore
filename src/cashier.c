@@ -1,3 +1,4 @@
+#define _POSIX_C_SOURCE 200809L
 #include "cashier.h"
 #include "queue.h"
 #include <stdlib.h>
@@ -39,7 +40,7 @@ void *cashier_fun(void *args) {
         thread_running = ca->state != STOP;
         pthread_mutex_unlock(&(ca->mutex));
     }
-
+    cashier_free(ca);
     return 0;
 }
 
@@ -88,7 +89,7 @@ cashier_t *alloc_cashier(long service_time) {
     return ca;
 }
 
-void free_cashier(cashier_t *ca) {
+void cashier_free(cashier_t *ca) {
     pthread_mutex_destroy(&(ca->mutex));
     pthread_cond_destroy(&(ca->paused));
     queue_destroy(ca->queue);

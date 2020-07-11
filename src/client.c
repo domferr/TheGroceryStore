@@ -1,17 +1,16 @@
-#define _POSIX_C_SOURCE 199309L
+#define _POSIX_C_SOURCE 200809L
 #include "client.h"
 #include "grocerystore.h"
+#include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
-#include <time.h>
 
 #define MSMULTIPLIER 1000000
 
-int msleep(int milliseconds);
-
 void *client_fun(void *args) {
     int run = 1;
+    struct timespec ts = {0};
     gs_state state;
     client_t *cl = (client_t*) args;
     grocerystore_t *gs = (grocerystore_t*) cl->gs;
@@ -23,6 +22,9 @@ void *client_fun(void *args) {
         if (ISOPEN(state)) {    //Stato in cui sono dentro al supermercato
             printf("Cliente %ld: Entro nel supermercato\n", cl->id);
             run = 1;
+            ts.tv_nsec = 1000*MSMULTIPLIER;
+            if (nanosleep(&ts, NULL) != 0)
+                perror("nanosleep");
             //Esco dal supermercato
             exit_store(gs);
         } else {    //Sono stato svegliato perchè devo terminare. Situazione di chiusura
@@ -34,8 +36,11 @@ void *client_fun(void *args) {
     return 0;
 }
 
-int msleep(int milliseconds) {
-    struct timespec ts_sleep = {0, milliseconds*MSMULTIPLIER}, remainder;
-
-    return nanosleep(&ts_sleep, &remainder);
+client_t *alloc_client(size_t id, grocerystore_t *gs) {
+    client_t *client = (client_t*) malloc(sizeof(client_t));
+    if (client == NULL)
+        return NULL;
+    client->gs = gs;
+    client->id = id;
+    return client;
 }

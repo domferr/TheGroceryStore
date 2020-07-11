@@ -2,17 +2,18 @@
  * Questo è lo starting point del programma.
  */
 #define _POSIX_C_SOURCE 200809L
-#include "signal_handler.h"
-#include "config.h"
 #include "grocerystore.h"
+#include "config.h"
 #include "threadpool.h"
 #include "client.h"
+#include "signal_handler.h"
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <signal.h>
 #include <pthread.h>
+#include <time.h>
 
 #define DEFAULT_CONFIG_FILE "./config.txt"
 #define ARG_CONFIG_FILE "-c"
@@ -52,6 +53,7 @@ int main(int argc, char** args) {
     pthread_join(handler_thread, NULL);
     thread_pool_join(clients);
     thread_pool_free(clients);
+    free(gs);
     free(config);
     return 0;
 }
@@ -110,10 +112,11 @@ thread_pool_t *clients_create(grocerystore_t *gs, int size) {
         return NULL;
     }
     for (i = 0; i < size; ++i) {
-        client_t *client = (client_t*) malloc(sizeof(client_t));
-        if (client == NULL) return NULL;
-        client->gs = gs;
-        client->id = i;
+        client_t *client = alloc_client(i, gs);
+        if (client == NULL) {
+            thread_pool_free(clients);
+            return NULL;
+        }
         if (thread_create(clients, &client_fun, client) != 0) {
             perror("thread_create");
             return NULL;

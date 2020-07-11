@@ -8,5 +8,6 @@ typedef struct {
 } client_t;
 
 void *client_fun(void *args);
+client_t *alloc_client(size_t id, grocerystore_t *gs);
 
 #endif //CLIENT_H

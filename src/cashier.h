@@ -26,7 +26,7 @@ typedef struct {
 
 void *cashier_fun(void *args);
 cashier_t *alloc_cashier(long service_time);
-void free_cashier(cashier_t *ca);
+void cashier_free(cashier_t *ca);
 void run_cashier(cashier_t *ca);
 void pause_cashier(cashier_t *ca);
 void stop_cashier(cashier_t *ca);
