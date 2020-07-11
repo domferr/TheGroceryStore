@@ -24,14 +24,17 @@ thread_pool_t *thread_pool_create(int max_size) {
     return pool;
 }
 
-void thread_pool_join(thread_pool_t *pool) {
+void** thread_pool_join(thread_pool_t *pool) {
     size_t i = 0;
-    void *retval;
+    void **retvalues = (void **) malloc(sizeof(void*)*pool->size);
+    if (retvalues == NULL)
+        return NULL;
     pthread_mutex_lock(&(pool->mtx));
     for (i = 0; i < pool->size; ++i) {
-        pthread_join(pool->threads[i], &retval);
+        pthread_join(pool->threads[i], retvalues[i]);
     }
     pthread_mutex_unlock(&(pool->mtx));
+    return retvalues;
 }
 
 void thread_pool_free(thread_pool_t *pool) {

@@ -6,6 +6,8 @@
 #include <stdlib.h>
 #include <pthread.h>
 
+//#define DEBUGSIGHANDLER
+
 //Funzione del thread handler
 void *thread_handler_fun(void *arg) {
     sigset_t set = ((signal_handler_t*) arg)->set;
@@ -22,15 +24,21 @@ void *thread_handler_fun(void *arg) {
         //Gestione del segnale arrivato
         switch (sig) {
             case SIGINT:
+#ifdef DEBUGSIGHANDLER
                 printf("\rArrivato SIGINT\n");
+#endif
                 break;
             case SIGQUIT:
+#ifdef DEBUGSIGHANDLER
                 printf("\rDa questo momento il supermercato è chiuso e i clienti all'interno verranno fatti uscire immediatamente\n");
+#endif
                 //free((signal_handler_t*)arg);
                 //return NULL;
                 break;
             case SIGHUP:
+#ifdef DEBUGSIGHANDLER
                 printf("\rDa questo momento i clienti non verranno più fatti entrare nel supermercato\n");
+#endif
                 break;
             default:
                 break;
@@ -43,6 +51,8 @@ void *thread_handler_fun(void *arg) {
     pthread_cond_signal(&(gs->exit));
     pthread_mutex_unlock(&(gs->mutex));
     free(arg);
+#ifdef DEBUGSIGHANDLER
     printf("Signal handler: Termino\n");
+#endif
     return 0;
 }
