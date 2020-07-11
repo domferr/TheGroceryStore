@@ -1,30 +1,14 @@
 #include "config.h"
+#include "utils.h"
 #include "scfiles.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <fcntl.h>
 #include <unistd.h>
 
-//Messaggi di errore
-#define UNABLE_TO_ALLOCATE_MESSAGE "Impossibile allocare memoria"
-#define UNABLE_TO_OPEN_FILE_MESSAGE "Impossibile aprire il file di configurazione"
-#define UNABLE_TO_READ_FILE_MESSAGE "Impossibile leggere il file di configurazione"
-#define UNABLE_TO_CLOSE_FILE_MESSAGE "Impossibile chiudere il file di configurazione"
-
 //Costanti
 #define MAX_ROW_LENGTH 128  //Massima dimensione del buffer per leggere una riga del file
 
-//Macro utili
-#define IS_NULL(what, then)                                 \
-        if (what == NULL) {                                 \
-            perror(UNABLE_TO_ALLOCATE_MESSAGE);             \
-            then;                                           \
-        }
-#define IS_MINUS_1(what, message, then) \
-        if (what == -1) {               \
-            perror(message);            \
-            then;                       \
-        }
 #define CHECK_LESS_OR_EQUAL(value, upper_limit)     \
     if (value <= upper_limit)                       \
         return 0;
@@ -70,14 +54,13 @@ static int parseRow(char *row, size_t row_length, off_t *idOffset) {
 
 Config *loadConfig(char *filepath) {
     Config *config = (Config*) malloc(sizeof(Config));
-    if (config == NULL)
-        return NULL;
+    EQNULL(config, return NULL);
     int configFD, bytesRead, valueRead;
     off_t offset = 0, idOffset = 0;
     char* rowBuf;
 
-    IS_NULL((rowBuf = (char*) malloc(sizeof(char) * MAX_ROW_LENGTH)), free(config); return NULL);
-    IS_MINUS_1((configFD = open(filepath, O_RDONLY)), UNABLE_TO_OPEN_FILE_MESSAGE, free(config); free(rowBuf); return NULL);
+    EQNULL((rowBuf = (char*) malloc(sizeof(char) * MAX_ROW_LENGTH)), free(config); return NULL);
+    MINUS1((configFD = open(filepath, O_RDONLY)), free(config); free(rowBuf); return NULL);
 
     while ((bytesRead = readline(configFD, rowBuf, MAX_ROW_LENGTH, &offset)) > 0) {
         if ((valueRead = parseRow(rowBuf, bytesRead, &idOffset)) == -1)
@@ -112,8 +95,8 @@ Config *loadConfig(char *filepath) {
         }
     }
     free(rowBuf);
-    IS_MINUS_1(close(configFD), UNABLE_TO_CLOSE_FILE_MESSAGE, free(config); return NULL);
-    IS_MINUS_1(bytesRead, UNABLE_TO_READ_FILE_MESSAGE, free(config); return NULL);
+    MINUS1(close(configFD), free(config); return NULL);
+    MINUS1(bytesRead, free(config); return NULL);
 
     return config;
 }

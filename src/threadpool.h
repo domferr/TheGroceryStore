@@ -39,7 +39,7 @@ void** thread_pool_join(thread_pool_t *pool);
  *
  * @param pool thread pool che deve essere rimosso dalla memoria
  */
-void thread_pool_free(thread_pool_t *pool);
+int thread_pool_free(thread_pool_t *pool);
 
 /**
  * Crea un nuovo thread nel thread pool che eseguirà la funzione specificata (passando gli argomenti specificati).

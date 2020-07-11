@@ -73,7 +73,7 @@ int addAtEnd(queue_t *queue, void *elem);
  * Rimuove dalla coda l'elemento in testa e lo ritorna al chiamante.
  *
  * @param queue coda dalla quale rimuovere la testa
- * @return elemento che si trovava in testa
+ * @return elemento che si trovava in testa, NULL in caso di errore
  */
 void *removeFromStart(queue_t *queue);
 
@@ -81,15 +81,16 @@ void *removeFromStart(queue_t *queue);
  * Rimuove dalla coda l'ultimo elemento e lo ritorna al chiamante.
  *
  * @param queue coda dalla quale rimuovere l'ultimo elemento
- * @return elemento che si trovava in coda
+ * @return elemento che si trovava in coda, NULL in caso di errore
  */
 void *removeFromEnd(queue_t *queue);
 
 /**
  * Elimina tutti gli elementi dalla coda e dalla memoria. Dopo la chiamata di questa funzione, la coda ha 0 elementi.
  * @param queue coda da azzerare
+ * @return 0 in caso di successo, -1 altrimenti
  */
-void clear(queue_t *queue);
+int clear(queue_t *queue);
 
 /**
  * Partendo dalla testa e scorrendo la coda fino alla sua coda, chiama la funzione passata per argomento.
@@ -97,8 +98,9 @@ void clear(queue_t *queue);
  *
  * @param queue coda da scorrere dalla testa fino alla coda
  * @param jobFun funzione da chiamare per ogni elemento
+ * @return 0 in caso di successo, -1 altrimenti
  */
-void applyFromFirst(queue_t *queue, void (*jobFun)(void*));
+int applyFromFirst(queue_t *queue, void (*jobFun)(void*));
 
 /**
  * Partendo dalla coda e scorrendo la coda fino alla sua testa, chiama la funzione passata per argomento.
@@ -106,7 +108,8 @@ void applyFromFirst(queue_t *queue, void (*jobFun)(void*));
  *
  * @param queue coda da scorrere dalla coda fino alla testa
  * @param jobFun funzione da chiamare per ogni elemento
+ * @return 0 in caso di successo, -1 altrimenti
  */
-void applyFromLast(queue_t *queue, void (*jobFun)(void*));
+int applyFromLast(queue_t *queue, void (*jobFun)(void*));
 
 #endif //QUEUE_H

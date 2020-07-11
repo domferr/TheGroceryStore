@@ -8,7 +8,7 @@
 #define ISCLOSED(st) st != open
 
 typedef enum {
-    open, closed, closed_fast
+    open, closed, closed_fast, gserror
 } gs_state;
 
 typedef struct {
@@ -21,9 +21,9 @@ typedef struct {
 } grocerystore_t;
 
 grocerystore_t *grocerystore_create(size_t e);
-void grocerystore_destroy(grocerystore_t *gs);
+void grocerystore_destroy(grocerystore_t *gs);  //TODO detroy grocery store
 gs_state enter_store(grocerystore_t *gs, size_t id);
-void exit_store(grocerystore_t *gs);
+int exit_store(grocerystore_t *gs);
 gs_state doBusiness(grocerystore_t *gs, int c, int e);
 
 #endif //GROCERYSTORE_H

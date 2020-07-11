@@ -3,6 +3,7 @@
  */
 
 #include "queue.h"
+#include "utils.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <pthread.h>
@@ -26,23 +27,15 @@ static void recursiveToNext(node_t *node, void (*jobFun)(void*));
 static void recursiveToPrev(node_t *node, void (*jobFun)(void*));
 
 queue_t *queue_create(void) {
+    int err;
     queue_t *queue = (queue_t*) malloc(sizeof(queue_t));
-    if (queue == NULL) {
-        return NULL;
-    }
+    EQNULL(queue, return NULL)
     queue->size = 0;
     queue->head = NULL;
     queue->tail = NULL;
-    if (pthread_mutex_init(&(queue->mtx), NULL) != 0) {
-        free(queue);
-        return NULL;
-    }
+    PTH(err, pthread_mutex_init(&(queue->mtx), NULL), free(queue); return NULL)
+    PTH(err, pthread_cond_init(&(queue->empty), NULL), pthread_mutex_destroy(&(queue->mtx)); free(queue); return NULL;)
 
-    if (pthread_cond_init(&(queue->empty), NULL) != 0) {
-        pthread_mutex_destroy(&(queue->mtx));
-        free(queue);
-        return NULL;
-    }
     return queue;
 }
 
@@ -54,13 +47,13 @@ void queue_destroy(queue_t *queue) {
 }
 
 int addAtStart(queue_t *queue, void *elem) {
+    int err;
     node_t *node = (node_t*) malloc(sizeof(node_t));
-    if (node == NULL)
-        return -1;
+    EQNULL(node, return -1)
+
     node->elem = elem;
     node->prev = NULL;
-
-    pthread_mutex_lock(&(queue->mtx));
+    PTH(err, pthread_mutex_lock(&(queue->mtx)), return -1)
     node->next = queue->head;
     if (queue->head == NULL) {
         queue->tail = node;
@@ -70,20 +63,21 @@ int addAtStart(queue_t *queue, void *elem) {
 
     queue->head = node;
     if (queue->size == 0)
-        pthread_cond_signal(&(queue->empty));
+        PTH(err, pthread_cond_signal(&(queue->empty)), return -1)
     (queue->size)++;
-    pthread_mutex_unlock(&(queue->mtx));
+    PTH(err, pthread_mutex_unlock(&(queue->mtx)), return -1)
     return 0;
 }
 
 int addAtEnd(queue_t *queue, void *elem) {
+    int err;
     node_t *node = (node_t*) malloc(sizeof(node_t));
-    if (node == NULL)
-        return -1;
+    EQNULL(node, return -1)
+
     node->elem = elem;
     node->next = NULL;
 
-    pthread_mutex_lock(&(queue->mtx));
+    PTH(err, pthread_mutex_lock(&(queue->mtx)), return -1)
     node->prev = queue->tail;
     if (queue->tail == NULL) {
         queue->head = node;
@@ -93,20 +87,21 @@ int addAtEnd(queue_t *queue, void *elem) {
 
     queue->tail = node;
     if (queue->size == 0)
-        pthread_cond_signal(&(queue->empty));
+        PTH(err, pthread_cond_signal(&(queue->empty)), return -1)
     (queue->size)++;
-    pthread_mutex_unlock(&(queue->mtx));
+    PTH(err, pthread_mutex_unlock(&(queue->mtx)), return -1)
     return 0;
 }
 
 void *removeFromStart(queue_t *queue) {
+    int err;
     void *headElem;
     node_t *headNode;
     node_t *headNextNode;
 
-    pthread_mutex_lock(&(queue->mtx));
+    PTH(err, pthread_mutex_lock(&(queue->mtx)), return NULL)
     while (queue->size == 0) {
-        pthread_cond_wait(&(queue->empty), &(queue->mtx));
+        PTH(err, pthread_cond_wait(&(queue->empty), &(queue->mtx)), return NULL)
     }
 
     headNode = (queue->head);
@@ -121,18 +116,19 @@ void *removeFromStart(queue_t *queue) {
     (queue->size)--;
     free(headNode);
 
-    pthread_mutex_unlock(&(queue->mtx));
+    PTH(err, pthread_mutex_unlock(&(queue->mtx)), return NULL)
     return headElem;
 }
 
 void *removeFromEnd(queue_t *queue) {
+    int err;
     void *tailElem;
     node_t *tailNode;
     node_t *tailPrevNode;
 
-    pthread_mutex_lock(&(queue->mtx));
+    PTH(err, pthread_mutex_lock(&(queue->mtx)), return NULL)
     while (queue->size == 0) {
-        pthread_cond_wait(&(queue->empty), &(queue->mtx));
+        PTH(err, pthread_cond_wait(&(queue->empty), &(queue->mtx)), return NULL)
     }
 
     tailNode = (queue->tail);
@@ -147,14 +143,15 @@ void *removeFromEnd(queue_t *queue) {
     (queue->size)--;
     free(tailNode);
 
-    pthread_mutex_unlock(&(queue->mtx));
+    PTH(err, pthread_mutex_unlock(&(queue->mtx)), return NULL)
     return tailElem;
 }
 
-void clear(queue_t *queue) {
+int clear(queue_t *queue) {
+    int err;
     node_t *curr;
     node_t *next;
-    pthread_mutex_lock(&(queue->mtx));
+    PTH(err, pthread_mutex_lock(&(queue->mtx)), return -1)
     curr = queue->head;
     while(curr != NULL) {
         next = curr->next;
@@ -162,19 +159,24 @@ void clear(queue_t *queue) {
         curr = next;
     }
     queue->size = 0;
-    pthread_mutex_unlock(&(queue->mtx));
+    PTH(err, pthread_mutex_unlock(&(queue->mtx)), return -1)
+    return 0;
 }
 
-void applyFromFirst(queue_t *queue, void (*jobFun)(void*)) {
-    pthread_mutex_lock(&(queue->mtx));
+int applyFromFirst(queue_t *queue, void (*jobFun)(void*)) {
+    int err;
+    PTH(err, pthread_mutex_lock(&(queue->mtx)), return -1)
     recursiveToNext(queue->head, jobFun);
-    pthread_mutex_unlock(&(queue->mtx));
+    PTH(err, pthread_mutex_unlock(&(queue->mtx)), return -1)
+    return 0;
 }
 
-void applyFromLast(queue_t *queue, void (*jobFun)(void*)) {
-    pthread_mutex_lock(&(queue->mtx));
+int applyFromLast(queue_t *queue, void (*jobFun)(void*)) {
+    int err;
+    PTH(err, pthread_mutex_lock(&(queue->mtx)), return -1)
     recursiveToPrev(queue->tail, jobFun);
-    pthread_mutex_unlock(&(queue->mtx));
+    PTH(err, pthread_mutex_unlock(&(queue->mtx)), return -1)
+    return 0;
 }
 
 static void recursiveToNext(node_t *node, void (*jobFun)(void*)) {
