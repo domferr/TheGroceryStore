@@ -123,9 +123,9 @@ void *removeFromStart(queue_t *queue) {
 int is_empty(queue_t *queue) {
     int err;
     int isempty;
-    PTH(err, pthread_mutex_lock(&(queue->mtx)), return NULL)
+    PTH(err, pthread_mutex_lock(&(queue->mtx)), return -1)
     isempty = queue->size == 0;
-    PTH(err, pthread_mutex_unlock(&(queue->mtx)), return NULL)
+    PTH(err, pthread_mutex_unlock(&(queue->mtx)), return -1)
     return isempty;
 }
 

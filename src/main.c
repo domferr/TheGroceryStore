@@ -25,17 +25,18 @@
 #define MESSAGE_STORE_IS_CLOSING "\rChiusura del supermercato...\n"
 
 char *parseArgs(int argc, char **args);
-int setup_signal_handling(pthread_t *handler, grocerystore_t *gs);
-thread_pool_t *cashiers_create(grocerystore_t *gs, int size);
+int setup_signal_handling(pthread_t *handler, grocerystore_t *gs, cashier_t **cashiers_args, size_t no_of_cashiers);
+thread_pool_t *cashiers_create(cashier_t **cashiers_args, grocerystore_t *gs, int size);
 thread_pool_t *clients_create(grocerystore_t *gs, int size, int t, int p);
 
 //grocerystore -c pathtoconfigfile
 int main(int argc, char** args) {
-    int err;
+    int err, i;
     grocerystore_t *gs;
     pthread_t handler_thread;            //Thread che gestisce i segnali
     thread_pool_t *clients;
     thread_pool_t *cashiers;
+    cashier_t **cashiers_args;
     void **clients_logs;
     void **cashiers_logs;
     char *configFilePath = parseArgs(argc, args);
@@ -54,9 +55,16 @@ int main(int argc, char** args) {
     gs = grocerystore_create(config->c);
     EQNULL(gs, perror("grocerystore_create"); exit(EXIT_FAILURE))
 
-    NOTZERO(setup_signal_handling(&handler_thread, gs), perror("setup_signal_handling"); exit(EXIT_FAILURE))
+    cashiers_args = (cashier_t**) malloc(sizeof(cashier_t*)*config->k);
+    EQNULL(cashiers_args, perror("cashiers_args"); exit(EXIT_FAILURE))
+    for (i = 0; i < config->k; i++) {
+        cashier_state starting_state = pause;
+        cashiers_args[i] = alloc_cashier(i, gs, starting_state, 20);    //TODO prendere il vero product service time al posto di 20
+        EQNULL(cashiers_args[i], perror("alloc_cashier"); exit(EXIT_FAILURE))
+    }
+    NOTZERO(setup_signal_handling(&handler_thread, gs, cashiers_args, config->k), perror("setup_signal_handling"); exit(EXIT_FAILURE))
 
-    cashiers = cashiers_create(gs, config->k);
+    cashiers = cashiers_create(cashiers_args, gs, config->k);
     EQNULL(cashiers, perror("cashiers_create"); exit(EXIT_FAILURE))
 
     clients = clients_create(gs, config->c, config->t, config->p);
@@ -82,14 +90,18 @@ int main(int argc, char** args) {
             break;
     }
     //join!
-    PTH(err, pthread_join(handler_thread, NULL), exit(EXIT_FAILURE))
-    clients_logs = thread_pool_join(clients);
+    PTH(err, pthread_join(handler_thread, NULL), exit(EXIT_FAILURE))    //join sul thread signal handler
+    clients_logs = thread_pool_join(clients);   //join sui clienti
     EQNULL(clients_logs, perror("join clients"); exit(EXIT_FAILURE))
-    cashiers_logs = thread_pool_join(cashiers);
+    printf("Clienti terminati\n");
+    cashiers_logs = thread_pool_join(cashiers); //join sui cassieri
     EQNULL(cashiers_logs, perror("join cashiers"); exit(EXIT_FAILURE))
+    printf("Cassieri terminati\n");
+
     //cleanup!
-    NOTZERO(thread_pool_free(clients), perror("join clients"); exit(EXIT_FAILURE))
-    NOTZERO(thread_pool_free(cashiers), perror("join cashiers"); exit(EXIT_FAILURE))
+    NOTZERO(thread_pool_free(clients), perror("free clients"); exit(EXIT_FAILURE))  //free clienti
+    NOTZERO(thread_pool_free(cashiers), perror("free cashiers"); exit(EXIT_FAILURE)) //free cassieri
+    free(cashiers_args);
     free(clients_logs);
     free(cashiers_logs);
     free(gs);
@@ -114,10 +126,10 @@ char *parseArgs(int argc, char **args) {
     return i < argc ? args[i]:(char *)DEFAULT_CONFIG_FILE;
 }
 
-int setup_signal_handling(pthread_t *handler, grocerystore_t *gs) {
-    int error;
+int setup_signal_handling(pthread_t *handler, grocerystore_t *gs, cashier_t **cashiers_args, size_t no_of_cashiers) {
+    int err;
     signal_handler_t *handler_args = malloc(sizeof(signal_handler_t));
-    if (handler_args == NULL) return -1;
+    EQNULL(handler_args, return -1)
 
     sigemptyset(&(handler_args->set));
     //Segnali che non voglio ricevere
@@ -127,33 +139,25 @@ int setup_signal_handling(pthread_t *handler, grocerystore_t *gs) {
 
     //Blocco i segnali per questo thread. Da questo momento in poi, anche i thread che verranno creati non riceveranno
     //questi segnali.
-    error = pthread_sigmask(SIG_BLOCK, &(handler_args->set), NULL);
-    if (error != 0) {
-        errno = error;
-        free(handler_args);
-        return -1;
-    }
+    PTH(err, pthread_sigmask(SIG_BLOCK, &(handler_args->set), NULL), free(handler_args); return -1)
 
     handler_args->gs = gs;
+    handler_args->cashiers = cashiers_args;
+    handler_args->no_of_cashiers = no_of_cashiers;
     //Creo il thread handler. Riceverà questi segnali chiamando la sigwait
-    if (pthread_create(handler, NULL, &thread_handler_fun, handler_args) != 0) {
-        free(handler_args);
-        return -1;
-    }
+    PTH(err, pthread_create(handler, NULL, &thread_handler_fun, handler_args), return -1)
+
     return 0;
 }
 
 
-thread_pool_t *cashiers_create(grocerystore_t *gs, int size) {
+thread_pool_t *cashiers_create(cashier_t **cashiers_args, grocerystore_t *gs, int size) {
     int i;
     thread_pool_t *cashiers = thread_pool_create(size);
     EQNULL(cashiers, return NULL)
 
     for (i = 0; i < size; ++i) {
-        cashier_t *cashier = alloc_cashier(i, gs, pause, 20);
-        EQNULL(cashier, return NULL)
-
-        NOTZERO(thread_create(cashiers, &cashier_fun, cashier), return NULL)
+        NOTZERO(thread_create(cashiers, &cashier_fun, cashiers_args[i]), return NULL)
     }
     return cashiers;
 }

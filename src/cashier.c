@@ -6,7 +6,8 @@
 #include <stdio.h>
 #include <pthread.h>
 #include <time.h>
-//TODO debug define
+
+#define DEBUG_CASHIER
 #define MIN_SERVICE_TIME 20 //ms
 #define MAX_SERVICE_TIME 80 //ms
 
@@ -18,16 +19,16 @@ void *cashier_fun(void *args) {
     cashier_t *ca = (cashier_t*) args;
     PTH(err, pthread_mutex_lock(&(ca->mutex)), return NULL)
     cashier_state internal_state = ca->state;
-    PTH(err, pthread_mutex_unlock(&(ca->mutex)), return NULL)
     queue_t *queue = ca->queue;
     unsigned int seed = ca->id;
+    PTH(err, pthread_mutex_unlock(&(ca->mutex)), return NULL)
     int fixed_service_time = RANDOM(seed, MIN_SERVICE_TIME, MAX_SERVICE_TIME);  //milliseconds
 
     while(internal_state != closing) {
         //Attendo che la cassa sia aperta
         PTH(err, pthread_mutex_lock(&(ca->mutex)), return NULL)
         while (ca->state == pause) {
-            pthread_cond_wait(&(ca->paused), &(ca->mutex));
+            PTH(err, pthread_cond_wait(&(ca->paused), &(ca->mutex)), return NULL)
         }
         internal_state = ca->state;
         PTH(err, pthread_mutex_unlock(&(ca->mutex)), return NULL)
@@ -61,6 +62,7 @@ void *cashier_fun(void *args) {
         }
 
     }
+    printf("Cassiere %ld: termino\n", ca->id);
     cashier_free(ca);
     return 0;
 }
