@@ -47,7 +47,7 @@ queue_t *queue_create(void);
  *
  * @param queue coda da distruggere
  */
-void queue_destroy(queue_t *queue);
+int queue_destroy(queue_t *queue);
 
 /**
  * Aggiunge in testa alla coda passata per argomento l'elemento specificato.
@@ -84,9 +84,6 @@ void *removeFromStart(queue_t *queue);
  * @return elemento che si trovava in coda, NULL in caso di errore
  */
 void *removeFromEnd(queue_t *queue);
-
-//TODO write documentation for this function
-int is_empty(queue_t *queue);
 
 /**
  * Elimina tutti gli elementi dalla coda e dalla memoria. Dopo la chiamata di questa funzione, la coda ha 0 elementi.

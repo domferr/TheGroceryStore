@@ -3,6 +3,7 @@
 #include "grocerystore.h"
 #include "cashier.h"
 #include "utils.h"
+#include "queue.h"
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -55,8 +56,10 @@ void *thread_handler_fun(void *arg) {
     //Cambio lo stato di ogni cassa per segnalare che il supermercato è in chiusura
     for(i=0; i<no_of_cashiers; i++) {
         PTH(err, pthread_mutex_lock(&((cashiers[i])->mutex)), return 0)
-        cashiers[i]->state = closing;
-        PTH(err, pthread_cond_signal(&((cashiers[i])->paused)), return 0)   //Sveglio il cassiere se si tratta di una cassa chiusa
+        //Sveglio il cassiere se è in attesa sulla coda vuota
+        PTH(err, pthread_cond_signal(&(((cashiers[i])->queue)->empty)), return 0)
+        //Sveglio il cassiere se si tratta di una cassa chiusa
+        PTH(err, pthread_cond_signal(&((cashiers[i])->paused)), return 0)
         PTH(err, pthread_mutex_unlock(&((cashiers[i])->mutex)), return 0)
     }
     free(arg);

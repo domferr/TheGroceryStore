@@ -39,11 +39,13 @@ queue_t *queue_create(void) {
     return queue;
 }
 
-void queue_destroy(queue_t *queue) {
+int queue_destroy(queue_t *queue) {
+    int err;
     clear(queue);
-    pthread_mutex_destroy(&(queue->mtx));
-    pthread_cond_destroy(&(queue->empty));
+    PTH(err, pthread_mutex_destroy(&(queue->mtx)), return -1)
+    PTH(err, pthread_cond_destroy(&(queue->empty)), return -1)
     free(queue);
+    return 0;
 }
 
 int addAtStart(queue_t *queue, void *elem) {
@@ -120,13 +122,8 @@ void *removeFromStart(queue_t *queue) {
     return headElem;
 }
 
-int is_empty(queue_t *queue) {
-    int err;
-    int isempty;
-    PTH(err, pthread_mutex_lock(&(queue->mtx)), return -1)
-    isempty = queue->size == 0;
-    PTH(err, pthread_mutex_unlock(&(queue->mtx)), return -1)
-    return isempty;
+void removeNode(node_t *node) {
+
 }
 
 void *removeFromEnd(queue_t *queue) {
@@ -136,9 +133,11 @@ void *removeFromEnd(queue_t *queue) {
     node_t *tailPrevNode;
 
     PTH(err, pthread_mutex_lock(&(queue->mtx)), return NULL)
-    while (queue->size == 0) {
+
+    while(queue->size == 0) {
         PTH(err, pthread_cond_wait(&(queue->empty), &(queue->mtx)), return NULL)
     }
+
 
     tailNode = (queue->tail);
     tailPrevNode = (queue->tail)->prev;
@@ -153,6 +152,7 @@ void *removeFromEnd(queue_t *queue) {
     free(tailNode);
 
     PTH(err, pthread_mutex_unlock(&(queue->mtx)), return NULL)
+
     return tailElem;
 }
 

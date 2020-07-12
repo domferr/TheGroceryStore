@@ -5,9 +5,8 @@
 #include "grocerystore.h"
 
 typedef enum {
-    run,    //Cassa APERTA. Continua a servire i clienti in coda.
-    pause,  //Cassa CHIUSA. Servi il cliente e non servire gli altri clienti in coda. Rimani in attesa di essere riattivato.
-    closing //Chiusura del programma. Servi il cliente, e gestisci clienti in coda
+    active,    //Cassa APERTA. Continua a servire i clienti in coda.
+    sleeping   //Cassa CHIUSA. Servi il cliente e non servire gli altri clienti in coda. Rimani in attesa di essere riattivato.
 } cashier_state;
 
 typedef struct {
@@ -29,7 +28,9 @@ typedef struct {
 
 void *cashier_fun(void *args);
 cashier_t *alloc_cashier(size_t id, grocerystore_t *gs, cashier_state starting_state, int product_service_time);
-void cashier_free(cashier_t *ca);
+int cashier_wait_activation(cashier_t *ca, grocerystore_t *gs, cashier_state *state);
+int cashier_get_client(cashier_t *ca, client_in_queue **client, cashier_state *ca_state);
+int serve_client(cashier_t *ca, client_in_queue *client, cashier_state *state, int fixed_service_time);
 void wake_client(client_in_queue *client, int done);
 
 #endif //CASHIER_H
