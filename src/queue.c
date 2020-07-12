@@ -122,15 +122,29 @@ void *removeFromStart(queue_t *queue) {
     return headElem;
 }
 
-void removeNode(node_t *node) {
-
+void *pop(queue_t *queue) {
+    void *tailElem = NULL;
+    node_t *tailNode;
+    node_t *tailPrevNode;
+    if (queue->size > 0) {
+        tailNode = (queue->tail);
+        tailPrevNode = (queue->tail)->prev;
+        tailElem = (queue->tail)->elem;
+        queue->tail = tailPrevNode;
+        if (queue->size == 1) {
+            queue->head = NULL;
+        } else {
+            tailPrevNode->next = NULL;
+        }
+        (queue->size)--;
+        free(tailNode);
+    }
+    return tailElem;
 }
 
 void *removeFromEnd(queue_t *queue) {
     int err;
-    void *tailElem;
-    node_t *tailNode;
-    node_t *tailPrevNode;
+    void *elem;
 
     PTH(err, pthread_mutex_lock(&(queue->mtx)), return NULL)
 
@@ -138,22 +152,11 @@ void *removeFromEnd(queue_t *queue) {
         PTH(err, pthread_cond_wait(&(queue->empty), &(queue->mtx)), return NULL)
     }
 
-
-    tailNode = (queue->tail);
-    tailPrevNode = (queue->tail)->prev;
-    tailElem = (queue->tail)->elem;
-    queue->tail = tailPrevNode;
-    if (queue->size == 1) {
-        queue->head = NULL;
-    } else {
-        tailPrevNode->next = NULL;
-    }
-    (queue->size)--;
-    free(tailNode);
+    elem = pop(queue);
 
     PTH(err, pthread_mutex_unlock(&(queue->mtx)), return NULL)
 
-    return tailElem;
+    return elem;
 }
 
 int clear(queue_t *queue) {

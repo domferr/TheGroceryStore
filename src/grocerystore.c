@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <errno.h>
 
-#define DEBUG_GS
+//#define DEBUG_GS
 
 grocerystore_t *grocerystore_create(size_t c) {
     int err;
