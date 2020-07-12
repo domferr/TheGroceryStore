@@ -120,6 +120,15 @@ void *removeFromStart(queue_t *queue) {
     return headElem;
 }
 
+int is_empty(queue_t *queue) {
+    int err;
+    int isempty;
+    PTH(err, pthread_mutex_lock(&(queue->mtx)), return NULL)
+    isempty = queue->size == 0;
+    PTH(err, pthread_mutex_unlock(&(queue->mtx)), return NULL)
+    return isempty;
+}
+
 void *removeFromEnd(queue_t *queue) {
     int err;
     void *tailElem;

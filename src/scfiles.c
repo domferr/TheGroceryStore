@@ -52,7 +52,7 @@ ssize_t readline(int fd, char *ptr, size_t n, off_t *offset) {
     temp = ptr;
     while (index < nread && *temp != '\n') { temp++; index++; }
     *temp = '\0';   //Aggiungo carattere di fine stringa
-    if (index == nread) {   //Se il carattere '\n' non presente
+    if (index == nread) {   //Se il carattere '\n' non è presente
         *offset += nread;
     } else {
         *offset += index+1;

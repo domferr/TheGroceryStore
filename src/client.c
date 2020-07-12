@@ -11,11 +11,11 @@
 //#define DEBUGCLIENT
 
 void *client_fun(void *args) {
-    int run = 1;
-    gs_state state;
     client_t *cl = (client_t*) args;
     grocerystore_t *gs = (grocerystore_t*) cl->gs;
     unsigned int seed = cl->id;
+    int run = 1;
+    gs_state state;
     int random_time;
     int products;
 #ifdef DEBUGCLIENT

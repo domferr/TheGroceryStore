@@ -85,6 +85,9 @@ void *removeFromStart(queue_t *queue);
  */
 void *removeFromEnd(queue_t *queue);
 
+//TODO write documentation for this function
+int is_empty(queue_t *queue);
+
 /**
  * Elimina tutti gli elementi dalla coda e dalla memoria. Dopo la chiamata di questa funzione, la coda ha 0 elementi.
  * @param queue coda da azzerare

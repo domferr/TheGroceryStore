@@ -23,7 +23,7 @@ thread_pool_t *thread_pool_create(int max_size) {
 void** thread_pool_join(thread_pool_t *pool) {
     int err;
     size_t i = 0;
-    void **retvalues = (void **) malloc(sizeof(void*)*pool->size);
+    void **retvalues = (void **) calloc(pool->size, sizeof(void*));
     EQNULL(retvalues, return NULL)
     PTH(err, pthread_mutex_lock(&(pool->mtx)), return NULL)
     for (i = 0; i < pool->size; ++i) {
