@@ -9,22 +9,20 @@
         if (w == NULL) {    \
             then;           \
         }
+
 #define MINUS1(w, then) \
         if (w == -1) {  \
             then;       \
         }
-#define ZERO(w, then)   \
-        if (w == 0) {   \
-            then;       \
-        }
+
 #define NOTZERO(w, then)    \
         if (w != 0) {       \
             then;           \
         }
+
 #define PTH(e, pcall, then)         \
         if ((e = pcall) != 0) {     \
             errno = e;              \
-            perror(#e);             \
             then;                   \
         }
 

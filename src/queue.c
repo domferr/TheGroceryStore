@@ -1,5 +1,5 @@
 /**
- * Implementazione di una unbounded queue le cui operazioni sono thread-safe.
+ * Implementazione di una unbounded queue FIFO.
  */
 
 #include "queue.h"
@@ -7,24 +7,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <pthread.h>
-
-/**
- * Attraversa la coda in maniera ricorsiva partendo dal nodo passato per argomento e continuando per i suoi successivi.
- * Per ogni nodo, chiama la funzione passandogli il nodo stesso.
- *
- * @param node il nodo da cui partire
- * @param jobFun la funzione da chiamare per ogni nodo
- */
-static void recursiveToNext(node_t *node, void (*jobFun)(void*));
-
-/**
- * Attraversa la coda in maniera ricorsiva partendo dal nodo passato per argomento e continuando per i suoi precedenti.
- * Per ogni nodo, chiama la funzione passandogli il nodo stesso.
- *
- * @param node il nodo da cui partire
- * @param jobFun la funzione da chiamare per ogni nodo
- */
-static void recursiveToPrev(node_t *node, void (*jobFun)(void*));
 
 queue_t *queue_create(void) {
     queue_t *queue = (queue_t*) malloc(sizeof(queue_t));

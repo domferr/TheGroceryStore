@@ -2,8 +2,8 @@
  * Header file per una unbounded queue FIFO. La struttura dati è una double linked list. Ogni nodo è rappresentato dalla
  * struct node_t. Ogni nodo possiede un elemento generico, il puntatore al suo successore ed il puntatore al nodo che
  * lo precede. Quando non vi è un successore, il puntatore del successore è nullo. Quando non vi è un precedessore,
- * il puntatore del predecessore è nullo. La coda fornisce operazioni di aggiunta (push), rimozione (pop) e scorrimento.
- * Le operazioni NON vengono svolte in mutua esclusione.
+ * il puntatore del predecessore è nullo. La coda fornisce operazioni di aggiunta (push) e rimozione (pop).
+ * Le operazioni NON sono thread safe in quanto non vengono svolte in mutua esclusione.
  */
 
 #ifndef QUEUE_H
@@ -21,7 +21,7 @@ typedef struct node_t {
 } node_t;
 
 /**
- * Struttura che rappresenta la coda stessa. Contiene la mutex utilizzata per svolgere le operazioni in mutua esclusione.
+ * Struttura che rappresenta la coda stessa.
  */
 typedef struct {
     node_t *head;           //puntatore alla testa della coda

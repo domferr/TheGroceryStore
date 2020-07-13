@@ -15,24 +15,25 @@ void *client_fun(void *args) {
     grocerystore_t *gs = (grocerystore_t*) cl->gs;
     unsigned int seed = cl->id;
     int run = 1;
-    gs_state state;
     int random_time;
     int products;
+    int is_inside_store;
 #ifdef DEBUGCLIENT
     printf("Thread cliente %ld in esecuzione\n", cl->id);
 #endif
     while (run) {
         //Entro nel supermercato. Chiamata bloccante, perchè attende che si possa entrare o che il supermercato chiuda
-        state = enter_store(gs, cl->id);
-        if (ISOPEN(state)) {    //Stato in cui sono dentro al supermercato
+        is_inside_store = enter_store(gs);
+        MINUS1(is_inside_store, perror("enter store"); return NULL)
+        if (is_inside_store) {    //Stato in cui sono dentro al supermercato
             products = RANDOM(seed, 0, cl->p);
             random_time = RANDOM(seed, MIN_T, cl->t);
 #ifdef DEBUGCLIENT
             printf("Cliente %ld: Entro nel supermercato. Prendo %d prodotti in %dms\n", cl->id, products, random_time);
 #endif
-            NOTZERO(msleep(random_time), perror("client sleep"); free(cl); return NULL;)
+            NOTZERO(msleep(random_time), perror("client sleep"); free(cl); return NULL)
             //Esco dal supermercato
-            exit_store(gs);
+            NOTZERO(exit_store(gs), perror("exit store"); return NULL)
 #ifdef DEBUGCLIENT
             printf("Cliente %ld: Esco dal supermercato\n", cl->id);
 #endif

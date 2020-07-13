@@ -29,44 +29,45 @@ grocerystore_t *grocerystore_create(size_t c) {
     return gs;
 }
 
-gs_state doBusiness(grocerystore_t *gs, int c, int e) {
-    int err;
-    gs_state state_copy = open;
-    while (ISOPEN(state_copy)) {
-        PTH(err, pthread_mutex_lock(&(gs->mutex)), return gserror)
+int manage_entrance(grocerystore_t *gs, gs_state *state, int c, int e) {
+    int err, run = 1;
+    while (run) {
+        PTH(err, pthread_mutex_lock(&(gs->mutex)), return -1)
         //Rimango in attesa fino a quando il supermercato è aperto ed il numero di clienti è maggiore di C-E
         while (ISOPEN(gs->state) && gs->clients_inside > c-e) {
-            PTH(err, pthread_cond_wait(&(gs->exit), &(gs->mutex)), return gserror)
+            PTH(err, pthread_cond_wait(&(gs->exit), &(gs->mutex)), return -1)
         }
 #ifdef DEBUG_GS
         printf("Clienti nel supermercato: %d. Faccio entrare %d clienti\n", gs->clients_inside, e);
 #endif
         if (ISOPEN(gs->state)) {
             gs->can_enter = e;
-            //Sveglio tutti i thread in attesa sull'entrata
-            PTH(err, pthread_cond_broadcast(&(gs->entrance)), return gserror)
+            //Sveglio tutti i thread in attesa sull'entrata. Solo E di loro entreranno
+            PTH(err, pthread_cond_broadcast(&(gs->entrance)), return -1)
+        } else {
+            run = 0;
         }
-        state_copy = gs->state;
-        PTH(err, pthread_mutex_unlock(&(gs->mutex)), return gserror)
+        *state = gs->state;
+        PTH(err, pthread_mutex_unlock(&(gs->mutex)), return -1)
     }
-    return state_copy;
+    return 0;
 }
 
-gs_state enter_store(grocerystore_t *gs, size_t id) {
-    int err;
-    gs_state state;
-    PTH(err, pthread_mutex_lock(&(gs->mutex)), return gserror)
+int enter_store(grocerystore_t *gs) {
+    int err, entered;
+    PTH(err, pthread_mutex_lock(&(gs->mutex)), return -1)
     while(ISOPEN(gs->state) && gs->can_enter == 0) {
-        PTH(err, pthread_cond_wait(&(gs->entrance), &(gs->mutex)), return gserror)
+        PTH(err, pthread_cond_wait(&(gs->entrance), &(gs->mutex)), return -1)
     }
     //Entro se è aperto altrimenti sono stato risvegliato perchè devo terminare
     if (ISOPEN(gs->state)) {
         (gs->can_enter)--;
         (gs->clients_inside)++;
+        entered = 1;
     }
-    state = gs->state;
-    PTH(err, pthread_mutex_unlock(&(gs->mutex)), return gserror)
-    return state;
+    entered = 0;
+    PTH(err, pthread_mutex_unlock(&(gs->mutex)), return -1)
+    return entered;
 }
 
 int exit_store(grocerystore_t *gs) {
@@ -75,5 +76,13 @@ int exit_store(grocerystore_t *gs) {
     (gs->clients_inside)--;
     PTH(err, pthread_cond_signal(&(gs->exit)), return -1);
     PTH(err, pthread_mutex_unlock(&(gs->mutex)), return -1);
+    return 0;
+}
+
+int get_store_state(grocerystore_t *gs, gs_state *state) {
+    int err;
+    PTH(err, pthread_mutex_lock(&(gs->mutex)), return -1)
+    *state = gs->state;
+    PTH(err, pthread_mutex_unlock(&(gs->mutex)), return -1)
     return 0;
 }

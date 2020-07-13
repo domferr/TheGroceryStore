@@ -33,7 +33,8 @@ thread_pool_t *clients_create(grocerystore_t *gs, int size, int t, int p);
 int main(int argc, char** args) {
     int err, i;
     grocerystore_t *gs;
-    pthread_t handler_thread;            //Thread che gestisce i segnali
+    gs_state closing_state;         //Stato di chiusura del supermercato
+    pthread_t handler_thread;       //Thread che gestisce i segnali
     thread_pool_t *clients;
     thread_pool_t *cashiers;
     cashier_t **cashiers_args;
@@ -62,7 +63,8 @@ int main(int argc, char** args) {
         cashiers_args[i] = alloc_cashier(i, gs, starting_state, 20);    //TODO prendere il vero product service time al posto di 20
         EQNULL(cashiers_args[i], perror("alloc_cashier"); exit(EXIT_FAILURE))
     }
-    NOTZERO(setup_signal_handling(&handler_thread, gs, cashiers_args, config->k), perror("setup_signal_handling"); exit(EXIT_FAILURE))
+    err = setup_signal_handling(&handler_thread, gs, cashiers_args, config->k);
+    NOTZERO(err, perror("setup_signal_handling"); exit(EXIT_FAILURE))
 
     cashiers = cashiers_create(cashiers_args, gs, config->k);
     EQNULL(cashiers, perror("cashiers_create"); exit(EXIT_FAILURE))
@@ -71,26 +73,19 @@ int main(int argc, char** args) {
     EQNULL(clients, perror("clients_create"); exit(EXIT_FAILURE))
 
     printf(MESSAGE_STORE_IS_OPEN);
-    gs_state ending_state = doBusiness(gs, config->c, config->e);
-    switch(ending_state) {
-        case open:  //stato non possibile
-        case gserror:
-            perror("Main");
-            free(gs);
-            free(config);
-            exit(EXIT_FAILURE);
-            break;
-        case closed:
-            printf(MESSAGE_STORE_IS_CLOSING);
-            printf("Tutti i clienti in coda verranno serviti prima di chiudere definitivamente.\n");
-            break;
-        case closed_fast:
-            printf(MESSAGE_STORE_IS_CLOSING);
-            printf("Tutti i clienti in coda verranno fatti uscire immediatamente.\n");
-            break;
+    err = manage_entrance(gs, &closing_state, config->c, config->e);
+    NOTZERO(err, perror("Main"); exit(EXIT_FAILURE))
+
+    if (closing_state == closed) {
+        printf(MESSAGE_STORE_IS_CLOSING);
+        printf("Tutti i clienti in coda verranno serviti prima di chiudere definitivamente.\n");
+    } else if (closing_state == closed_fast) {
+        printf(MESSAGE_STORE_IS_CLOSING);
+        printf("Tutti i clienti in coda verranno fatti uscire immediatamente.\n");
     }
+
     //join!
-    PTH(err, pthread_join(handler_thread, NULL), exit(EXIT_FAILURE))    //join sul thread signal handler
+    PTH(err, pthread_join(handler_thread, NULL), perror("join thread handler"); exit(EXIT_FAILURE))    //join sul thread signal handler
     clients_logs = thread_pool_join(clients);   //join sui clienti
     EQNULL(clients_logs, perror("join clients"); exit(EXIT_FAILURE))
     printf("Clienti terminati\n");

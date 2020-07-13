@@ -16,7 +16,8 @@ static int wakeup_cashier(cashier_t *ca);
 
 //Funzione del thread handler
 void *thread_handler_fun(void *arg) {
-    int err, sig, i;
+    int err, sig;
+    size_t i;
     gs_state closing_state;
     sigset_t set = ((signal_handler_t*) arg)->set;
     grocerystore_t *gs = ((signal_handler_t*) arg)->gs;
@@ -77,19 +78,14 @@ void *thread_handler_fun(void *arg) {
 static int wakeup_cashier(cashier_t *ca) {
     int err;
     queue_t *queue = ca->queue;
-    cashier_state ca_state;
     PTH(err, pthread_mutex_lock(&(ca->mutex)), return 0)
     //Sveglio il cassiere se dovesse essere una cassa chiusa
-    ca_state = ca->state;
-    if (ca->state == sleeping)
+    if (ca->state == sleeping) {
         PTH(err, pthread_cond_signal(&(ca->paused)), return 0)
-    PTH(err, pthread_mutex_unlock(&(ca->mutex)), return 0)
-
-    PTH(err, pthread_mutex_lock(&(queue->mtx)), return 0)
+    } else if (ca->state == active && queue->size == 0) {
     //Sveglio il cassiere se dovesse essere in attesa sulla coda vuota
-    if (ca_state == active && queue->size == 0)
-        PTH(err, pthread_cond_signal(&(queue->empty)), return 0)
-    PTH(err, pthread_mutex_unlock(&(queue->mtx)), return 0)
-
+        //PTH(err, pthread_cond_signal(&(queue->empty)), return 0)
+    }
+    PTH(err, pthread_mutex_unlock(&(ca->mutex)), return 0)
     return 0;
 }
