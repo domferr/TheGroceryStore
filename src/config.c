@@ -69,7 +69,10 @@ Config *loadConfig(char *filepath) {
         switch(rowBuf[idOffset])
         {
             case 'K':
-                config->k = valueRead;
+                if (idOffset+1 < bytesRead && rowBuf[idOffset+1] == 'T')
+                    config->kt = valueRead;
+                else
+                    config->k = valueRead;
                 break;
             case 'C':
                 config->c = valueRead;

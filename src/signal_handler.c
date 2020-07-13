@@ -29,11 +29,6 @@ void *thread_handler_fun(void *arg) {
     //Gestione del segnale arrivato
     switch (sig) {
         case SIGINT:
-#ifdef DEBUGSIGHANDLER
-            printf("\rArrivato SIGINT\n");
-#endif
-            closing_state = closed_fast;
-            break;
         case SIGQUIT:
 #ifdef DEBUGSIGHANDLER
             printf("\rDa questo momento il supermercato è chiuso e i clienti all'interno verranno fatti uscire immediatamente\n");
@@ -84,7 +79,7 @@ static int wakeup_cashier(cashier_t *ca) {
         PTH(err, pthread_cond_signal(&(ca->paused)), return 0)
     } else if (ca->state == active && queue->size == 0) {
     //Sveglio il cassiere se dovesse essere in attesa sulla coda vuota
-        //PTH(err, pthread_cond_signal(&(queue->empty)), return 0)
+        PTH(err, pthread_cond_signal(&(ca->noclients)), return 0)
     }
     PTH(err, pthread_mutex_unlock(&(ca->mutex)), return 0)
     return 0;

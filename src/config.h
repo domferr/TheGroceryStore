@@ -13,6 +13,7 @@
  */
 struct config {
     int k;  //numero di thread attivi come cassieri
+    int kt; //tempo di gestione di un singolo prodotto da parte di un cassiere. Espresso in millisecondi
     int c;  //numero di thread attivi come clienti all'interno del supermercato
     int e;  //quanto è grande il gruppo di clienti che entra nel supermercato.
     int t;  //massimo tempo per gli acquisti per un cliente. Deve essere > 10

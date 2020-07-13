@@ -26,13 +26,16 @@ void *cashier_fun(void *args) {
         PTH(err, pthread_mutex_lock(&(ca->mutex)), perror("cashier lock"); return NULL)
         switch(ca->state) {
             case sleeping:
+#ifdef DEBUG_CASHIER
+                printf("Cassiere %ld: chiudo la cassa\n", ca->id);
+#endif
                 //Sveglia i clienti senza servirli
                 while ((ca->queue)->size > 0) {
                     client = pop(ca->queue);
                     wakeup_client(client, 0);
                 }
                 while (ISOPEN(store_state) && ca->state == sleeping) {
-                    PTH(err, pthread_cond_wait(&(ca->paused), &(ca->mutex)), perror("cashier cond wait"); return NULL)
+                    PTH(err, pthread_cond_wait(&(ca->paused), &(ca->mutex)), perror("cashier cond wait paused"); return NULL)
                     PTH(err, pthread_mutex_unlock(&(ca->mutex)), perror("cashier unlock"); return NULL)
                     NOTZERO(get_store_state(gs, &store_state), perror("get store state"); return NULL)
                     PTH(err, pthread_mutex_lock(&(ca->mutex)), perror("cashier lock"); return NULL)
@@ -40,12 +43,26 @@ void *cashier_fun(void *args) {
                 PTH(err, pthread_mutex_unlock(&(ca->mutex)), perror("cashier unlock"); return NULL)
                 break;
             case active:
-#ifdef DEBUG_CASHIER
-                printf("Cassiere %ld: servo il prossimo cliente...\n", ca->id);
-#endif
+                while (ISOPEN(store_state) && ca->state == active && (ca->queue)->size == 0) {
+                    PTH(err, pthread_cond_wait(&(ca->noclients), &(ca->mutex)), perror("cashier cond wait noclients"); return NULL)
+                    PTH(err, pthread_mutex_unlock(&(ca->mutex)), perror("cashier unlock"); return NULL)
+                    NOTZERO(get_store_state(gs, &store_state), perror("get store state"); return NULL)
+                    PTH(err, pthread_mutex_lock(&(ca->mutex)), perror("cashier lock"); return NULL)
+                }
+                client = pop(ca->queue);
                 PTH(err, pthread_mutex_unlock(&(ca->mutex)), perror("cashier unlock"); return NULL)
-                //TODO wait for clients and serve them!
-                NOTZERO(get_store_state(gs, &store_state), perror("get store state"); return NULL)
+
+                if (client != NULL) {   //Ho preso un cliente dalla coda
+#ifdef DEBUG_CASHIER
+                    printf("Cassiere %ld: servo il prossimo cliente\n", ca->id);
+#endif
+                    err = serve_client(ca, client);
+                    NOTZERO(err, perror("serve client"); return NULL)
+                    err = wakeup_client(client, 1);
+                    NOTZERO(err, perror("wake up client"); return NULL)
+                }
+                //Se il cliente è nullo allora la coda è vuota quindi sono stato svegliato perchè
+                //il supermercato è in chiusura oppure la cassa è stata chiusa
                 break;
         }
     }
@@ -58,7 +75,10 @@ void *cashier_fun(void *args) {
 #endif
         while ((ca->queue)->size > 0) {
             client = pop(ca->queue);
-            wakeup_client(client, 1);
+            err = serve_client(ca, client);
+            NOTZERO(err, perror("serve client"); return NULL)
+            err = wakeup_client(client, 1);
+            NOTZERO(err, perror("wake up client"); return NULL)
         }
     } else if (store_state == closed_fast) { //Sveglia i clienti senza servirli
 #ifdef DEBUG_CASHIER
@@ -66,14 +86,14 @@ void *cashier_fun(void *args) {
 #endif
         while ((ca->queue)->size > 0) {
             client = pop(ca->queue);
-            wakeup_client(client, 0);
+            NOTZERO(wakeup_client(client, 0), perror("wake up client"); return NULL);
         }
     }
     PTH(err, pthread_mutex_unlock(&(ca->mutex)), perror("cashier unlock"); return NULL)
 
     //cleanup
-    PTH(err, pthread_mutex_destroy(&(ca->mutex)), return NULL)
-    PTH(err, pthread_cond_destroy(&(ca->paused)), return NULL)
+    PTH(err, pthread_mutex_destroy(&(ca->mutex)), perror("cashier mutex destroy"); return NULL)
+    PTH(err, pthread_cond_destroy(&(ca->paused)), perror("cashier cond destroy"); return NULL)
     NOTZERO(queue_destroy(ca->queue), perror("cashier queue destroy"); return NULL)
     free(ca);
 #ifdef DEBUG_CASHIER
@@ -148,6 +168,7 @@ cashier_t *alloc_cashier(size_t id, grocerystore_t *gs, cashier_state starting_s
 
     PTH(err, pthread_mutex_init(&(ca->mutex), NULL), return NULL)
     PTH(err, pthread_cond_init(&(ca->paused), NULL), return NULL)
+    PTH(err, pthread_cond_init(&(ca->noclients), NULL), return NULL)
 
     return ca;
 }

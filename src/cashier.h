@@ -18,6 +18,7 @@ typedef struct {
     int fixed_service_time;
     pthread_mutex_t mutex;
     pthread_cond_t paused;
+    pthread_cond_t noclients;
 } cashier_t;
 
 typedef struct {
