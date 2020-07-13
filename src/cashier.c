@@ -7,7 +7,7 @@
 #include <pthread.h>
 #include <time.h>
 
-#define DEBUG_CASHIER
+//#define DEBUG_CASHIER
 #define MIN_SERVICE_TIME 20 //ms
 #define MAX_SERVICE_TIME 80 //ms
 
@@ -113,6 +113,7 @@ int cashier_get_client(cashier_t *ca, client_in_queue **client, cashier_state *c
         PTH(err, pthread_cond_wait(&(queue->empty), &(queue->mtx)), return -1)
         PTH(err, pthread_mutex_unlock(&(queue->mtx)), return -1)
         //se vengo risvegliato posso riaddormentarmi solo se lo store è ancora aperto
+        printf("WHILE DEL CLIENTE\n");
         NOTZERO(get_store_state(gs, store_state), perror("get store state"); return -1)
         NOTZERO(get_cashier_state(ca, ca_state), perror("get cashier state"); return -1)
         PTH(err, pthread_mutex_lock(&(queue->mtx)), return -1)
@@ -134,7 +135,9 @@ int serve_client(cashier_t *ca, client_in_queue *client) {
     PTH(err, pthread_mutex_lock(&(client->mutex)), return -1)
     ms = ca->fixed_service_time + (ca->product_service_time)*client->products;
     PTH(err, pthread_mutex_unlock(&(client->mutex)), return -1)
+#ifdef DEBUG_CASHIER
     printf("Cassiere %ld: Servo un cliente. Impiegherò %dms\n", ca->id, ms);
+#endif
     return msleep(ms);
 }
 
@@ -151,10 +154,10 @@ int handle_closure(cashier_t *ca, int serve) {
     client_in_queue *client;
     queue_t *queue = ca->queue;
     int err, end = 0;
-    while (end) {
+    while (!end) {
         PTH(err, pthread_mutex_lock(&(queue->mtx)), return -1)
         client = pop(queue);
-        PTH(err, pthread_mutex_lock(&(queue->mtx)), return -1)
+        PTH(err, pthread_mutex_unlock(&(queue->mtx)), return -1)
 
         if (client != NULL) {
             if (serve) {

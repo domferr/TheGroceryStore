@@ -4,6 +4,7 @@
 #include "cashier.h"
 #include "utils.h"
 #include "queue.h"
+#include "scfiles.h"
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,10 +12,11 @@
 
 #define DEBUGSIGHANDLER
 
+static int wakeup_cashier(cashier_t *ca);
+
 //Funzione del thread handler
 void *thread_handler_fun(void *arg) {
-    int err, sig;
-    size_t i;
+    int err, sig, i;
     gs_state closing_state;
     sigset_t set = ((signal_handler_t*) arg)->set;
     grocerystore_t *gs = ((signal_handler_t*) arg)->gs;
@@ -46,6 +48,9 @@ void *thread_handler_fun(void *arg) {
         default:
             break;
     }
+#ifdef DEBUGSIGHANDLER
+    printf("Signal handler: Chiudo il supermercato\n");
+#endif
     //Imposto lo stato del supermercato, non faccio entrare più clienti
     PTH(err, pthread_mutex_lock(&(gs->mutex)), return 0)
     gs->state = closing_state;
@@ -53,18 +58,38 @@ void *thread_handler_fun(void *arg) {
     PTH(err, pthread_cond_broadcast(&(gs->entrance)), return 0) //Sveglio tutti i thread che aspettano di entrare
     PTH(err, pthread_cond_signal(&(gs->exit)), return 0)   //Sveglio il gestore delle entrate
     PTH(err, pthread_mutex_unlock(&(gs->mutex)), return 0)
+#ifdef DEBUGSIGHANDLER
+    printf("Signal handler: Ho impostato lo stato del supermercato in chiusura\n");
+#endif
     //Cambio lo stato di ogni cassa per segnalare che il supermercato è in chiusura
-    for(i=0; i<no_of_cashiers; i++) {
-        PTH(err, pthread_mutex_lock(&((cashiers[i])->mutex)), return 0)
-        //Sveglio il cassiere se è in attesa sulla coda vuota
-        PTH(err, pthread_cond_signal(&(((cashiers[i])->queue)->empty)), return 0)
-        //Sveglio il cassiere se si tratta di una cassa chiusa
-        PTH(err, pthread_cond_signal(&((cashiers[i])->paused)), return 0)
-        PTH(err, pthread_mutex_unlock(&((cashiers[i])->mutex)), return 0)
+    for(i=0; i<no_of_cashiers; ++i) {
+        err = wakeup_cashier(cashiers[i]);
+        NOTZERO(err, perror("wakeup cashier"); return 0)
     }
-    free(arg);
+
 #ifdef DEBUGSIGHANDLER
     printf("Signal handler: Termino\n");
 #endif
+    free(arg);
+    return 0;
+}
+
+static int wakeup_cashier(cashier_t *ca) {
+    int err;
+    queue_t *queue = ca->queue;
+    cashier_state ca_state;
+    PTH(err, pthread_mutex_lock(&(ca->mutex)), return 0)
+    //Sveglio il cassiere se dovesse essere una cassa chiusa
+    ca_state = ca->state;
+    if (ca->state == sleeping)
+        PTH(err, pthread_cond_signal(&(ca->paused)), return 0)
+    PTH(err, pthread_mutex_unlock(&(ca->mutex)), return 0)
+
+    PTH(err, pthread_mutex_lock(&(queue->mtx)), return 0)
+    //Sveglio il cassiere se dovesse essere in attesa sulla coda vuota
+    if (ca_state == active && queue->size == 0)
+        PTH(err, pthread_cond_signal(&(queue->empty)), return 0)
+    PTH(err, pthread_mutex_unlock(&(queue->mtx)), return 0)
+
     return 0;
 }
