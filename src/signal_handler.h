@@ -1,5 +1,6 @@
 #ifndef SIGNAL_HANDLER_H
 #define SIGNAL_HANDLER_H
+
 #define _POSIX_C_SOURCE 200809L
 #include "grocerystore.h"
 #include "cashier.h"

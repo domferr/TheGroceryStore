@@ -10,7 +10,7 @@
 #include <stdlib.h>
 #include <pthread.h>
 
-#define DEBUGSIGHANDLER
+//#define DEBUGSIGHANDLER
 
 static int wakeup_cashier(cashier_t *ca);
 
@@ -19,10 +19,9 @@ void *thread_handler_fun(void *arg) {
     int err, sig;
     size_t i;
     gs_state closing_state;
-    sigset_t set = ((signal_handler_t*) arg)->set;
-    grocerystore_t *gs = ((signal_handler_t*) arg)->gs;
-    cashier_t **cashiers = ((signal_handler_t*) arg)->cashiers;
-    size_t no_of_cashiers = ((signal_handler_t*) arg)->no_of_cashiers;
+    signal_handler_t *sh = (signal_handler_t*) arg;
+    sigset_t set = sh->set;
+    grocerystore_t *gs = sh->gs;
     //Aspetta sul set che arrivi un segnale
     //Se l'attesa non è andata a buon fine
     NOTZERO(sigwait(&set, &sig), perror("sigwait"); free(arg); return NULL;)
@@ -58,8 +57,8 @@ void *thread_handler_fun(void *arg) {
     printf("Signal handler: Ho impostato lo stato del supermercato in chiusura\n");
 #endif
     //Cambio lo stato di ogni cassa per segnalare che il supermercato è in chiusura
-    for(i=0; i<no_of_cashiers; ++i) {
-        err = wakeup_cashier(cashiers[i]);
+    for(i=0; i<(sh->no_of_cashiers); ++i) {
+        err = wakeup_cashier((sh->cashiers)[i]);
         NOTZERO(err, perror("wakeup cashier"); return 0)
     }
 

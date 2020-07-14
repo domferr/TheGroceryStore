@@ -53,19 +53,19 @@ int manage_entrance(grocerystore_t *gs, gs_state *state, int c, int e) {
     return 0;
 }
 
-int enter_store(grocerystore_t *gs) {
-    int err, entered;
+int enter_store(grocerystore_t *gs, gs_state *state) {
+    int err, entered = 0;
     PTH(err, pthread_mutex_lock(&(gs->mutex)), return -1)
     while(ISOPEN(gs->state) && gs->can_enter == 0) {
         PTH(err, pthread_cond_wait(&(gs->entrance), &(gs->mutex)), return -1)
     }
+    *state = gs->state;
     //Entro se è aperto altrimenti sono stato risvegliato perchè devo terminare
     if (ISOPEN(gs->state)) {
         (gs->can_enter)--;
         (gs->clients_inside)++;
         entered = 1;
     }
-    entered = 0;
     PTH(err, pthread_mutex_unlock(&(gs->mutex)), return -1)
     return entered;
 }

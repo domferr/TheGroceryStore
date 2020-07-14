@@ -27,7 +27,7 @@
 char *parseArgs(int argc, char **args);
 int setup_signal_handling(pthread_t *handler, grocerystore_t *gs, cashier_t **cashiers_args, size_t no_of_cashiers);
 thread_pool_t *cashiers_create(cashier_t **cashiers_args, grocerystore_t *gs, int size);
-thread_pool_t *clients_create(grocerystore_t *gs, int size, int t, int p);
+thread_pool_t *clients_create(grocerystore_t *gs, int size, int t, int p, cashier_t **cashiers_args, size_t no_of_cashiers);
 
 //grocerystore -c pathtoconfigfile
 int main(int argc, char** args) {
@@ -69,7 +69,7 @@ int main(int argc, char** args) {
     cashiers = cashiers_create(cashiers_args, gs, config->k);
     EQNULL(cashiers, perror("cashiers_create"); exit(EXIT_FAILURE))
 
-    clients = clients_create(gs, config->c, config->t, config->p);
+    clients = clients_create(gs, config->c, config->t, config->p, cashiers_args, config->k);
     EQNULL(clients, perror("clients_create"); exit(EXIT_FAILURE))
 
     printf(MESSAGE_STORE_IS_OPEN);
@@ -157,13 +157,13 @@ thread_pool_t *cashiers_create(cashier_t **cashiers_args, grocerystore_t *gs, in
     return cashiers;
 }
 
-thread_pool_t *clients_create(grocerystore_t *gs, int size, int t, int p) {
+thread_pool_t *clients_create(grocerystore_t *gs, int size, int t, int p, cashier_t **cashiers_args, size_t no_of_cashiers) {
     int i;
     thread_pool_t *clients = thread_pool_create(size);
     EQNULL(clients, return NULL)
 
     for (i = 0; i < size; ++i) {
-        client_t *client = alloc_client(i, gs, t, p);
+        client_t *client = alloc_client(i, gs, t, p, cashiers_args, no_of_cashiers);
         EQNULL(client, return NULL)
 
         NOTZERO(thread_create(clients, &client_fun, client), return NULL)

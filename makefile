@@ -12,16 +12,17 @@ LIBS    	= -lpthread
 SRCDIR  	= src
 OBJDIR   	= obj
 BINDIR   	= bin
-OBJS		= 	$(OBJDIR)/main.o			\
-			 	$(OBJDIR)/grocerystore.o	\
-				$(OBJDIR)/config.o			\
+OBJS		= 	$(OBJDIR)/utils.o			\
 				$(OBJDIR)/scfiles.o			\
-				$(OBJDIR)/threadpool.o		\
 				$(OBJDIR)/queue.o			\
-				$(OBJDIR)/client.o			\
-				$(OBJDIR)/cashier.o			\
+				$(OBJDIR)/threadpool.o		\
+				$(OBJDIR)/config.o			\
+			 	$(OBJDIR)/grocerystore.o	\
+				$(OBJDIR)/cashier.o	\
+				$(OBJDIR)/client.o	\
+				$(OBJDIR)/client_in_queue.o	\
 				$(OBJDIR)/signal_handler.o	\
-				$(OBJDIR)/utils.o			\
+				$(OBJDIR)/main.o			\
 
 TARGETS		= 	$(BINDIR)/grocerystore
 
