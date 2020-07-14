@@ -23,4 +23,7 @@ typedef struct {
     client_status status;   //vale done se è stato servito
 } client_in_queue;
 
+client_in_queue *alloc_client_in_queue(size_t id);
+int destroy_client_in_queue(client_in_queue *cl_in_q);
+
 #endif //CLIENT_IN_QUEUE_H

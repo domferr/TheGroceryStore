@@ -4,23 +4,23 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int serve_client(cashier_t *ca, client_in_queue *client) {
-    int err, ms;
-    PTH(err, pthread_mutex_lock(&(client->mutex)), return -1)
-    ms = ca->fixed_service_time + (ca->product_service_time)*client->products;
-    PTH(err, pthread_mutex_unlock(&(client->mutex)), return -1)
-#ifdef DEBUG_CASHIER
-    printf("Cassiere %ld: Servo un cliente. Impiegherò %dms\n", ca->id, ms);
-#endif
-    MINUS1(msleep(ms), return -1);
-    return wakeup_client(client, done);
+client_in_queue *alloc_client_in_queue(size_t id) {
+    int err;
+    client_in_queue *cl_in_q = (client_in_queue*) malloc(sizeof(client_in_queue));
+    EQNULL(cl_in_q, return NULL)
+
+    PTH(err, pthread_mutex_init(&(cl_in_q->mutex), NULL), return NULL)
+    PTH(err, pthread_cond_init(&(cl_in_q->waiting), NULL), return NULL)
+
+    cl_in_q->id = id;
+
+    return cl_in_q;
 }
 
-int wakeup_client(client_in_queue *client, client_status status) {
+int destroy_client_in_queue(client_in_queue *cl_in_q) {
     int err;
-    PTH(err, pthread_mutex_lock(&(client->mutex)), return -1)
-    client->status = status;
-    PTH(err, pthread_cond_signal(&(client->waiting)), return -1)
-    PTH(err, pthread_mutex_unlock(&(client->mutex)), return -1)
+    PTH(err, pthread_mutex_destroy(&(cl_in_q->mutex)), return -1)
+    PTH(err, pthread_cond_destroy(&(cl_in_q->waiting)), return -1)
+    free(cl_in_q);
     return 0;
 }

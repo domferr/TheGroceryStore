@@ -9,6 +9,7 @@
 #include "signal_handler.h"
 #include "client.h"
 #include "cashier.h"
+#include "logger.h"
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
@@ -38,8 +39,8 @@ int main(int argc, char** args) {
     thread_pool_t *clients;
     thread_pool_t *cashiers;
     cashier_t **cashiers_args;
-    void **clients_logs;
-    void **cashiers_logs;
+    log_client **clients_logs;
+    log_cashier **cashiers_logs;
     char *configFilePath = parseArgs(argc, args);
     Config *config = loadConfig(configFilePath);
     EQNULL(config, perror(ERROR_READ_CONFIG_FILE); exit(EXIT_FAILURE))
@@ -86,17 +87,23 @@ int main(int argc, char** args) {
 
     //join!
     PTH(err, pthread_join(handler_thread, NULL), perror("join thread handler"); exit(EXIT_FAILURE))    //join sul thread signal handler
-    clients_logs = thread_pool_join(clients);   //join sui clienti
+    clients_logs = (log_client**) thread_pool_join(clients);   //join sui clienti
     EQNULL(clients_logs, perror("join clients"); exit(EXIT_FAILURE))
     printf("Clienti terminati\n");
-    cashiers_logs = thread_pool_join(cashiers); //join sui cassieri
+    cashiers_logs = (log_cashier**) thread_pool_join(cashiers); //join sui cassieri
     EQNULL(cashiers_logs, perror("join cashiers"); exit(EXIT_FAILURE))
     printf("Cassieri terminati\n");
+
+    //logging!
+    MINUS1(write_log(stdout, clients_logs, config->c, cashiers_logs, config->k), perror("write log"); exit(EXIT_FAILURE))
 
     //cleanup!
     NOTZERO(thread_pool_free(clients), perror("free clients"); exit(EXIT_FAILURE))  //free clienti
     NOTZERO(thread_pool_free(cashiers), perror("free cashiers"); exit(EXIT_FAILURE)) //free cassieri
     free(cashiers_args);
+    for (i = 0; i < config->c; ++i) {
+        free(clients_logs[i]);
+    }
     free(clients_logs);
     free(cashiers_logs);
     free(gs);

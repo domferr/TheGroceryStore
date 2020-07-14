@@ -22,6 +22,7 @@ OBJS		= 	$(OBJDIR)/utils.o			\
 				$(OBJDIR)/client.o	\
 				$(OBJDIR)/client_in_queue.o	\
 				$(OBJDIR)/signal_handler.o	\
+				$(OBJDIR)/logger.o	\
 				$(OBJDIR)/main.o			\
 
 TARGETS		= 	$(BINDIR)/grocerystore

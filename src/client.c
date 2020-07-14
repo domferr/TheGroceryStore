@@ -4,6 +4,7 @@
 #include "grocerystore.h"
 #include "config.h"
 #include "utils.h"
+#include "logger.h"
 #include <time.h>
 #include <errno.h>
 #include <stdio.h>
@@ -19,11 +20,12 @@ void *client_fun(void *args) {
     cashier_t *picked_cashier;
     gs_state store_state;
 
-    client_in_queue *cl_in_q = (client_in_queue*) malloc(sizeof(client_in_queue));
-    EQNULL(cl_in_q, perror("malloc client in queue"); return NULL)
-    PTH(err, pthread_mutex_init(&(cl_in_q->mutex), NULL), perror("client mutex init"); return NULL)
-    PTH(err, pthread_cond_init(&(cl_in_q->waiting), NULL), perror("client cond init"); return NULL)
-    cl_in_q->id = cl->id;
+    log_client *log = alloc_client_log(cl->id);
+    EQNULL(log, perror("alloc client log"); return NULL);
+
+    client_in_queue *cl_in_q = alloc_client_in_queue(cl->id);
+    EQNULL(cl_in_q, perror("alloc client in queue"); return NULL);
+
 #ifdef DEBUGCLIENT
     printf("Thread cliente %ld in esecuzione\n", cl->id);
 #endif
@@ -72,11 +74,10 @@ void *client_fun(void *args) {
 #ifdef DEBUGCLIENT
     printf("Cliente %ld terminato\n", cl->id);
 #endif
-    PTH(err, pthread_mutex_destroy(&(cl_in_q->mutex)), perror("client mutex destroy"); return NULL)
-    PTH(err, pthread_cond_destroy(&(cl_in_q->waiting)), perror("client cond waiting destroy"); return NULL)
-    free(cl_in_q);
+
+    MINUS1(destroy_client_in_queue(cl_in_q), perror("destroy client in queue"); return NULL)
     free(cl);
-    return 0;
+    return log;
 }
 
 client_t *alloc_client(size_t id, grocerystore_t *gs, int t, int p, cashier_t **cashiers, size_t no_of_cashiers) {
