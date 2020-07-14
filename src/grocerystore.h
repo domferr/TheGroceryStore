@@ -41,7 +41,6 @@ grocerystore_t *grocerystore_create(size_t c);
  */
 int grocerystore_destroy(grocerystore_t *gs);
 
-
 int enter_store(grocerystore_t *gs, gs_state *state);
 int exit_store(grocerystore_t *gs);
 int manage_entrance(grocerystore_t *gs, gs_state *state, int c, int e);

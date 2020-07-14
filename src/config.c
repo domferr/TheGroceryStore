@@ -73,6 +73,8 @@ Config *loadConfig(char *filepath) {
             case 'K':
                 if (idOffset+1 < bytesRead && rowBuf[idOffset+1] == 'T')
                     set_int_value(&(config->kt), value_ptr);
+                else if (idOffset+1 < bytesRead && rowBuf[idOffset+1] == 'A')
+                    set_int_value(&(config->ka), value_ptr);
                 else
                     set_int_value(&(config->k), value_ptr);
                 break;

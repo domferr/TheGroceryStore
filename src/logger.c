@@ -20,7 +20,7 @@ cashier_thread_stats *alloc_cashier_thread_stats(size_t id) {
     stats->id = id;
     stats->clients_served = 0;  //numero di clienti serviti
     stats->closed_counter = 0;  //numero di volte che la cassa è stata chiusa
-    stats->total_products = 0;
+    stats->total_products = 0;  //numero totale di prodotti acquistati tramite questa cassa
     return stats;
 }
 
@@ -32,9 +32,11 @@ int write_log(FILE *out_file, client_thread_stats **clients, size_t no_of_client
     int total_clients = 0, total_products = 0;  //il numero di clienti serviti, il numero di prodotti acquistati
     size_t i;
     for (i = 0; i < no_of_clients; ++i) {
+        EQNULL((clients[i]), continue);
         printf("Cliente %ld: ancora nessuna statistica\n", (clients[i])->id);
     }
     for (i = 0; i < no_of_cashiers; i++) {
+        EQNULL((cashiers[i]), continue);
         printf("Cassiere %ld: clienti serviti: %d; prodotti elaborati: %d; chiusure %d;\n", (cashiers[i])->id, (cashiers[i])->clients_served, (cashiers[i])->total_products, (cashiers[i])->closed_counter);
         total_products += (cashiers[i])->total_products;
         total_clients += (cashiers[i])->clients_served;

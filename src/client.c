@@ -104,7 +104,7 @@ int client_get_products(client_t *cl, grocerystore_t *gs, gs_state *store_state)
     printf("Cliente %ld: Entro nel supermercato. Prendo %d prodotti in %dms\n", cl->id, products, random_time);
 #endif
     NOTZERO(msleep(random_time), return -1)
-    NOTZERO(get_store_state(gs, store_state), perror("get store state"); return -1)
+    NOTZERO(get_store_state(gs, store_state), return -1)
     return products;
 }
 

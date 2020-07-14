@@ -64,7 +64,9 @@ int main(int argc, char** args) {
     cashiers_args = (cashier_t**) malloc(sizeof(cashier_t*)*config->k);
     EQNULL(cashiers_args, perror("cashiers_args"); exit(EXIT_FAILURE))
     for (i = 0; i < config->k; i++) {
-        cashier_state starting_state = active;
+        cashier_state starting_state = sleeping;
+        if (i<config->ka)
+            starting_state = active;
         cashiers_args[i] = alloc_cashier(i, gs, starting_state, config->kt);
         EQNULL(cashiers_args[i], perror("alloc_cashier"); exit(EXIT_FAILURE))
     }
