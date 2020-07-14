@@ -40,7 +40,7 @@ int main(int argc, char** args) {
     thread_pool_t *cashiers;
     cashier_t **cashiers_args;
     log_client **clients_logs;
-    log_cashier **cashiers_logs;
+    cashier_main_stats **cashiers_stats;
     char *configFilePath = parseArgs(argc, args);
     Config *config = loadConfig(configFilePath);
     EQNULL(config, perror(ERROR_READ_CONFIG_FILE); exit(EXIT_FAILURE))
@@ -85,27 +85,34 @@ int main(int argc, char** args) {
         printf("Tutti i clienti in coda verranno fatti uscire immediatamente.\n");
     }
 
-    //join!
-    PTH(err, pthread_join(handler_thread, NULL), perror("join thread handler"); exit(EXIT_FAILURE))    //join sul thread signal handler
-    clients_logs = (log_client**) thread_pool_join(clients);   //join sui clienti
-    EQNULL(clients_logs, perror("join clients"); exit(EXIT_FAILURE))
+    //Alloco memoria per ottenere i file di log
+    clients_logs = (log_client**) malloc(sizeof(log_client*)*config->c);
+    EQNULL(clients_logs, perror("malloc clients logs"); exit(EXIT_FAILURE))
+    cashiers_stats = (cashier_main_stats**) malloc(sizeof(cashier_main_stats*)*config->k);
+    EQNULL(cashiers_stats, perror("malloc cashiers stats"); exit(EXIT_FAILURE))
+    //Eseguo la join sui vari threads!
+    //join sul thread signal handler
+    PTH(err, pthread_join(handler_thread, NULL), perror("join thread handler"); exit(EXIT_FAILURE))
+    //join sui clienti
+    MINUS1(thread_pool_join(clients, (void**)clients_logs), perror("join clients"); exit(EXIT_FAILURE))
     printf("Clienti terminati\n");
-    cashiers_logs = (log_cashier**) thread_pool_join(cashiers); //join sui cassieri
-    EQNULL(cashiers_logs, perror("join cashiers"); exit(EXIT_FAILURE))
+    //join sui cassieri
+    MINUS1(thread_pool_join(cashiers, (void**)cashiers_stats), perror("join cashiers"); exit(EXIT_FAILURE))
     printf("Cassieri terminati\n");
 
     //logging!
-    MINUS1(write_log(stdout, clients_logs, config->c, cashiers_logs, config->k), perror("write log"); exit(EXIT_FAILURE))
+    //MINUS1(write_log(stdout, clients_logs, config->c, cashiers_logs, config->k), perror("write log"); exit(EXIT_FAILURE))
 
     //cleanup!
     NOTZERO(thread_pool_free(clients), perror("free clients"); exit(EXIT_FAILURE))  //free clienti
     NOTZERO(thread_pool_free(cashiers), perror("free cashiers"); exit(EXIT_FAILURE)) //free cassieri
     free(cashiers_args);
-    for (i = 0; i < config->c; ++i) {
-        free(clients_logs[i]);
+    for (i = 0; i < (config->k); i++) {
+        printf("Cassiere %ld: clienti serviti: %d\n", (cashiers_stats[i])->id, (cashiers_stats[i])->clients_served);
+        free(cashiers_stats[i]);
     }
     free(clients_logs);
-    free(cashiers_logs);
+    free(cashiers_stats);
     free(gs);
     free(config);
     return 0;

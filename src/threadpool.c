@@ -20,17 +20,18 @@ thread_pool_t *thread_pool_create(int max_size) {
     return pool;
 }
 
-void** thread_pool_join(thread_pool_t *pool) {
+int thread_pool_join(thread_pool_t *pool, void **retvalues) {
     int err;
     size_t i = 0;
-    void **retvalues = (void **) calloc(pool->size, sizeof(void*));
-    EQNULL(retvalues, return NULL)
-    PTH(err, pthread_mutex_lock(&(pool->mtx)), return NULL)
+    void *thread_return;
+
+    PTH(err, pthread_mutex_lock(&(pool->mtx)), return -1)
     for (i = 0; i < pool->size; ++i) {
-        PTH(err, pthread_join(pool->threads[i], retvalues[i]), return NULL)
+        PTH(err, pthread_join(pool->threads[i], &thread_return), return -1)
+        retvalues[i] = thread_return;
     }
-    PTH(err, pthread_mutex_unlock(&(pool->mtx)), return NULL)
-    return retvalues;
+    PTH(err, pthread_mutex_unlock(&(pool->mtx)), return -1)
+    return 0;
 }
 
 int thread_pool_free(thread_pool_t *pool) {

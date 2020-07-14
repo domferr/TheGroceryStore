@@ -3,6 +3,7 @@
 #include "cashier.h"
 #include "client_in_queue.h"
 #include "queue.h"
+#include "logger.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <pthread.h>
@@ -21,7 +22,8 @@ void *cashier_fun(void *args) {
 #ifdef DEBUG_CASHIER
     printf("Cassiere %ld: attivo\n", ca->id);
 #endif
-
+    cashier_main_stats *stats = alloc_cashier_stats(ca->id);
+    EQNULL(stats, perror("alloc cashier stats"); return NULL)
     NOTZERO(get_store_state(gs, &store_state), perror("get store state"); return NULL)
     while(ISOPEN(store_state)) {
         PTH(err, pthread_mutex_lock(&(ca->mutex)), perror("cashier lock"); return NULL)
@@ -33,8 +35,9 @@ void *cashier_fun(void *args) {
                 //Sveglia i clienti senza servirli
                 while ((ca->queue)->size > 0) {
                     client = pop(ca->queue);
-                    wakeup_client(client, cashier_sleeping);
+                    wakeup_client(client, cashier_sleeping, stats);
                 }
+                (stats->closed_counter)++;
                 while (ISOPEN(store_state) && ca->state == sleeping) {
                     PTH(err, pthread_cond_wait(&(ca->paused), &(ca->mutex)), perror("cashier cond wait paused"); return NULL)
                     PTH(err, pthread_mutex_unlock(&(ca->mutex)), perror("cashier unlock"); return NULL)
@@ -62,7 +65,7 @@ void *cashier_fun(void *args) {
 #ifdef DEBUG_CASHIER
                     printf("Cassiere %ld: servo il cliente %ld\n", ca->id, client->id);
 #endif
-                    NOTZERO(serve_client(ca, client), perror("serve client"); return NULL)
+                    NOTZERO(serve_client(ca, client, stats), perror("serve client"); return NULL)
                     NOTZERO(get_store_state(gs, &store_state), perror("get store state"); return NULL)
                 }
                 break;
@@ -71,7 +74,7 @@ void *cashier_fun(void *args) {
 
 
     //Gestisci chiusura supermercato
-    MINUS1(handle_closure(ca, store_state), perror("handle closure"); return NULL)
+    MINUS1(handle_closure(ca, store_state, stats), perror("handle closure"); return NULL)
 
     //cleanup
     PTH(err, pthread_mutex_destroy(&(ca->mutex)), perror("cashier mutex destroy"); return NULL)
@@ -81,7 +84,7 @@ void *cashier_fun(void *args) {
     printf("Cassiere %ld: termino\n", ca->id);
 #endif
     free(ca);
-    return 0;
+    return stats;
 }
 
 cashier_t *alloc_cashier(size_t id, grocerystore_t *gs, cashier_state starting_state, int product_service_time) {
@@ -105,7 +108,7 @@ cashier_t *alloc_cashier(size_t id, grocerystore_t *gs, cashier_state starting_s
     return ca;
 }
 
-int handle_closure(cashier_t *ca, gs_state closing_state) {
+int handle_closure(cashier_t *ca, gs_state closing_state, cashier_main_stats *stats) {
     int err;
     client_in_queue *client;
     PTH(err, pthread_mutex_lock(&(ca->mutex)), return -1)
@@ -115,7 +118,7 @@ int handle_closure(cashier_t *ca, gs_state closing_state) {
 #endif
         while ((ca->queue)->size > 0) {
             client = pop(ca->queue);
-            NOTZERO(serve_client(ca, client), return -1)
+            NOTZERO(serve_client(ca, client, stats), return -1)
         }
     } else if (closing_state == closed_fast) { //Sveglia i clienti senza servirli
 #ifdef DEBUG_CASHIER
@@ -123,14 +126,14 @@ int handle_closure(cashier_t *ca, gs_state closing_state) {
 #endif
         while ((ca->queue)->size > 0) {
             client = pop(ca->queue);
-            NOTZERO(wakeup_client(client, store_closure), return -1);
+            NOTZERO(wakeup_client(client, store_closure, stats), return -1);
         }
     }
     PTH(err, pthread_mutex_unlock(&(ca->mutex)), return -1)
     return 0;
 }
 
-int serve_client(cashier_t *ca, client_in_queue *client) {
+int serve_client(cashier_t *ca, client_in_queue *client, cashier_main_stats *stats) {
     int err, ms;
     PTH(err, pthread_mutex_lock(&(client->mutex)), return -1)
     ms = ca->fixed_service_time + (ca->product_service_time)*client->products;
@@ -139,14 +142,16 @@ int serve_client(cashier_t *ca, client_in_queue *client) {
     printf("Cassiere %ld: Servo un cliente. Impiegherò %dms\n", ca->id, ms);
 #endif
     MINUS1(msleep(ms), return -1);
-    return wakeup_client(client, done);
+    return wakeup_client(client, done, stats);
 }
 
-int wakeup_client(client_in_queue *client, client_status status) {
+int wakeup_client(client_in_queue *client, client_status status, cashier_main_stats *stats) {
     int err;
     PTH(err, pthread_mutex_lock(&(client->mutex)), return -1)
     client->status = status;
     PTH(err, pthread_cond_signal(&(client->waiting)), return -1)
     PTH(err, pthread_mutex_unlock(&(client->mutex)), return -1)
+    if (status == done)
+        (stats->clients_served)++;
     return 0;
 }

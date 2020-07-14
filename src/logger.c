@@ -13,13 +13,13 @@ log_client *alloc_client_log(size_t id) {
     return log;
 }
 
-log_cashier *alloc_cashier_log(size_t id) {
-    log_cashier *log = (log_cashier*) malloc(sizeof(log_cashier));
-    EQNULL(log, return NULL);
-    log->id = id;
-    log->clients_served = 0;     //numero di clienti serviti
-    log->closure_counter = 0;    //numero di prodotti acquistati
-    return log;
+cashier_main_stats *alloc_cashier_stats(size_t id) {
+    cashier_main_stats *stats = (cashier_main_stats*) malloc(sizeof(cashier_main_stats));
+    EQNULL(stats, return NULL);
+    stats->id = id;
+    stats->clients_served = 0;  //numero di clienti serviti
+    stats->closed_counter = 0;  //numero di volte che la cassa è stata chiusa
+    return stats;
 }
 
 int write_log(FILE *out_file, log_client **clients, size_t no_of_clients, log_cashier **cashiers, size_t no_of_cashiers) {

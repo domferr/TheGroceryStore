@@ -1,8 +1,10 @@
 #ifndef CLIENT_H
 #define CLIENT_H
+
 #include "grocerystore.h"
 #include "cashier.h"
 #include "client_in_queue.h"
+#include "logger.h"
 
 typedef struct {
     size_t id;
@@ -11,6 +13,7 @@ typedef struct {
     size_t no_of_cashiers;
     int t;  //tempo massimo per acquistare prima di mettersi in una coda
     int p;  //numero massimo di prodotti che acquista
+    log_client *log;    //il cliente riempirà questa struttura dati con le sue statistiche
 } client_t;
 
 void *client_fun(void *args);

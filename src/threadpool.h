@@ -31,7 +31,7 @@ thread_pool_t *thread_pool_create(int max_size);
  *
  * @param pool l'attesa viene eseguita sugli elementi di questo thread pool
  */
-void** thread_pool_join(thread_pool_t *pool);   //TODO update documentation
+int thread_pool_join(thread_pool_t *pool, void **retvalues);   //TODO update documentation
 
 /**
  * Libera la memoria occupata dal thread pool passato per argomento. Quando il controllo viene passato al chiamante, il
