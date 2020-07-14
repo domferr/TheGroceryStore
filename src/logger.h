@@ -1,13 +1,22 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
+#include "queue.h"
 #include <stdio.h>
 
 /** Statistiche raccolte da un thread cliente */
 typedef struct {
     size_t id;          //identificatore del thread cliente
-
+    queue_t *queue;     //statistiche per ogni cliente che è entrato nel supermercato mediante questo thread
 } client_thread_stats;
+
+typedef struct {
+    size_t id;          //identificatore univoco del cliente
+    int products;       //numero di prodotti acquistati
+    int time_in_store;  //tempo di permanenza nel supermercato
+    int time_in_queue;  //tempo di attesa in coda
+    int queue_counter;  //numero di code visitate
+} client_stats;
 
 /** Statistiche raccolte da un thread cassiere */
 typedef struct {
@@ -28,16 +37,9 @@ typedef struct {
     int opening_counter;    //numero di volte che la cassa è stata aperta
 } log_cashier;
 
-typedef struct {
-    size_t id;
-    int products;       //numero di prodotti acquistati
-    int time_in_store;  //tempo di permanenza nel supermercato
-    int time_in_queue;  //tempo di attesa in coda
-    int queue_counter;  //numero di code visitate
-} log_client;
-
 
 client_thread_stats *alloc_client_thread_stats(size_t id);
+client_stats *alloc_client_stats(size_t id);
 void destroy_client_thread_stats(client_thread_stats *stats);
 cashier_thread_stats *alloc_cashier_thread_stats(size_t id);
 void destroy_cashier_thread_stats(cashier_thread_stats *stats);

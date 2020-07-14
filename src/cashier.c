@@ -46,11 +46,13 @@ void *cashier_fun(void *args) {
                     PTH(err, pthread_mutex_lock(&(ca->mutex)), perror("cashier lock"); return NULL)
                 }
                 PTH(err, pthread_mutex_unlock(&(ca->mutex)), perror("cashier unlock"); return NULL)
+                if (ca->state == active) {
+#ifdef DEBUG_CASHIER
+                    printf("Cassiere %ld: apro la cassa\n", ca->id);
+#endif
+                }
                 break;
             case active:
-#ifdef DEBUG_CASHIER
-                printf("Cassiere %ld: apro la cassa\n", ca->id);
-#endif
                 while (ISOPEN(store_state) && ca->state == active && (ca->queue)->size == 0) {
                     PTH(err, pthread_cond_wait(&(ca->noclients), &(ca->mutex)), perror("cashier cond wait noclients"); return NULL)
                     PTH(err, pthread_mutex_unlock(&(ca->mutex)), perror("cashier unlock"); return NULL)
@@ -81,9 +83,6 @@ void *cashier_fun(void *args) {
     PTH(err, pthread_mutex_destroy(&(ca->mutex)), perror("cashier mutex destroy"); return NULL)
     PTH(err, pthread_cond_destroy(&(ca->paused)), perror("cashier cond destroy"); return NULL)
     NOTZERO(queue_destroy(ca->queue), perror("cashier queue destroy"); return NULL)
-#ifdef DEBUG_CASHIER
-    printf("Cassiere %ld: termino\n", ca->id);
-#endif
     free(ca);
     return stats;
 }

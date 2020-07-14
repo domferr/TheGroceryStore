@@ -16,7 +16,7 @@ typedef struct {
 
 void *client_fun(void *args);
 client_t *alloc_client(size_t id, grocerystore_t *gs, int t, int p, cashier_t **cashiers, size_t no_of_cashiers);
-int client_get_products(client_t *cl, grocerystore_t *gs, gs_state *store_state);
-cashier_t *enter_random_queue(client_t *cl, client_in_queue *cl_in_q);
+
+int enter_random_queue(client_t *cl, client_in_queue *cl_in_q, grocerystore_t *gs, gs_state *store_state);
 
 #endif //CLIENT_H

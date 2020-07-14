@@ -1,16 +1,32 @@
 #include "logger.h"
 #include "utils.h"
+#include "queue.h"
 #include <stdlib.h>
 
 client_thread_stats *alloc_client_thread_stats(size_t id) {
     client_thread_stats *stats = (client_thread_stats*) malloc(sizeof(client_thread_stats));
-    EQNULL(stats, return NULL);
+    EQNULL(stats, return NULL)
     stats->id = id; //identificatore del thread cliente
+    stats->queue = queue_create();
+    EQNULL(stats->queue, return NULL)
+
+    return stats;
+}
+
+client_stats *alloc_client_stats(size_t id) {
+    client_stats *stats = (client_stats*) malloc(sizeof(client_stats));
+    EQNULL(stats, return NULL)
+    stats->id = id;
+    stats->products = 0;
+    stats->time_in_store = 0;
+    stats->time_in_queue = 0;
+    stats->queue_counter = 0;
 
     return stats;
 }
 
 void destroy_client_thread_stats(client_thread_stats *stats) {
+    queue_destroy(stats->queue);
     free(stats);
 }
 

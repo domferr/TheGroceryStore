@@ -20,7 +20,7 @@ typedef struct {
     pthread_cond_t exit;        //Il gestore delle entrate rimane in attesa su questa condition variable per contare le uscite e fare entrare nuovi clienti
     pthread_cond_t entrance;    //I thread clienti rimangono in attesa su questa condition variable. Vengono svegliati quando ci sono C-E clienti dentro al supermercato
     int can_enter;      //vale tanto quanto il numero di clienti che possono entrare.
-    int total_clients;  //contatore per dare un nuovo identificatore ai clienti che entrano nel supermercato
+    size_t total_clients;  //contatore per dare un nuovo identificatore ai clienti che entrano nel supermercato
 } grocerystore_t;
 
 /**
@@ -42,7 +42,7 @@ grocerystore_t *grocerystore_create(size_t c);
 int grocerystore_destroy(grocerystore_t *gs);
 
 int enter_store(grocerystore_t *gs, gs_state *state);
-int exit_store(grocerystore_t *gs);
+int exit_store(grocerystore_t *gs, gs_state *store_state);
 int manage_entrance(grocerystore_t *gs, gs_state *state, int c, int e);
 int get_store_state(grocerystore_t *gs, gs_state *state);
 

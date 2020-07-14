@@ -60,7 +60,7 @@ int manage_entrance(grocerystore_t *gs, gs_state *state, int c, int e) {
 }
 
 int enter_store(grocerystore_t *gs, gs_state *state) {
-    int err, entered = 0;
+    int err, client_id = 0;
     PTH(err, pthread_mutex_lock(&(gs->mutex)), return -1)
     while(ISOPEN(gs->state) && gs->can_enter == 0) {
         PTH(err, pthread_cond_wait(&(gs->entrance), &(gs->mutex)), return -1)
@@ -70,16 +70,18 @@ int enter_store(grocerystore_t *gs, gs_state *state) {
     if (ISOPEN(gs->state)) {
         (gs->can_enter)--;
         (gs->clients_inside)++;
-        entered = 1;
+        (gs->total_clients)++;
+        client_id = gs->total_clients;
     }
     PTH(err, pthread_mutex_unlock(&(gs->mutex)), return -1)
-    return entered;
+    return client_id;
 }
 
-int exit_store(grocerystore_t *gs) {
+int exit_store(grocerystore_t *gs, gs_state *store_state) {
     int err;
     PTH(err, pthread_mutex_lock(&(gs->mutex)), return -1);
     (gs->clients_inside)--;
+    *store_state = gs->state;
     PTH(err, pthread_cond_signal(&(gs->exit)), return -1);
     PTH(err, pthread_mutex_unlock(&(gs->mutex)), return -1);
     return 0;

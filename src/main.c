@@ -53,7 +53,7 @@ int main(int argc, char** args) {
     } else {
         printf(MESSAGE_CONFIG_FILE_NOT_VALID);
         printConfig(config);
-        free(config);
+        free_config(config);
         exit(EXIT_FAILURE);
     }
 

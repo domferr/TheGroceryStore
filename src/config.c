@@ -137,6 +137,12 @@ int isValidConfig(Config *config) {
     //Deve valere: 0 < E < C
     if (config->c <= 0 || config->e <= 0 || config->e >= config->c)
         return 0;
+    //Deve valere: 0 < KA <= K
+    if (config->ka <= 0 || config->ka > config->k)
+        return 0;
+    //Il file di log non deve essere mancante
+    if ((config->logfilename)[0] == '\0')
+        return 0;
     //Deve valere: T > 10
     CHECK_LESS_OR_EQUAL(config->t, MIN_T);
 
