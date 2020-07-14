@@ -3,7 +3,7 @@
 #include "queue.h"
 #include <stdlib.h>
 
-static int write_client_stats(void *elem);
+static int write_client_stats(void *elem, void *args);
 
 client_thread_stats *alloc_client_thread_stats(size_t id) {
     client_thread_stats *stats = (client_thread_stats*) malloc(sizeof(client_thread_stats));
@@ -55,11 +55,11 @@ int write_log(FILE *out_file, client_thread_stats **clients, size_t no_of_client
     for (i = 0; i < no_of_clients; ++i) {
         EQNULL((clients[i]), continue);
         queue = (clients[i])->queue;
-        foreach(queue, &write_client_stats);
+        foreach(queue, &write_client_stats, out_file);
     }
     for (i = 0; i < no_of_cashiers; i++) {
         EQNULL((cashiers[i]), continue);
-        printf("[Cassiere %ld] clienti serviti: %d, prodotti elaborati: %d, chiusure: %d\n", (cashiers[i])->id, (cashiers[i])->clients_served, (cashiers[i])->total_products, (cashiers[i])->closed_counter);
+        fprintf(out_file, "[Cassiere %ld] clienti serviti: %d, prodotti elaborati: %d, chiusure: %d\n", (cashiers[i])->id, (cashiers[i])->clients_served, (cashiers[i])->total_products, (cashiers[i])->closed_counter);
         total_products += (cashiers[i])->total_products;
         total_clients += (cashiers[i])->clients_served;
     }
@@ -68,8 +68,8 @@ int write_log(FILE *out_file, client_thread_stats **clients, size_t no_of_client
     return 0;
 }
 
-static int write_client_stats(void *elem) {
+static int write_client_stats(void *elem, void *args) {
     client_stats *cl_stats = (client_stats*) elem;
-    printf("[Cliente %ld] tempo passato nello store: %dms, prodotti acquistati: %d, code cambiate: %d, tempo in coda: %dms\n", cl_stats->id, cl_stats->time_in_store, cl_stats->products, cl_stats->queue_counter, cl_stats->time_in_queue);
+    fprintf((FILE*)args, "[Cliente %ld] tempo di permanenza: %ldms, prodotti acquistati: %d, code cambiate: %d, tempo in coda: %ldms\n", cl_stats->id, cl_stats->time_in_store, cl_stats->products, cl_stats->queue_counter, cl_stats->time_in_queue);
     return 0;
 }

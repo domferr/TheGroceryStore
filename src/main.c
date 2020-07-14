@@ -41,6 +41,7 @@ int main(int argc, char** args) {
     cashier_t **cashiers_args;      //Array contenente l'argomento passato per ogni cassiere
     client_thread_stats **clients_stats;    //Array con le statistiche di tutti i clienti
     cashier_thread_stats **cashiers_stats;  //Array con le statistiche di tutti i cassieri
+    FILE *logfile;
     //Eseguo il parsing del nome del file di configurazione
     char *configFilePath = parseArgs(argc, args);
     //Leggo il file di configurazione
@@ -109,7 +110,9 @@ int main(int argc, char** args) {
 
     //logging!
     printf("Scrivo il file di log %s\n", config->logfilename);
-    MINUS1(write_log(stdout, clients_stats, config->c, cashiers_stats, config->k), perror("write log"); exit(EXIT_FAILURE))
+    logfile = fopen(config->logfilename, "w");
+    MINUS1(write_log(logfile, clients_stats, config->c, cashiers_stats, config->k), perror("write log"); exit(EXIT_FAILURE))
+    fclose(logfile);
 
     //cleanup!
     for (i = 0; i < (config->c); i++) {

@@ -2,7 +2,7 @@
 #include <time.h>
 #include <stdio.h>
 
-#define LONG1E9 1000000000L
+#define LONG1E9 1000000000L //1e9
 
 int msleep(int milliseconds) {
     struct timespec req = {MS_TO_SEC(milliseconds), MS_TO_NANOSEC(milliseconds)}, rem = {0, 0};

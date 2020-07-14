@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <pthread.h>
 
-static int internal_foreach(node_t *node, int (*fun)(void*));
+static int internal_foreach(node_t *node, int (*fun)(void*, void*), void *args);
 
 queue_t *queue_create(void) {
     queue_t *queue = (queue_t*) malloc(sizeof(queue_t));
@@ -62,14 +62,14 @@ void *pop(queue_t *queue) {
     return tailElem;
 }
 
-int foreach(queue_t *queue, int (*fun)(void*)) {
-    return internal_foreach(queue->tail, fun);
+int foreach(queue_t *queue, int (*fun)(void*, void*), void *args) {
+    return internal_foreach(queue->tail, fun, args);
 }
 
-static int internal_foreach(node_t *node, int (*fun)(void*)) {
+static int internal_foreach(node_t *node, int (*fun)(void*, void*), void *args) {
     if (node != NULL) {
-        MINUS1(fun(node->elem), return -1)
-        return internal_foreach(node->prev, fun);
+        MINUS1(fun(node->elem, args), return -1)
+        return internal_foreach(node->prev, fun, args);
     }
     return 0;
 }

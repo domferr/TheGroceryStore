@@ -46,7 +46,7 @@ void *client_fun(void *args) {
                 MINUS1(client_id, perror("Impossibile entrare nello store"); return NULL)
                 if (client_id) {    //Se sono entrato nel supermercato
                     internal_state = take_products;
-                    MINUS1(clock_gettime(CLOCK_REALTIME, &store_entrance), perror("clock_gettime"); return NULL)
+                    MINUS1(clock_gettime(CLOCK_MONOTONIC, &store_entrance), perror("clock_gettime"); return NULL)
                     current_client_stats = alloc_client_stats(client_id);
                     EQNULL(current_client_stats, perror("alloc client stats"); return NULL)
                     MINUS1(push(thread_stats->queue, current_client_stats), perror("push into stats queue"); return NULL)
@@ -76,14 +76,12 @@ void *client_fun(void *args) {
                 //Entro in una coda di una cassa random aperta
                 err = enter_random_queue(cl, cl_in_q, gs, &store_state);
                 MINUS1(err, perror("client enter random queue"); return NULL)
-                MINUS1(clock_gettime(CLOCK_REALTIME, &queue_entrance), perror("clock_gettime"); return NULL)
+                MINUS1(clock_gettime(CLOCK_MONOTONIC, &queue_entrance), perror("clock_gettime"); return NULL)
 
                 //Fino a quando non sono stato servito oppure lo store è aperto o chiuso tramite SIGHUP
                 PTH(err, pthread_mutex_lock(&(cl_in_q)->mutex), perror("client mutex lock"); return NULL)
                 while (store_state != closed_fast && cl_in_q->status == waiting) {
                     PTH(err, pthread_cond_wait(&(cl_in_q->waiting), (&(cl_in_q->mutex))), perror("client cond wait"); return NULL)
-                    if (cl_in_q->status == cashier_sleeping)    //Se la cassa è chiusa, devo cambiarla
-                        current_client_stats->queue_counter += 1;
                     PTH(err, pthread_mutex_unlock(&(cl_in_q->mutex)), perror("client mutex unlock"); return NULL)
                     //Aggiorno lo stato del store perchè devo terminare se lo stato è closed_fast
                     NOTZERO(get_store_state(gs, &store_state), perror("get store state"); return NULL)
@@ -97,7 +95,7 @@ void *client_fun(void *args) {
                 if (cl_in_q->status == store_closure) {
                     internal_state = on_exit;
                 } else if (cl_in_q->status == done || cl_in_q->status == store_closure) {
-                    MINUS1(clock_gettime(CLOCK_REALTIME, &queue_exit), perror("clock_gettime"); return NULL)
+                    MINUS1(clock_gettime(CLOCK_MONOTONIC, &queue_exit), perror("clock_gettime"); return NULL)
                     current_client_stats->time_in_queue = get_elapsed_milliseconds(queue_entrance, queue_exit);
                     current_client_stats->products = cl_in_q->products;
                     internal_state = on_exit;
@@ -111,7 +109,7 @@ void *client_fun(void *args) {
                 printf("Thread cliente %ld: esco dal supermercato\n", cl->id);
 #endif
                 NOTZERO(exit_store(gs, &store_state), perror("exit store"); return NULL)
-                MINUS1(clock_gettime(CLOCK_REALTIME, &store_exit), perror("clock_gettime"); return NULL)
+                MINUS1(clock_gettime(CLOCK_MONOTONIC, &store_exit), perror("clock_gettime"); return NULL)
                 current_client_stats->time_in_store = get_elapsed_milliseconds(store_entrance, store_exit);
                 //Rendo il thread riutilizzabile se il supermercato è aperto
                 internal_state = on_entrance;

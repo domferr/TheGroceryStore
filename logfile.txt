@@ -1,0 +1,15 @@
+[Cliente 1] tempo di permanenza: 4294967208ms, prodotti acquistati: 4, code cambiate: 0, tempo in coda: 0ms
+[Cliente 9] tempo di permanenza: 0ms, prodotti acquistati: 0, code cambiate: 0, tempo in coda: 0ms
+[Cliente 4] tempo di permanenza: 0ms, prodotti acquistati: 0, code cambiate: 0, tempo in coda: 0ms
+[Cliente 5] tempo di permanenza: 0ms, prodotti acquistati: 0, code cambiate: 0, tempo in coda: 0ms
+[Cliente 2] tempo di permanenza: 0ms, prodotti acquistati: 0, code cambiate: 0, tempo in coda: 0ms
+[Cliente 3] tempo di permanenza: 1910ms, prodotti acquistati: 59, code cambiate: 0, tempo in coda: 0ms
+[Cliente 6] tempo di permanenza: 0ms, prodotti acquistati: 0, code cambiate: 0, tempo in coda: 0ms
+[Cliente 8] tempo di permanenza: 0ms, prodotti acquistati: 0, code cambiate: 0, tempo in coda: 0ms
+[Cliente 7] tempo di permanenza: 0ms, prodotti acquistati: 0, code cambiate: 0, tempo in coda: 0ms
+[Cliente 10] tempo di permanenza: 0ms, prodotti acquistati: 0, code cambiate: 0, tempo in coda: 0ms
+[Cassiere 0] clienti serviti: 2, prodotti elaborati: 63, chiusure: 0
+[Cassiere 1] clienti serviti: 0, prodotti elaborati: 0, chiusure: 1
+[Cassiere 2] clienti serviti: 0, prodotti elaborati: 0, chiusure: 1
+[Cassiere 3] clienti serviti: 0, prodotti elaborati: 0, chiusure: 1
+[Cassiere 4] clienti serviti: 0, prodotti elaborati: 0, chiusure: 1
