@@ -18,15 +18,21 @@ grocerystore_t *grocerystore_create(size_t c) {
     gs->state = open;
     gs->clients_inside = 0;
     gs->can_enter = c;
-    PTH(err, pthread_mutex_init(&(gs->mutex), NULL), free(gs); return NULL)
-    PTH(err, pthread_cond_init(&(gs->entrance), NULL), pthread_mutex_destroy(&(gs->mutex)); free(gs); return NULL)
-    if (pthread_cond_init(&(gs->exit), NULL) != 0) {
-        pthread_cond_destroy(&(gs->entrance));
-        pthread_mutex_destroy(&(gs->mutex));
-        free(gs);
-        return NULL;
-    }
+    gs->total_clients = 0;
+    PTH(err, pthread_mutex_init(&(gs->mutex), NULL), return NULL)
+    PTH(err, pthread_cond_init(&(gs->entrance), NULL), return NULL)
+    PTH(err, pthread_cond_init(&(gs->exit), NULL), return NULL)
+
     return gs;
+}
+
+int grocerystore_destroy(grocerystore_t *gs) {
+    int err;
+    PTH(err, pthread_mutex_destroy(&(gs->mutex)), return -1);
+    PTH(err, pthread_cond_destroy(&(gs->entrance)), return -1);
+    PTH(err, pthread_cond_destroy(&(gs->exit)), return -1);
+    free(gs);
+    return 0;
 }
 
 int manage_entrance(grocerystore_t *gs, gs_state *state, int c, int e) {

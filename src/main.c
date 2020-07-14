@@ -38,13 +38,16 @@ int main(int argc, char** args) {
     pthread_t handler_thread;       //Thread che gestisce i segnali
     thread_pool_t *clients;
     thread_pool_t *cashiers;
-    cashier_t **cashiers_args;
-    client_thread_stats **clients_stats;
-    cashier_thread_stats **cashiers_stats;
+    cashier_t **cashiers_args;      //Array contenente l'argomento passato per ogni cassiere
+    client_thread_stats **clients_stats;    //Array con le statistiche di tutti i clienti
+    cashier_thread_stats **cashiers_stats;  //Array con le statistiche di tutti i cassieri
+    //Eseguo il parsing del nome del file di configurazione
     char *configFilePath = parseArgs(argc, args);
+    //Leggo il file di configurazione
     Config *config = loadConfig(configFilePath);
     EQNULL(config, perror(ERROR_READ_CONFIG_FILE); exit(EXIT_FAILURE))
 
+    //Controllo se il file di configurazione è valido, altrimenti termino ed informo
     if (isValidConfig(config)) {
         printConfig(config);
     } else {
@@ -54,6 +57,7 @@ int main(int argc, char** args) {
         exit(EXIT_FAILURE);
     }
 
+    //Creo lo store
     gs = grocerystore_create(config->c);
     EQNULL(gs, perror("grocerystore_create"); exit(EXIT_FAILURE))
 
@@ -117,7 +121,7 @@ int main(int argc, char** args) {
     free(cashiers_args);
     free(clients_stats);
     free(cashiers_stats);
-    free(gs);
+    grocerystore_destroy(gs);
     free_config(config);
     return 0;
 }
