@@ -6,7 +6,7 @@
 /** Statistiche raccolte da un thread cliente */
 typedef struct {
     size_t id;          //identificatore del thread cliente
-    int total_products; //numero totale di prodotti acquistati dai clienti che sono entrati con questo thread
+
 } client_thread_stats;
 
 /** Statistiche raccolte da un thread cassiere */
@@ -14,6 +14,7 @@ typedef struct {
     size_t id;              //identificatore del thread cassiere
     int clients_served;     //numero di clienti serviti
     int closed_counter;     //quante volte la cassa è stata chiusa
+    int total_products;     //numero prodotti acquistati tramite questa cassa
 } cashier_thread_stats;
 
 

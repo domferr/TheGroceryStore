@@ -60,7 +60,7 @@ void *client_fun(void *args) {
                         EQNULL(picked_cashier, perror("client enter random queue"); return NULL)
                         PTH(err, pthread_mutex_lock(&(cl_in_q)->mutex), perror("client mutex lock"); return NULL)
                     } else if (cl_in_q->status == done) {
-                        stats->total_products += products;
+
                     }
                 }
                 PTH(err, pthread_mutex_unlock(&(cl_in_q->mutex)), return NULL)

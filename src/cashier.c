@@ -150,9 +150,11 @@ int wakeup_client(client_in_queue *client, client_status status, cashier_thread_
     int err;
     PTH(err, pthread_mutex_lock(&(client->mutex)), return -1)
     client->status = status;
+    if (status == done) {
+        (stats->clients_served)++;
+        stats->total_products += client->products;
+    }
     PTH(err, pthread_cond_signal(&(client->waiting)), return -1)
     PTH(err, pthread_mutex_unlock(&(client->mutex)), return -1)
-    if (status == done)
-        (stats->clients_served)++;
     return 0;
 }

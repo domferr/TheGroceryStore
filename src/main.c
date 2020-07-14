@@ -101,17 +101,15 @@ int main(int argc, char** args) {
     MINUS1(thread_pool_join(cashiers, (void**)cashiers_stats), perror("join cashiers"); exit(EXIT_FAILURE))
     printf("Cassieri terminati\n");
 
-    printf("Scrivo il file di log %s\n", config->logfilename);
     //logging!
+    printf("Scrivo il file di log %s\n", config->logfilename);
     MINUS1(write_log(stdout, clients_stats, config->c, cashiers_stats, config->k), perror("write log"); exit(EXIT_FAILURE))
 
     //cleanup!
     for (i = 0; i < (config->c); i++) {
-        printf("Cliente %ld: totale prodotti acquistati: %d\n", (clients_stats[i])->id, (clients_stats[i])->total_products);
         destroy_client_thread_stats(clients_stats[i]);
     }
     for (i = 0; i < (config->k); i++) {
-        printf("Cassiere %ld: clienti serviti: %d\n", (cashiers_stats[i])->id, (cashiers_stats[i])->clients_served);
         destroy_cashier_thread_stats(cashiers_stats[i]);
     }
     NOTZERO(thread_pool_free(clients), perror("free clients"); exit(EXIT_FAILURE))  //free clienti
