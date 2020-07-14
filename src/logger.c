@@ -3,6 +3,8 @@
 #include "queue.h"
 #include <stdlib.h>
 
+static int write_client_stats(void *elem);
+
 client_thread_stats *alloc_client_thread_stats(size_t id) {
     client_thread_stats *stats = (client_thread_stats*) malloc(sizeof(client_thread_stats));
     EQNULL(stats, return NULL)
@@ -16,6 +18,7 @@ client_thread_stats *alloc_client_thread_stats(size_t id) {
 client_stats *alloc_client_stats(size_t id) {
     client_stats *stats = (client_stats*) malloc(sizeof(client_stats));
     EQNULL(stats, return NULL)
+
     stats->id = id;
     stats->products = 0;
     stats->time_in_store = 0;
@@ -47,17 +50,26 @@ void destroy_cashier_thread_stats(cashier_thread_stats *stats) {
 int write_log(FILE *out_file, client_thread_stats **clients, size_t no_of_clients, cashier_thread_stats **cashiers, size_t no_of_cashiers) {
     int total_clients = 0, total_products = 0;  //il numero di clienti serviti, il numero di prodotti acquistati
     size_t i;
+    queue_t *queue;
+
     for (i = 0; i < no_of_clients; ++i) {
         EQNULL((clients[i]), continue);
-        printf("Cliente %ld: ancora nessuna statistica\n", (clients[i])->id);
+        queue = (clients[i])->queue;
+        foreach(queue, &write_client_stats);
     }
     for (i = 0; i < no_of_cashiers; i++) {
         EQNULL((cashiers[i]), continue);
-        printf("Cassiere %ld: clienti serviti: %d; prodotti elaborati: %d; chiusure %d;\n", (cashiers[i])->id, (cashiers[i])->clients_served, (cashiers[i])->total_products, (cashiers[i])->closed_counter);
+        printf("[Cassiere %ld] clienti serviti: %d, prodotti elaborati: %d, chiusure: %d\n", (cashiers[i])->id, (cashiers[i])->clients_served, (cashiers[i])->total_products, (cashiers[i])->closed_counter);
         total_products += (cashiers[i])->total_products;
         total_clients += (cashiers[i])->clients_served;
     }
     printf("Numero di clienti serviti: %d\n", total_clients);
     printf("Numero di prodotti acquistati: %d\n", total_products);
+    return 0;
+}
+
+static int write_client_stats(void *elem) {
+    client_stats *cl_stats = (client_stats*) elem;
+    printf("[Cliente %ld] tempo passato nello store: %dms, prodotti acquistati: %d, code cambiate: %d, tempo in coda: %dms\n", cl_stats->id, cl_stats->time_in_store, cl_stats->products, cl_stats->queue_counter, cl_stats->time_in_queue);
     return 0;
 }

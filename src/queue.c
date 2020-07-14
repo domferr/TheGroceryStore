@@ -8,6 +8,8 @@
 #include <stdio.h>
 #include <pthread.h>
 
+static int internal_foreach(node_t *node, int (*fun)(void*));
+
 queue_t *queue_create(void) {
     queue_t *queue = (queue_t*) malloc(sizeof(queue_t));
     EQNULL(queue, return NULL)
@@ -60,14 +62,23 @@ void *pop(queue_t *queue) {
     return tailElem;
 }
 
-void clear(queue_t *queue) {
-    node_t *next;
-    node_t *curr = queue->head;
+int foreach(queue_t *queue, int (*fun)(void*)) {
+    return internal_foreach(queue->tail, fun);
+}
 
-    while(curr != NULL) {
-        next = curr->next;
-        free(curr);
-        curr = next;
+static int internal_foreach(node_t *node, int (*fun)(void*)) {
+    if (node != NULL) {
+        MINUS1(fun(node->elem), return -1)
+        return internal_foreach(node->prev, fun);
     }
-    queue->size = 0;
+    return 0;
+}
+
+void clear(queue_t *queue) {
+    node_t *curr;
+
+    while(queue->size > 0) {
+        curr = pop(queue);
+        free(curr);
+    }
 }

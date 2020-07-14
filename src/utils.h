@@ -2,7 +2,7 @@
 #define UTILS_H
 
 #define _POSIX_C_SOURCE 200809L
-
+#include <time.h>
 #include <errno.h>
 
 #define EQNULL(w, then)     \
@@ -48,5 +48,14 @@
  * @return 0 in caso di successo, -1 altrimenti
  */
 int msleep(int milliseconds);
+
+/**
+ * Ritorna il tempo passato in millisecondi dai due istanti definiti da start ed end
+ *
+ * @param start istante di inizio
+ * @param end istante di fine
+ * @return ritorna la durata in millisecondi tra l'istante di inizio e l'istante di fine
+ */
+long get_elapsed_milliseconds(struct timespec start, struct timespec end);
 
 #endif //UTILS_H

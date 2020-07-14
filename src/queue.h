@@ -64,6 +64,8 @@ int push(queue_t *queue, void *elem);
  */
 void *pop(queue_t *queue);
 
+int foreach(queue_t *queue, int (*fun)(void*));
+
 /**
  * Elimina tutti gli elementi dalla coda e dalla memoria. Dopo la chiamata di questa funzione, la coda ha 0 elementi.
  *

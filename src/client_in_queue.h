@@ -6,7 +6,7 @@
 typedef enum {
     waiting,    //Il cliente è in attesa di essere servito. La cassa ed il supermercato sono aperti
     done,       //Il cliente è stato servito dal cassiere
-    store_closure,  //Il cliente non è stato servito perchè il supermercato è il chiusura e deve andarsene senza fare acquisti
+    store_closure,  //Il cliente non è stato servito perchè il supermercato è in chiusura e deve andarsene senza fare acquisti
     cashier_sleeping    //La cassa è stata chiusa. Il cliente deve cercare una nuova cassa
 } client_status;
 

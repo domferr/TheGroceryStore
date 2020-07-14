@@ -9,7 +9,7 @@
 #include <pthread.h>
 #include <time.h>
 
-#define DEBUG_CASHIER
+//#define DEBUG_CASHIER
 #define MIN_SERVICE_TIME 20 //ms
 #define MAX_SERVICE_TIME 80 //ms
 
