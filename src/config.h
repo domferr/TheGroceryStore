@@ -21,6 +21,7 @@ struct config {
     int s;  //ogni quanti millisecondi il cliente decide se spostarsi o meno
     int s1; //valore soglia per chiusura di una cassa
     int s2; //valore soglia per apertura di una cassa
+    char *logfilename;  //nome del file di log generato dal programma prima della sua chiusura
 };
 
 typedef struct config Config;
@@ -49,5 +50,8 @@ int isValidConfig(Config *config);
  * @param config la struttura di configurazione da stampare
  */
 void printConfig(Config *config);
+
+//TODO questa documentazione
+void free_config(Config *config);
 
 #endif //CONFIG_H

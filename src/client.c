@@ -17,9 +17,12 @@ void *client_fun(void *args) {
     int err, products, is_inside_store;
     client_t *cl = (client_t*) args;
     grocerystore_t *gs = (grocerystore_t*) cl->gs;
-    log_client *log = cl->log;
+
     cashier_t *picked_cashier;
     gs_state store_state;
+
+    client_thread_stats *stats = alloc_client_thread_stats(cl->id);
+    EQNULL(stats, perror("alloc client thread stats"); return NULL)
 
     client_in_queue *cl_in_q = alloc_client_in_queue(cl->id);
     EQNULL(cl_in_q, perror("alloc client in queue"); return NULL);
@@ -57,7 +60,7 @@ void *client_fun(void *args) {
                         EQNULL(picked_cashier, perror("client enter random queue"); return NULL)
                         PTH(err, pthread_mutex_lock(&(cl_in_q)->mutex), perror("client mutex lock"); return NULL)
                     } else if (cl_in_q->status == done) {
-                        log->products += products;
+                        stats->total_products += products;
                     }
                 }
                 PTH(err, pthread_mutex_unlock(&(cl_in_q->mutex)), return NULL)
@@ -76,9 +79,8 @@ void *client_fun(void *args) {
 #endif
 
     MINUS1(destroy_client_in_queue(cl_in_q), perror("destroy client in queue"); return NULL)
-    free(cl->log);
     free(cl);
-    return 0;
+    return stats;
 }
 
 client_t *alloc_client(size_t id, grocerystore_t *gs, int t, int p, cashier_t **cashiers, size_t no_of_cashiers) {
@@ -90,8 +92,7 @@ client_t *alloc_client(size_t id, grocerystore_t *gs, int t, int p, cashier_t **
     client->no_of_cashiers = no_of_cashiers;
     client->t = t;
     client->p = p;
-    client->log = alloc_client_log(id);
-    EQNULL(client->log, return NULL);
+
     return client;
 }
 

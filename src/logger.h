@@ -3,6 +3,21 @@
 
 #include <stdio.h>
 
+/** Statistiche raccolte da un thread cliente */
+typedef struct {
+    size_t id;          //identificatore del thread cliente
+    int total_products; //numero totale di prodotti acquistati dai clienti che sono entrati con questo thread
+} client_thread_stats;
+
+/** Statistiche raccolte da un thread cassiere */
+typedef struct {
+    size_t id;              //identificatore del thread cassiere
+    int clients_served;     //numero di clienti serviti
+    int closed_counter;     //quante volte la cassa è stata chiusa
+} cashier_thread_stats;
+
+
+
 typedef struct {
     size_t id;              //id della cassa
     int clients_served;     //numero di clienti serviti
@@ -12,9 +27,6 @@ typedef struct {
     int opening_counter;    //numero di volte che la cassa è stata aperta
 } log_cashier;
 
-/**
- * Statistiche di log di ogni thread cliente
- */
 typedef struct {
     size_t id;
     int products;       //numero di prodotti acquistati
@@ -23,25 +35,11 @@ typedef struct {
     int queue_counter;  //numero di code visitate
 } log_client;
 
-typedef struct {
-    int total_products; //numero totale di prodotti acquistati dai clienti che sono entrati con questo thread
 
-} stats_client_thread;
-
-typedef struct {
-    size_t id;
-    int clients_served;     //numero di clienti serviti
-    int closed_counter;     //quante volte la cassa è stata chiusa
-    //queue_t active_stats;
-} cashier_main_stats;
-
-typedef struct {
-    int opening_times;
-    //queue_t clients_served;
-} cashier_active_stats;
-
-log_client *alloc_client_log(size_t id);
-cashier_main_stats *alloc_cashier_stats(size_t id);
-int write_log(FILE *out_file, log_client **clients, size_t no_of_clients, log_cashier **cashiers, size_t no_of_cashiers);
+client_thread_stats *alloc_client_thread_stats(size_t id);
+void destroy_client_thread_stats(client_thread_stats *stats);
+cashier_thread_stats *alloc_cashier_thread_stats(size_t id);
+void destroy_cashier_thread_stats(cashier_thread_stats *stats);
+int write_log(FILE *out_file, client_thread_stats **clients, size_t no_of_clients, cashier_thread_stats **cashiers, size_t no_of_cashiers);
 
 #endif //LOGGER_H

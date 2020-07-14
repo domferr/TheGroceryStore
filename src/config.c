@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <string.h>
 
 //Costanti
 #define MAX_ROW_LENGTH 128  //Massima dimensione del buffer per leggere una riga del file
@@ -25,11 +26,10 @@
  * @param idOffset viene settato con la posizione dell'id della riga letta
  * @return il valore associato all'id letto dal file di configurazione. Ritorna -1 se la riga del file non segue il
  * corretto formato o se contiene soltanto un commento.
- */
-static int parseRow(char *row, size_t row_length, off_t *idOffset) {
-    char *ptr = row, *endPtr;
+ *///TODO update this doc with @param char *value_ptr
+static int parseRow(char *row, size_t row_length, off_t *idOffset, char **value_ptr) {
+    char *ptr = row;
     size_t index = 0;
-    int value;
 
     //Ignoro tutti gli spazi iniziali
     while (index < row_length && *ptr == ' ') { ptr++; index++; }
@@ -45,54 +45,63 @@ static int parseRow(char *row, size_t row_length, off_t *idOffset) {
     if (index == row_length || *ptr == '#') return -1;
     index++;
     ptr++;  //Da questa posizione inizia il numero
+    *value_ptr = ptr;
+    /*value = strtol(ptr, &endPtr, 10);
+    if (value == 0 && endPtr == ptr) return -1;    //Il numero è invalido*/
 
-    value = strtol(ptr, &endPtr, 10);
-    if (value == 0 && endPtr == ptr) return -1;    //Il numero è invalido
-
-    return value;
+    return 0;
 }
+
+static int set_int_value(int *dest, char *value_ptr);
 
 Config *loadConfig(char *filepath) {
     Config *config = (Config*) malloc(sizeof(Config));
     EQNULL(config, return NULL);
-    int configFD, bytesRead, valueRead;
+    int configFD, bytesRead;
     off_t offset = 0, idOffset = 0;
-    char* rowBuf;
+    char *rowBuf, *value_ptr;
+    size_t len;
 
     EQNULL((rowBuf = (char*) malloc(sizeof(char) * MAX_ROW_LENGTH)), free(config); return NULL);
     MINUS1((configFD = open(filepath, O_RDONLY)), free(config); free(rowBuf); return NULL);
 
     while ((bytesRead = readline(configFD, rowBuf, MAX_ROW_LENGTH, &offset)) > 0) {
-        if ((valueRead = parseRow(rowBuf, bytesRead, &idOffset)) == -1)
-            continue;
+        MINUS1(parseRow(rowBuf, bytesRead, &idOffset, &value_ptr), continue)
 
         switch(rowBuf[idOffset])
         {
             case 'K':
                 if (idOffset+1 < bytesRead && rowBuf[idOffset+1] == 'T')
-                    config->kt = valueRead;
+                    set_int_value(&(config->kt), value_ptr);
                 else
-                    config->k = valueRead;
+                    set_int_value(&(config->k), value_ptr);
                 break;
             case 'C':
-                config->c = valueRead;
+                set_int_value(&(config->c), value_ptr);
                 break;
             case 'E':
-                config->e = valueRead;
+                set_int_value(&(config->e), value_ptr);
                 break;
             case 'T':
-                config->t = valueRead;
+                set_int_value(&(config->t), value_ptr);
                 break;
             case 'P':
-                config->p = valueRead;
+                set_int_value(&(config->p), value_ptr);
                 break;
             case 'S':
                 if (idOffset+1 < bytesRead && rowBuf[idOffset+1] == '1')
-                    config->s1 = valueRead;
+                    set_int_value(&(config->s1), value_ptr);
                 else if (idOffset+1 < bytesRead && rowBuf[idOffset+1] == '2')
-                    config->s2 = valueRead;
+                    set_int_value(&(config->s2), value_ptr);
                 else
-                    config->s = valueRead;
+                    set_int_value(&(config->s), value_ptr);
+                break;
+            case 'L':
+                len = strcspn(value_ptr, " #");
+                config->logfilename = (char *) malloc((sizeof(char*)*len)+1);
+                EQNULL(config->logfilename, return NULL)
+                config->logfilename = strncpy(config->logfilename, value_ptr, len);
+                (config->logfilename)[len] = '\0';
                 break;
 
         }
@@ -102,6 +111,14 @@ Config *loadConfig(char *filepath) {
     MINUS1(bytesRead, free(config); return NULL);
 
     return config;
+}
+
+static int set_int_value(int *dest, char *value_ptr) {
+    char *endPtr;
+    int value = strtol(value_ptr, &endPtr, 10);
+    if (value == 0 && endPtr == value_ptr) return -1;
+    *dest = value;
+    return 0;
 }
 
 int isValidConfig(Config *config) {
@@ -127,4 +144,9 @@ int isValidConfig(Config *config) {
 void printConfig(Config *config) {
     printf("{K: %d, C: %d, E: %d, T: %d, P: %d, S: %d, S1: %d, S2: %d}\n",
             config->k, config->c, config->e, config->t, config->p, config->s, config->s1, config->s2);
+}
+
+void free_config(Config *config) {
+    free(config->logfilename);
+    free(config);
 }

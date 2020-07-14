@@ -22,8 +22,9 @@ void *cashier_fun(void *args) {
 #ifdef DEBUG_CASHIER
     printf("Cassiere %ld: attivo\n", ca->id);
 #endif
-    cashier_main_stats *stats = alloc_cashier_stats(ca->id);
-    EQNULL(stats, perror("alloc cashier stats"); return NULL)
+    cashier_thread_stats *stats = alloc_cashier_thread_stats(ca->id);
+    EQNULL(stats, perror("alloc cashier thread stats"); return NULL)
+
     NOTZERO(get_store_state(gs, &store_state), perror("get store state"); return NULL)
     while(ISOPEN(store_state)) {
         PTH(err, pthread_mutex_lock(&(ca->mutex)), perror("cashier lock"); return NULL)
@@ -108,7 +109,7 @@ cashier_t *alloc_cashier(size_t id, grocerystore_t *gs, cashier_state starting_s
     return ca;
 }
 
-int handle_closure(cashier_t *ca, gs_state closing_state, cashier_main_stats *stats) {
+int handle_closure(cashier_t *ca, gs_state closing_state, cashier_thread_stats *stats) {
     int err;
     client_in_queue *client;
     PTH(err, pthread_mutex_lock(&(ca->mutex)), return -1)
@@ -133,7 +134,7 @@ int handle_closure(cashier_t *ca, gs_state closing_state, cashier_main_stats *st
     return 0;
 }
 
-int serve_client(cashier_t *ca, client_in_queue *client, cashier_main_stats *stats) {
+int serve_client(cashier_t *ca, client_in_queue *client, cashier_thread_stats *stats) {
     int err, ms;
     PTH(err, pthread_mutex_lock(&(client->mutex)), return -1)
     ms = ca->fixed_service_time + (ca->product_service_time)*client->products;
@@ -145,7 +146,7 @@ int serve_client(cashier_t *ca, client_in_queue *client, cashier_main_stats *sta
     return wakeup_client(client, done, stats);
 }
 
-int wakeup_client(client_in_queue *client, client_status status, cashier_main_stats *stats) {
+int wakeup_client(client_in_queue *client, client_status status, cashier_thread_stats *stats) {
     int err;
     PTH(err, pthread_mutex_lock(&(client->mutex)), return -1)
     client->status = status;
