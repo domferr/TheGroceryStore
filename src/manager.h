@@ -14,17 +14,17 @@ typedef struct {
 
 typedef struct {
     size_t size;
+    cashier_sync **ca_sync;
     int **counters;
-    int **open;
 } manager_arr_t;
 
+/** Argomenti passati al thread manager */
 typedef struct {
     grocerystore_t *gs;
     manager_queue *queue; //Su questa coda avviene la comunicazione con i notificatori
     manager_arr_t *marr;
     int s1;
     int s2;
-    cashier_t **cashiers;
 } manager_args;
 
 /**

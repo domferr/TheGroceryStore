@@ -10,7 +10,7 @@
 typedef struct {
     sigset_t set;
     grocerystore_t *gs;
-    cashier_t **cashiers;
+    cashier_sync **cashiers;
     size_t no_of_cashiers;
     manager_queue *mqueue;
 } signal_handler_t;

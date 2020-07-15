@@ -5,7 +5,7 @@
 #include <stdlib.h>
 
 static int handle_notification(manager_args *ma, notifier_data *data);
-static manager_arr_t *create_manager_arr(size_t size);
+static manager_arr_t *create_manager_arr(cashier_t **cashiers, size_t size);
 static int destroy_manager_arr(manager_arr_t *arr);
 
 void *manager_fun(void *args) {
@@ -57,8 +57,7 @@ manager_args *alloc_manager(grocerystore_t *gs, int s1, int s2, cashier_t **cash
     ma->gs = gs;
     ma->s1 = s1;
     ma->s2 = s2;
-    ma->cashiers = cashiers;
-    ma->marr = create_manager_arr(no_of_cashiers);
+    ma->marr = create_manager_arr(cashiers, no_of_cashiers);
     EQNULL(ma->marr, return NULL);
     return ma;
 }
@@ -75,14 +74,24 @@ int destroy_manager(manager_args *ma) {
     return 0;
 }
 
-static manager_arr_t *create_manager_arr(size_t size) {
+static manager_arr_t *create_manager_arr(cashier_t **cashiers, size_t size) {
+    size_t i;
     manager_arr_t *marr = (manager_arr_t*) malloc(sizeof(manager_arr_t));
     EQNULL(marr, return NULL);
     marr->size = size;
+    marr->ca_sync = (cashier_sync**) malloc(sizeof(cashier_sync*)*size);
+    EQNULL(marr->ca_sync, return NULL)
+    for (i = 0; i < size; i++) {
+        (marr->ca_sync)[i] = (cashiers[i])->ca_sync;
+    }
+    marr->counters = (int**) malloc(sizeof(int*)*size);
+    EQNULL(marr->counters, return NULL)
     return marr;
 }
 
 static int destroy_manager_arr(manager_arr_t *arr) {
+    free(arr->counters);
+    free(arr->ca_sync);
     free(arr);
     return 0;
 }

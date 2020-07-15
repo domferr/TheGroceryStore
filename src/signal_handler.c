@@ -13,7 +13,7 @@
 
 //#define DEBUGSIGHANDLER
 
-static int wakeup_cashier(cashier_t *ca);
+static int wakeup_cashier(cashier_sync *ca_sync);
 
 //Funzione del thread handler
 void *thread_handler_fun(void *arg) {
@@ -66,13 +66,13 @@ void *thread_handler_fun(void *arg) {
 #ifdef DEBUGSIGHANDLER
     printf("Signal handler: Termino\n");
 #endif
+    free(sh->cashiers);
     free(arg);
     return 0;
 }
 
-static int wakeup_cashier(cashier_t *ca) {
+static int wakeup_cashier(cashier_sync *ca_sync) {
     int err;
-    cashier_sync *ca_sync = ca->ca_sync;
     PTH(err, pthread_mutex_lock(&(ca_sync->mutex)), return 0)
     //Sveglio il cassiere se dovesse essere una cassa chiusa
     PTH(err, pthread_cond_signal(&(ca_sync->paused)), return 0)
@@ -84,6 +84,7 @@ static int wakeup_cashier(cashier_t *ca) {
 
 int setup_signal_handling(pthread_t *handler, manager_queue *mqueue, grocerystore_t *gs, cashier_t **cashiers_args, size_t no_of_cashiers) {
     int err;
+    size_t i;
     signal_handler_t *handler_args = malloc(sizeof(signal_handler_t));
     EQNULL(handler_args, return -1)
 
@@ -98,8 +99,12 @@ int setup_signal_handling(pthread_t *handler, manager_queue *mqueue, grocerystor
     PTH(err, pthread_sigmask(SIG_BLOCK, &(handler_args->set), NULL), free(handler_args); return -1)
 
     handler_args->gs = gs;
-    handler_args->cashiers = cashiers_args;
+    handler_args->cashiers = (cashier_sync**) malloc(sizeof(cashier_sync*)*no_of_cashiers);
+    EQNULL(handler_args->cashiers, return -1);
     handler_args->no_of_cashiers = no_of_cashiers;
+    for (i = 0; i < no_of_cashiers; i++) {
+        handler_args->cashiers[i] = (cashiers_args[i])->ca_sync;
+    }
     handler_args->mqueue = mqueue;
 //Creo il thread handler. Riceverà questi segnali chiamando la sigwait
     PTH(err, pthread_create(handler, NULL, &thread_handler_fun, handler_args), return -1)
