@@ -35,15 +35,15 @@ int main(int argc, char** args) {
     int err, i;
     grocerystore_t *gs;
     gs_state closing_state;         //Stato di chiusura del supermercato
-    pthread_t handler_thread;       //Thread che gestisce i segnali
-    pthread_t manager_thread;       //Thread che riceve ad intervalli regolari le informazioni dalle casse
-    thread_pool_t *clients;
-    thread_pool_t *cashiers;
+    pthread_t handler_thread, manager_thread;       //Thread che gestisce i segnali e thread che riceve ad intervalli regolari le informazioni dalle casse
+    thread_pool_t *clients, *cashiers;
     cashier_t **cashiers_args;      //Array contenente l'argomento passato per ogni cassiere
     manager_args *manager;
+    manager_queue *mqueue;
     client_thread_stats **clients_stats;    //Array con le statistiche di tutti i clienti
     cashier_thread_stats **cashiers_stats;  //Array con le statistiche di tutti i cassieri
     FILE *logfile;
+
     //Eseguo il parsing del nome del file di configurazione
     char *configFilePath = parseArgs(argc, args);
     //Leggo il file di configurazione
@@ -64,31 +64,41 @@ int main(int argc, char** args) {
     gs = grocerystore_create(config->c);
     EQNULL(gs, perror("grocerystore_create"); exit(EXIT_FAILURE))
 
+    mqueue = alloc_manager_queue();
+    EQNULL(mqueue, perror("alloc manager queue"); exit(EXIT_FAILURE))
+
+    //Inizializzo tutti i cassieri senza farli partire
     cashiers_args = (cashier_t**) malloc(sizeof(cashier_t*)*config->k);
     EQNULL(cashiers_args, perror("cashiers_args"); exit(EXIT_FAILURE))
     for (i = 0; i < config->k; i++) {
         cashier_state starting_state = sleeping;
         if (i<config->ka)
             starting_state = active;
-        cashiers_args[i] = alloc_cashier(i, gs, starting_state, config->kt);
+        cashiers_args[i] = alloc_cashier(i, gs, starting_state, config->kt, config->d, mqueue);
         EQNULL(cashiers_args[i], perror("alloc_cashier"); exit(EXIT_FAILURE))
     }
 
-    manager = alloc_manager(gs, config->s1, config->s2, cashiers_args, config->k);
+    //Inizializzo il direttore senza farlo partire
+    manager = alloc_manager(gs, config->s1, config->s2, mqueue, cashiers_args, config->k);
     EQNULL(manager, perror("alloc_manager"); exit(EXIT_FAILURE))
 
-    err = setup_signal_handling(&handler_thread, manager->queue, gs, cashiers_args, config->k);
+    //Imposto l'handler e faccio partire il thread. Da questo momento lui prenderà tutti i segnali
+    err = setup_signal_handling(&handler_thread, mqueue, gs, cashiers_args, config->k);
     NOTZERO(err, perror("setup_signal_handling"); exit(EXIT_FAILURE))
 
+    //Faccio partire i cassieri
     cashiers = cashiers_create(cashiers_args, gs, config->k);
     EQNULL(cashiers, perror("cashiers_create"); exit(EXIT_FAILURE))
 
+    //Faccio partire il direttore
     PTH(err, pthread_create(&manager_thread, NULL, &manager_fun, manager), perror("manager pthread create"); exit(EXIT_FAILURE))
 
+    //Faccio partire i clienti
     clients = clients_create(gs, config->c, config->t, config->p, cashiers_args, config->k);
     EQNULL(clients, perror("clients_create"); exit(EXIT_FAILURE))
 
     printf(MESSAGE_STORE_IS_OPEN);
+    //Gestisco le entrate e le uscite del supermercato
     err = manage_entrance(gs, &closing_state, config->c, config->e);
     NOTZERO(err, perror("Main"); exit(EXIT_FAILURE))
 
@@ -134,6 +144,7 @@ int main(int argc, char** args) {
     }
     NOTZERO(thread_pool_free(clients), perror("free clients"); exit(EXIT_FAILURE))  //free clienti
     NOTZERO(thread_pool_free(cashiers), perror("free cashiers"); exit(EXIT_FAILURE)) //free cassieri
+    MINUS1(destroy_manager_queue(mqueue), perror("manager queue destroy"); exit(EXIT_FAILURE));
     free(cashiers_args);
     free(clients_stats);
     free(cashiers_stats);

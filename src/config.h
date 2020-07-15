@@ -22,6 +22,7 @@ struct config {
     int s;  //ogni quanti millisecondi il cliente decide se spostarsi o meno
     int s1; //valore soglia per chiusura di una cassa
     int s2; //valore soglia per apertura di una cassa
+    int d;  //ogni quanto tempo una cassa comunica con il direttore
     char *logfilename;  //nome del file di log generato dal programma prima della sua chiusura
 };
 

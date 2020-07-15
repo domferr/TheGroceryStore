@@ -105,6 +105,9 @@ Config *loadConfig(char *filepath) {
                 config->logfilename = strncpy(config->logfilename, value_ptr, len);
                 (config->logfilename)[len] = '\0';
                 break;
+            case 'D':
+                set_int_value(&(config->d), value_ptr);
+                break;
 
         }
     }
