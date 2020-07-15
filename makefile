@@ -25,7 +25,6 @@ OBJS		= 	$(OBJDIR)/scfiles.o			\
 				$(OBJDIR)/logger.o			\
 				$(OBJDIR)/main.o			\
 				$(OBJDIR)/manager.o			\
-				$(OBJDIR)/notifier.o			\
 
 TARGETS		= 	$(BINDIR)/grocerystore
 

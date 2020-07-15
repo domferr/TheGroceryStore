@@ -1,14 +1,14 @@
-[Cliente 1] tempo di permanenza: 442ms, prodotti acquistati: 4, code cambiate: 0, tempo in coda: 262ms
-[Cliente 5] tempo di permanenza: 1397ms, prodotti acquistati: 33, code cambiate: 0, tempo in coda: 1208ms
-[Cliente 2] tempo di permanenza: 4313ms, prodotti acquistati: 0, code cambiate: 0, tempo in coda: 0ms
-[Cliente 7] tempo di permanenza: 4216ms, prodotti acquistati: 0, code cambiate: 0, tempo in coda: 0ms
-[Cliente 3] tempo di permanenza: 4264ms, prodotti acquistati: 0, code cambiate: 0, tempo in coda: 0ms
-[Cliente 4] tempo di permanenza: 1985ms, prodotti acquistati: 24, code cambiate: 0, tempo in coda: 1580ms
-[Cliente 6] tempo di permanenza: 2237ms, prodotti acquistati: 6, code cambiate: 0, tempo in coda: 1767ms
-[Cliente 8] tempo di permanenza: 1028ms, prodotti acquistati: 20, code cambiate: 0, tempo in coda: 960ms
-[Cliente 10] tempo di permanenza: 2153ms, prodotti acquistati: 0, code cambiate: 0, tempo in coda: 0ms
-[Cliente 9] tempo di permanenza: 4133ms, prodotti acquistati: 79, code cambiate: 0, tempo in coda: 4021ms
-[Cassiere 0] clienti serviti: 4, prodotti elaborati: 54, chiusure: 0, tempi di servizio dei clienti serviti: 204ms 764ms 904ms 274ms
+[Cliente 2] tempo di permanenza: 372ms, prodotti acquistati: 4, code cambiate: 0, tempo in coda: 237ms
+[Cliente 1] tempo di permanenza: 1432ms, prodotti acquistati: 33, code cambiate: 0, tempo in coda: 1208ms
+[Cliente 4] tempo di permanenza: 4170ms, prodotti acquistati: 0, code cambiate: 0, tempo in coda: 0ms
+[Cliente 7] tempo di permanenza: 4084ms, prodotti acquistati: 0, code cambiate: 0, tempo in coda: 0ms
+[Cliente 3] tempo di permanenza: 4171ms, prodotti acquistati: 0, code cambiate: 0, tempo in coda: 0ms
+[Cliente 5] tempo di permanenza: 1938ms, prodotti acquistati: 24, code cambiate: 0, tempo in coda: 1534ms
+[Cliente 6] tempo di permanenza: 1908ms, prodotti acquistati: 0, code cambiate: 0, tempo in coda: 0ms
+[Cliente 8] tempo di permanenza: 970ms, prodotti acquistati: 20, code cambiate: 0, tempo in coda: 903ms
+[Cliente 10] tempo di permanenza: 1824ms, prodotti acquistati: 0, code cambiate: 0, tempo in coda: 0ms
+[Cliente 9] tempo di permanenza: 4029ms, prodotti acquistati: 79, code cambiate: 0, tempo in coda: 3917ms
+[Cassiere 0] clienti serviti: 3, prodotti elaborati: 48, chiusure: 0, tempi di servizio dei clienti serviti: 204ms 764ms 904ms
 [Cassiere 1] clienti serviti: 2, prodotti elaborati: 112, chiusure: 0, tempi di servizio dei clienti serviti: 1208ms 2818ms
-Numero di clienti serviti: 6
-Numero di prodotti acquistati: 166
+Numero di clienti serviti: 5
+Numero di prodotti acquistati: 160

@@ -5,6 +5,7 @@
 #include "grocerystore.h"
 #include "client_in_queue.h"
 #include "logger.h"
+#include "manager.h"
 
 typedef enum {
     active,    //Cassa APERTA. Continua a servire i clienti in coda.
@@ -25,6 +26,7 @@ typedef struct {
     cashier_sync *ca_sync;
     int product_service_time;   //quanto impiega a gestire un singolo prodotto
     int fixed_service_time;     //tempo fisso per la gestione di un cliente
+    manager_queue *mq;
 } cashier_t;
 
 /**
