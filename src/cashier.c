@@ -9,7 +9,7 @@
 #include <pthread.h>
 #include <time.h>
 
-//#define DEBUG_CASHIER
+#define DEBUG_CASHIER
 #define MIN_SERVICE_TIME 20 //ms
 #define MAX_SERVICE_TIME 80 //ms
 
@@ -33,9 +33,6 @@ void *cashier_fun(void *args) {
         PTH(err, pthread_mutex_lock(&(ca->mutex)), perror("cashier lock"); return NULL)
         switch(ca->state) {
             case sleeping:
-#ifdef DEBUG_CASHIER
-                printf("Cassiere %ld: chiudo la cassa\n", ca->id);
-#endif
                 //Sveglia i clienti senza servirli
                 while ((ca->queue)->size > 0) {
                     client = pop(ca->queue);
@@ -52,7 +49,6 @@ void *cashier_fun(void *args) {
                     printf("Cassiere %ld: apro la cassa\n", ca->id);
 #endif
                     MINUS1(clock_gettime(CLOCK_MONOTONIC, &active_start), perror("clock_gettime"); return NULL)
-                    printf("active1 %ld\n", active_start.tv_nsec);
                 }
                 PTH(err, pthread_mutex_unlock(&(ca->mutex)), perror("cashier unlock"); return NULL)
                 break;
@@ -68,10 +64,6 @@ void *cashier_fun(void *args) {
                     PTH(err, pthread_mutex_lock(&(ca->mutex)), perror("cashier lock"); return NULL)
                 }
                 client = pop(ca->queue);
-                if (ca->state == sleeping) {  //la cassa è stata chiusa
-                    (stats->closed_counter)++;
-                    MINUS1(push_activation_time(stats, &active_start), perror("push activation time"); return NULL)
-                }
                 PTH(err, pthread_mutex_unlock(&(ca->mutex)), perror("cashier unlock"); return NULL)
 
                 //Se il cliente è nullo allora la coda è vuota quindi sono stato svegliato perchè
@@ -83,9 +75,15 @@ void *cashier_fun(void *args) {
                     NOTZERO(serve_client(ca, client, stats), perror("serve client"); return NULL)
                     NOTZERO(get_store_state(gs, &store_state), perror("get store state"); return NULL)
                 }
-                if (ISCLOSED(store_state)) {
+                PTH(err, pthread_mutex_lock(&(ca->mutex)), perror("cashier unlock"); return NULL)
+                if (ca->state == sleeping) {  //la cassa è stata chiusa
+                    (stats->closed_counter)++;
                     MINUS1(push_activation_time(stats, &active_start), perror("push activation time"); return NULL)
+#ifdef DEBUG_CASHIER
+                    printf("Cassiere %ld: chiudo la cassa\n", ca->id);
+#endif
                 }
+                PTH(err, pthread_mutex_unlock(&(ca->mutex)), perror("cashier unlock"); return NULL)
                 break;
         }
     }
