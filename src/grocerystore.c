@@ -1,7 +1,5 @@
 #include "grocerystore.h"
 #include "client.h"
-#include "cashier.h"
-#include "signal_handler.h"
 #include "utils.h"
 #include <string.h>
 #include <stdio.h>

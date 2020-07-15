@@ -17,6 +17,7 @@ OBJS		= 	$(OBJDIR)/scfiles.o			\
 				$(OBJDIR)/threadpool.o		\
 				$(OBJDIR)/config.o			\
 			 	$(OBJDIR)/grocerystore.o	\
+				$(OBJDIR)/notifier.o		\
 				$(OBJDIR)/cashier.o			\
 				$(OBJDIR)/client.o			\
 				$(OBJDIR)/utils.o			\
@@ -24,8 +25,8 @@ OBJS		= 	$(OBJDIR)/scfiles.o			\
 				$(OBJDIR)/signal_handler.o	\
 				$(OBJDIR)/logger.o			\
 				$(OBJDIR)/main.o			\
+				$(OBJDIR)/manager_struct.o  \
 				$(OBJDIR)/manager.o			\
-				$(OBJDIR)/notifier.o			\
 
 TARGETS		= 	$(BINDIR)/grocerystore
 
