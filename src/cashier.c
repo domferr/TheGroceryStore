@@ -23,7 +23,7 @@ static int destroy_notifier(notifier_t *no);
 static int set_notifier_state(notifier_t *notifier, notifier_state state);
 
 void *cashier_fun(void *args) {
-    int err;
+    int err, activated;
     struct timespec active_start = {0,0};
     cashier_t *ca = (cashier_t*) args;
     cashier_sync *ca_sync = ca->ca_sync;
@@ -60,14 +60,15 @@ void *cashier_fun(void *args) {
                     NOTZERO(get_store_state(gs, &store_state), perror("get store state"); return NULL)
                     PTH(err, pthread_mutex_lock(mutex), perror("cashier lock"); return NULL)
                 }
-                if (ca_sync->state == active) {
+                activated = ca_sync->state == active;
+                PTH(err, pthread_mutex_unlock(mutex), perror("cashier unlock"); return NULL)
+                if (activated) {
 #ifdef DEBUG_CASHIER
                     printf("Cassiere %ld: apro la cassa\n", ca->id);
 #endif
                     MINUS1(set_notifier_state(notifier, turned_on), perror("set notifier state"); return NULL)
                     MINUS1(clock_gettime(CLOCK_MONOTONIC, &active_start), perror("clock_gettime"); return NULL)
                 }
-                PTH(err, pthread_mutex_unlock(mutex), perror("cashier unlock"); return NULL)
                 break;
             case active:
                 //Se non ho mai preso il tempo di attivazione da quando la cassa è stata attivata
@@ -106,10 +107,10 @@ void *cashier_fun(void *args) {
                 break;
         }
     }
+    MINUS1(set_notifier_state(notifier, stopped), perror("set notifier state"); return NULL)
 
     //Gestisci chiusura supermercato
     MINUS1(handle_closure(ca, store_state, stats), perror("handle closure"); return NULL)
-    MINUS1(set_notifier_state(notifier, stopped), perror("set notifier state"); return NULL)
 
     //join del thread notificatore
     NOTZERO(pthread_join(notifier->thread, NULL), perror("join notifier thread"); return NULL)
@@ -274,7 +275,9 @@ int notify(cashier_t *ca, int clients_in_queue) {
     data->id = ca->id;
     data->clients_in_queue = clients_in_queue;
 
-    printf("Dico al direttore che ci sono %d clienti\n", clients_in_queue);
+#ifdef DEBUG_CASHIER
+    printf("Cassiere %ld: notifico al direttore che ci sono %d clienti\n", ca->id, clients_in_queue);
+#endif
 
     PTH(err, pthread_mutex_lock(&(mq->mutex)), return -1)
     MINUS1(push(queue, data), return -1)

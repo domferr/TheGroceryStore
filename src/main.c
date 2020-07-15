@@ -72,14 +72,14 @@ int main(int argc, char** args) {
     EQNULL(cashiers_args, perror("cashiers_args"); exit(EXIT_FAILURE))
     for (i = 0; i < config->k; i++) {
         cashier_state starting_state = sleeping;
-        if (i<config->ka)
+        if (i < config->ka)
             starting_state = active;
         cashiers_args[i] = alloc_cashier(i, gs, starting_state, config->kt, config->d, mqueue);
         EQNULL(cashiers_args[i], perror("alloc_cashier"); exit(EXIT_FAILURE))
     }
 
     //Inizializzo il direttore senza farlo partire
-    manager = alloc_manager(gs, config->s1, config->s2, mqueue, cashiers_args, config->k);
+    manager = alloc_manager(gs, config->s1, config->s2, config->ka, mqueue, cashiers_args, config->k);
     EQNULL(manager, perror("alloc_manager"); exit(EXIT_FAILURE))
 
     //Imposto l'handler e faccio partire il thread. Da questo momento lui prenderà tutti i segnali
