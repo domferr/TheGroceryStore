@@ -1,4 +1,3 @@
-#define _POSIX_C_SOURCE 200809L
 #include "client.h"
 #include "client_in_queue.h"
 #include "cashier.h"

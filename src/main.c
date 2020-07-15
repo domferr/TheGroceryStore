@@ -48,8 +48,6 @@ int main(int argc, char** args) {
     Config *config = loadConfig(configFilePath);
     EQNULL(config, perror(ERROR_READ_CONFIG_FILE); exit(EXIT_FAILURE))
 
-    struct timespec start, end;
-
     //Controllo se il file di configurazione è valido, altrimenti termino ed informo
     if (isValidConfig(config)) {
         printConfig(config);
@@ -81,15 +79,6 @@ int main(int argc, char** args) {
 
     clients = clients_create(gs, config->c, config->t, config->p, cashiers_args, config->k);
     EQNULL(clients, perror("clients_create"); exit(EXIT_FAILURE))
-
-    /*
-    MINUS1(clock_gettime(CLOCK_MONOTONIC, &start), perror("clock_gettime"); return -1)
-    long elapsed = -1;
-    while (elapsed < 2000) {
-        MINUS1(clock_gettime(CLOCK_MONOTONIC, &end), perror("clock_gettime"); return -1)
-        elapsed = get_elapsed_milliseconds(start, end);
-        printf("%ld\n", elapsed);
-    }*/
 
     printf(MESSAGE_STORE_IS_OPEN);
     err = manage_entrance(gs, &closing_state, config->c, config->e);
