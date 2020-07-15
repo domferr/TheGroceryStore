@@ -64,7 +64,7 @@ static int close_random_cashier(cashier_sync **ca_sync, size_t k) {
         }
         PTH(err, pthread_mutex_unlock(&(ca->mutex)), return -1)
     }
-    return 0;
+    return i;
 }
 
 static int activate_cashier(cashier_sync **ca_sync, size_t k) {
@@ -101,7 +101,9 @@ static int run_cashiers_algorithm(manager_arr_t *marr, int s1, int s2) {
             i++;
         }
         if (i < marr->size) {
-            MINUS1(close_random_cashier(marr->ca_sync, marr->size), return -1)
+            i = close_random_cashier(marr->ca_sync, marr->size);
+            MINUS1(i, return -1)
+            counters[i] = 0;
             marr->active_cashiers -= 1;
         }
     }
