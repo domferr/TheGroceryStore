@@ -1,9 +1,9 @@
 #ifndef MANAGER_H
 #define MANAGER_H
 
-#include "manager_struct.h"
 #include "grocerystore.h"
 #include "queue.h"
+#include "cashier.h"
 #include <pthread.h>
 
 typedef struct {
@@ -11,6 +11,12 @@ typedef struct {
     pthread_cond_t waiting;
     queue_t *queue;
 } manager_queue;
+
+typedef struct {
+    size_t size;
+    cashier_sync **ca_sync;
+    int **counters;
+} manager_arr_t;
 
 /** Argomenti passati al thread manager */
 typedef struct {
@@ -28,7 +34,7 @@ typedef struct {
  */
 void *manager_fun(void *args);
 
-manager_args *alloc_manager(grocerystore_t *gs, int s1, int s2, manager_arr_t *marr, size_t no_of_cashiers);
+manager_args *alloc_manager(grocerystore_t *gs, int s1, int s2, cashier_t **cashiers, size_t no_of_cashiers);
 
 /**
  * Libera l'area di memoria occupata dagli argomenti passati al manager

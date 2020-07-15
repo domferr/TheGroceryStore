@@ -2,7 +2,6 @@
 #define CASHIER_H
 
 #include "queue.h"
-#include "notifier.h"
 #include "grocerystore.h"
 #include "client_in_queue.h"
 #include "logger.h"
@@ -26,7 +25,6 @@ typedef struct {
     cashier_sync *ca_sync;
     int product_service_time;   //quanto impiega a gestire un singolo prodotto
     int fixed_service_time;     //tempo fisso per la gestione di un cliente
-    notifier_t *notifier;
 } cashier_t;
 
 /**
@@ -48,7 +46,7 @@ void *cashier_fun(void *args);
  * @param product_service_time quanto tempo impiega questo cassiere a gestire un singolo prodotto
  * @return Ritorna il puntatore alla struttura dati se la allocazione è avvenuta con successo, NULL altrimenti e setta errno
  */
-cashier_t *alloc_cashier(size_t id, grocerystore_t *gs, cashier_state starting_state, int product_service_time, manager_queue *mq, int interval);
+cashier_t *alloc_cashier(size_t id, grocerystore_t *gs, cashier_state starting_state, int product_service_time);
 
 /**
  * Gestione della chiusura del supermercato da parte di un cassiere

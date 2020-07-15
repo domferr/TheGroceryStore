@@ -23,7 +23,6 @@ void *cashier_fun(void *args) {
     pthread_mutex_t *mutex = &(ca_sync->mutex);
     pthread_cond_t *paused = &(ca_sync->paused);
     pthread_cond_t *noclients = &(ca_sync->noclients);
-    notifier_t *notifier = ca->notifier;
     grocerystore_t *gs = ca->gs;
     gs_state store_state;
     client_in_queue *client;
@@ -32,8 +31,6 @@ void *cashier_fun(void *args) {
 #endif
     cashier_thread_stats *stats = alloc_cashier_thread_stats(ca->id);
     EQNULL(stats, perror("alloc cashier thread stats"); return NULL)
-
-    PTH(err, pthread_create(&(notifier->thread), NULL, &notifier_fun, notifier), perror("cashier notifier create"); return NULL)
 
     NOTZERO(get_store_state(gs, &store_state), perror("get store state"); return NULL)
     while(ISOPEN(store_state)) {
@@ -104,24 +101,21 @@ void *cashier_fun(void *args) {
     PTH(err, pthread_cond_destroy(paused), perror("cashier cond destroy"); return NULL)
     NOTZERO(queue_destroy(ca->queue), perror("cashier queue destroy"); return NULL)
     free(ca_sync);
-    destroy_notifier(notifier);
     free(ca);
     return stats;
 }
 
-cashier_t *alloc_cashier(size_t id, grocerystore_t *gs, cashier_state starting_state, int product_service_time, manager_queue *mq, int interval) {
+cashier_t *alloc_cashier(size_t id, grocerystore_t *gs, cashier_state starting_state, int product_service_time) {
     int err;
     unsigned int seed = id;
     cashier_t *ca = (cashier_t*) malloc(sizeof(cashier_t));
     EQNULL(ca, return NULL)
+    cashier_sync *ca_sync = (cashier_sync*) malloc(sizeof(cashier_sync));
+    EQNULL(ca_sync, return NULL)
     ca->id = id;
     ca->gs = gs;
     ca->product_service_time = product_service_time;
     ca->fixed_service_time = RANDOM(seed, MIN_SERVICE_TIME, MAX_SERVICE_TIME);  //milliseconds
-
-    cashier_sync *ca_sync = (cashier_sync*) malloc(sizeof(cashier_sync));
-    EQNULL(ca_sync, return NULL)
-
     ca->queue = queue_create();
     EQNULL(ca->queue, return NULL)
 
@@ -130,10 +124,6 @@ cashier_t *alloc_cashier(size_t id, grocerystore_t *gs, cashier_state starting_s
     PTH(err, pthread_cond_init(&(ca_sync->paused), NULL), return NULL)
     PTH(err, pthread_cond_init(&(ca_sync->noclients), NULL), return NULL)
     ca->ca_sync = ca_sync;
-
-    ca->notifier = alloc_notifier(ca, mq, interval);
-    EQNULL(ca->notifier, return NULL);
-
     return ca;
 }
 

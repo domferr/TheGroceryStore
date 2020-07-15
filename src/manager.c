@@ -1,7 +1,7 @@
 #include "manager.h"
-#include "cashier.h"
 #include "utils.h"
 #include "queue.h"
+#include "notifier.h"
 #include <stdlib.h>
 
 static int handle_notification(manager_args *ma, notifier_data *data);
@@ -17,7 +17,7 @@ void *manager_fun(void *args) {
     queue_t *queue = (ma->queue)->queue;
     grocerystore_t *gs = ma->gs;
     gs_state store_state;
-    notifier_data *data;
+    notifier_data *notif;
 
     NOTZERO(get_store_state(gs, &store_state), perror("get store state"); return NULL)
 
@@ -29,11 +29,10 @@ void *manager_fun(void *args) {
             NOTZERO(get_store_state(gs, &store_state), perror("get store state"); return NULL)
             PTH(err, pthread_mutex_lock(mutex), perror("manager lock"); return NULL)
         }
-        data = pop(queue);
-        if (data != NULL) {
-            MINUS1(handle_notification(ma, data), perror("handle_notification"); return NULL)
+        notif = pop(queue);
+        if (notif != NULL) {
+            MINUS1(handle_notification(ma, notif), perror("handle_notification"); return NULL)
 
-            free(data);
         }
         PTH(err, pthread_mutex_unlock(mutex), perror("manager unlock"); return NULL)
 
@@ -107,5 +106,6 @@ int wakeup_manager(manager_queue *mqueue) {
 
 static int handle_notification(manager_args *ma, notifier_data *data) {
 
+    free(data);
     return 0;
 }
