@@ -1,3 +1,4 @@
+#define _POSIX_C_SOURCE 200809L
 #include "client.h"
 #include "client_in_queue.h"
 #include "cashier.h"
@@ -10,7 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
-
+#include <sys/time.h>
 //#define DEBUGCLIENT
 
 typedef enum {
@@ -58,6 +59,7 @@ void *client_fun(void *args) {
             case take_products:
                 cl_in_q->products = RANDOM(seed, 0, cl->p);
                 random_time = RANDOM(seed, MIN_T, cl->t);
+
 #ifdef DEBUGCLIENT
                 printf("Thread cliente %ld: Entro nel supermercato. Prendo %d prodotti in %dms\n", cl->id, cl_in_q->products, random_time);
 #endif
@@ -77,7 +79,6 @@ void *client_fun(void *args) {
                 err = enter_random_queue(cl, cl_in_q, gs, &store_state);
                 MINUS1(err, perror("client enter random queue"); return NULL)
                 MINUS1(clock_gettime(CLOCK_MONOTONIC, &queue_entrance), perror("clock_gettime"); return NULL)
-
                 //Fino a quando non sono stato servito oppure lo store è aperto o chiuso tramite SIGHUP
                 PTH(err, pthread_mutex_lock(&(cl_in_q)->mutex), perror("client mutex lock"); return NULL)
                 while (store_state != closed_fast && cl_in_q->status == waiting) {

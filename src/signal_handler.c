@@ -1,4 +1,5 @@
 #define _POSIX_C_SOURCE 200809L
+
 #include "signal_handler.h"
 #include "grocerystore.h"
 #include "cashier.h"

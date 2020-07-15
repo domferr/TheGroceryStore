@@ -18,11 +18,11 @@ OBJS		= 	$(OBJDIR)/utils.o			\
 				$(OBJDIR)/threadpool.o		\
 				$(OBJDIR)/config.o			\
 			 	$(OBJDIR)/grocerystore.o	\
-				$(OBJDIR)/cashier.o	\
-				$(OBJDIR)/client.o	\
+				$(OBJDIR)/cashier.o			\
+				$(OBJDIR)/client.o			\
 				$(OBJDIR)/client_in_queue.o	\
 				$(OBJDIR)/signal_handler.o	\
-				$(OBJDIR)/logger.o	\
+				$(OBJDIR)/logger.o			\
 				$(OBJDIR)/main.o			\
 
 TARGETS		= 	$(BINDIR)/grocerystore
