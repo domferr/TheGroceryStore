@@ -72,16 +72,13 @@ void *thread_handler_fun(void *arg) {
 
 static int wakeup_cashier(cashier_t *ca) {
     int err;
-    queue_t *queue = ca->queue;
-    PTH(err, pthread_mutex_lock(&(ca->mutex)), return 0)
+    cashier_sync *ca_sync = ca->ca_sync;
+    PTH(err, pthread_mutex_lock(&(ca_sync->mutex)), return 0)
     //Sveglio il cassiere se dovesse essere una cassa chiusa
-    if (ca->state == sleeping) {
-        PTH(err, pthread_cond_signal(&(ca->paused)), return 0)
-    } else if (ca->state == active && queue->size == 0) {
+    PTH(err, pthread_cond_signal(&(ca_sync->paused)), return 0)
     //Sveglio il cassiere se dovesse essere in attesa sulla coda vuota
-        PTH(err, pthread_cond_signal(&(ca->noclients)), return 0)
-    }
-    PTH(err, pthread_mutex_unlock(&(ca->mutex)), return 0)
+    PTH(err, pthread_cond_signal(&(ca_sync->noclients)), return 0)
+    PTH(err, pthread_mutex_unlock(&(ca_sync->mutex)), return 0)
     return 0;
 }
 

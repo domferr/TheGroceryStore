@@ -25,11 +25,6 @@ typedef struct {
     cashier_sync *ca_sync;
     int product_service_time;   //quanto impiega a gestire un singolo prodotto
     int fixed_service_time;     //tempo fisso per la gestione di un cliente
-    cashier_state state;        //stato del cassiere
-    pthread_mutex_t mutex;
-    pthread_cond_t paused;      //il cassiere attende su questa condition variable quando la cassa non è attiva
-    pthread_cond_t noclients;   //il cassiere attende su questa condition variable quando non ci sono clienti in coda
-
 } cashier_t;
 
 /**
@@ -64,7 +59,7 @@ cashier_t *alloc_cashier(size_t id, grocerystore_t *gs, cashier_state starting_s
 int handle_closure(cashier_t *ca, gs_state closing_state, cashier_thread_stats *stats);
 
 //TODO update all the entire docs
-int serve_client(cashier_t *ca, client_in_queue *client, cashier_thread_stats *stats);
+int serve_client(size_t id, int fixed_time, int product_time, client_in_queue *client, cashier_thread_stats *stats);
 int wakeup_client(client_in_queue *client, client_status status);
 
 #endif //CASHIER_H

@@ -144,21 +144,22 @@ int enter_random_queue(client_t *cl, client_in_queue *cl_in_q, grocerystore_t *g
     unsigned int seed = cl->id;
     cashier_t **cashiers = cl->cashiers;
     cashier_t *random_cashier;
+    cashier_sync *ca_sync;
 
     while(ISOPEN(*store_state) && !found) {
         //0 <= cashier_index < no_of_cashiers
         cashier_index = RANDOM(seed, 0, cl->no_of_cashiers);
         random_cashier = cashiers[cashier_index];
-
-        PTH(err, pthread_mutex_lock(&(random_cashier->mutex)), return -1)
+        ca_sync = random_cashier->ca_sync;
+        PTH(err, pthread_mutex_lock(&(ca_sync->mutex)), return -1)
         //Se la cassa scelta casualmente è attiva, mi aggiungo in coda ed esco dal ciclo
-        if (random_cashier->state == active) {
+        if (ca_sync->state == active) {
             MINUS1(push(random_cashier->queue, cl_in_q), return -1);
             if ((random_cashier->queue)->size == 1)
-                PTH(err, pthread_cond_signal(&(random_cashier->noclients)), return -1)
+                PTH(err, pthread_cond_signal(&(ca_sync->noclients)), return -1)
             found = 1;
         }
-        PTH(err, pthread_mutex_unlock(&(random_cashier->mutex)), return -1)
+        PTH(err, pthread_mutex_unlock(&(ca_sync->mutex)), return -1)
         NOTZERO(get_store_state(gs, store_state), return -1)
     }
 #ifdef DEBUGCLIENT
