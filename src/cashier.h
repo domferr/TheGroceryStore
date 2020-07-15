@@ -49,11 +49,13 @@ cashier_t *alloc_cashier(size_t id, grocerystore_t *gs, cashier_state starting_s
  *
  * @param ca cassiere che deve svolgere le operazioni di terminazione in caso di chiusura supermercato
  * @param closing_state che tipo di chiusura sta avvenendo
+ * @param stats puntatore alle statistiche da aggiornare
  * @return 0 se la gestione è avvenuta con successo, -1 altrimenti e setta errno
  */
 int handle_closure(cashier_t *ca, gs_state closing_state, cashier_thread_stats *stats);
+
 //TODO update all the entire docs
 int serve_client(cashier_t *ca, client_in_queue *client, cashier_thread_stats *stats);
-int wakeup_client(client_in_queue *client, client_status status, cashier_thread_stats *stats);
+int wakeup_client(client_in_queue *client, client_status status);
 
 #endif //CASHIER_H

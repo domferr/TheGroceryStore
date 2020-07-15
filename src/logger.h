@@ -22,11 +22,10 @@ typedef struct {
 /** Statistiche raccolte da un thread cassiere */
 typedef struct {
     size_t id;              //identificatore del thread cassiere
-    int clients_served;     //numero di clienti serviti
     int closed_counter;     //quante volte la cassa è stata chiusa
     int total_products;     //numero prodotti acquistati tramite questa cassa
     queue_t *active_times;  //tempi di apertura della cassa
-    queue_t *clients_times; //tempo di servizio di ogni cliente servito
+    queue_t *clients_times; //tempo di servizio di ogni cliente servito. La sua dimensione indica anche il numero di clienti serviti
 } cashier_thread_stats;
 
 client_thread_stats *alloc_client_thread_stats(size_t id);
