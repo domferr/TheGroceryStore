@@ -64,6 +64,14 @@ int push(queue_t *queue, void *elem);
  */
 void *pop(queue_t *queue);
 
+/**
+ * Applica la funzione passata per argomento ad ogni elemento della coda
+ *
+ * @param queue la coda sulla quale applicare la funzione
+ * @param fun la funzione da applicare
+ * @param args argomenti aggiuntivi da passare alla funzione per ogni chiamata (oltre all'elemento della coda)
+ * @return 0 se l'applicazione è avvenuta con successo, -1 altrimenti e imposta errno
+ */
 int foreach(queue_t *queue, int (*fun)(void*, void*), void *args);
 
 /**

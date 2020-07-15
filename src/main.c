@@ -10,6 +10,7 @@
 #include "client.h"
 #include "cashier.h"
 #include "logger.h"
+#include "manager.h"
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
@@ -26,7 +27,6 @@
 #define MESSAGE_STORE_IS_CLOSING "\rChiusura del supermercato...\n"
 
 char *parseArgs(int argc, char **args);
-int setup_signal_handling(pthread_t *handler, grocerystore_t *gs, cashier_t **cashiers_args, size_t no_of_cashiers);
 thread_pool_t *cashiers_create(cashier_t **cashiers_args, grocerystore_t *gs, int size);
 thread_pool_t *clients_create(grocerystore_t *gs, int size, int t, int p, cashier_t **cashiers_args, size_t no_of_cashiers);
 
@@ -36,9 +36,11 @@ int main(int argc, char** args) {
     grocerystore_t *gs;
     gs_state closing_state;         //Stato di chiusura del supermercato
     pthread_t handler_thread;       //Thread che gestisce i segnali
+    pthread_t manager_thread;       //Thread che riceve ad intervalli regolari le informazioni dalle casse
     thread_pool_t *clients;
     thread_pool_t *cashiers;
     cashier_t **cashiers_args;      //Array contenente l'argomento passato per ogni cassiere
+    manager_args *manager;
     client_thread_stats **clients_stats;    //Array con le statistiche di tutti i clienti
     cashier_thread_stats **cashiers_stats;  //Array con le statistiche di tutti i cassieri
     FILE *logfile;
@@ -71,11 +73,17 @@ int main(int argc, char** args) {
         cashiers_args[i] = alloc_cashier(i, gs, starting_state, config->kt);
         EQNULL(cashiers_args[i], perror("alloc_cashier"); exit(EXIT_FAILURE))
     }
-    err = setup_signal_handling(&handler_thread, gs, cashiers_args, config->k);
+
+    manager = alloc_manager(gs, config->s1, config->s2, cashiers_args, config->k);
+    EQNULL(manager, perror("alloc_manager"); exit(EXIT_FAILURE))
+
+    err = setup_signal_handling(&handler_thread, manager->queue, gs, cashiers_args, config->k);
     NOTZERO(err, perror("setup_signal_handling"); exit(EXIT_FAILURE))
 
     cashiers = cashiers_create(cashiers_args, gs, config->k);
     EQNULL(cashiers, perror("cashiers_create"); exit(EXIT_FAILURE))
+
+    PTH(err, pthread_create(&manager_thread, NULL, &manager_fun, manager), perror("manager pthread create"); exit(EXIT_FAILURE))
 
     clients = clients_create(gs, config->c, config->t, config->p, cashiers_args, config->k);
     EQNULL(clients, perror("clients_create"); exit(EXIT_FAILURE))
@@ -107,6 +115,9 @@ int main(int argc, char** args) {
     //join sui cassieri
     MINUS1(thread_pool_join(cashiers, (void**)cashiers_stats), perror("join cashiers"); exit(EXIT_FAILURE))
     printf("Cassieri terminati\n");
+    //join sul direttore
+    PTH(err, pthread_join(manager_thread, NULL), perror("join thread manager"); exit(EXIT_FAILURE))
+    printf("Direttore terminato\n");
 
     //logging!
     printf("Scrivo il file di log %s\n", config->logfilename);
@@ -147,31 +158,6 @@ char *parseArgs(int argc, char **args) {
     i++;
     return i < argc ? args[i]:(char *)DEFAULT_CONFIG_FILE;
 }
-
-int setup_signal_handling(pthread_t *handler, grocerystore_t *gs, cashier_t **cashiers_args, size_t no_of_cashiers) {
-    int err;
-    signal_handler_t *handler_args = malloc(sizeof(signal_handler_t));
-    EQNULL(handler_args, return -1)
-
-    sigemptyset(&(handler_args->set));
-    //Segnali che non voglio ricevere
-    sigaddset(&(handler_args->set), SIGINT);
-    sigaddset(&(handler_args->set), SIGQUIT);
-    sigaddset(&(handler_args->set), SIGHUP);
-
-    //Blocco i segnali per questo thread. Da questo momento in poi, anche i thread che verranno creati non riceveranno
-    //questi segnali.
-    PTH(err, pthread_sigmask(SIG_BLOCK, &(handler_args->set), NULL), free(handler_args); return -1)
-
-    handler_args->gs = gs;
-    handler_args->cashiers = cashiers_args;
-    handler_args->no_of_cashiers = no_of_cashiers;
-    //Creo il thread handler. Riceverà questi segnali chiamando la sigwait
-    PTH(err, pthread_create(handler, NULL, &thread_handler_fun, handler_args), return -1)
-
-    return 0;
-}
-
 
 thread_pool_t *cashiers_create(cashier_t **cashiers_args, grocerystore_t *gs, int size) {
     int i;

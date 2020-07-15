@@ -62,7 +62,7 @@ void *thread_handler_fun(void *arg) {
         err = wakeup_cashier((sh->cashiers)[i]);
         NOTZERO(err, perror("wakeup cashier"); return 0)
     }
-
+    MINUS1(wakeup_manager(sh->mqueue), perror("wakeup manager"); return 0)
 #ifdef DEBUGSIGHANDLER
     printf("Signal handler: Termino\n");
 #endif
@@ -82,5 +82,30 @@ static int wakeup_cashier(cashier_t *ca) {
         PTH(err, pthread_cond_signal(&(ca->noclients)), return 0)
     }
     PTH(err, pthread_mutex_unlock(&(ca->mutex)), return 0)
+    return 0;
+}
+
+int setup_signal_handling(pthread_t *handler, manager_queue *mqueue, grocerystore_t *gs, cashier_t **cashiers_args, size_t no_of_cashiers) {
+    int err;
+    signal_handler_t *handler_args = malloc(sizeof(signal_handler_t));
+    EQNULL(handler_args, return -1)
+
+    sigemptyset(&(handler_args->set));
+//Segnali che non voglio ricevere
+    sigaddset(&(handler_args->set), SIGINT);
+    sigaddset(&(handler_args->set), SIGQUIT);
+    sigaddset(&(handler_args->set), SIGHUP);
+
+//Blocco i segnali per questo thread. Da questo momento in poi, anche i thread che verranno creati non riceveranno
+//questi segnali.
+    PTH(err, pthread_sigmask(SIG_BLOCK, &(handler_args->set), NULL), free(handler_args); return -1)
+
+    handler_args->gs = gs;
+    handler_args->cashiers = cashiers_args;
+    handler_args->no_of_cashiers = no_of_cashiers;
+    handler_args->mqueue = mqueue;
+//Creo il thread handler. Riceverà questi segnali chiamando la sigwait
+    PTH(err, pthread_create(handler, NULL, &thread_handler_fun, handler_args), return -1)
+
     return 0;
 }

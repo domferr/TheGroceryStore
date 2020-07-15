@@ -12,15 +12,24 @@ typedef enum {
 } cashier_state;
 
 typedef struct {
-    size_t id;                  //identificatore univoco di questo cassiere tra tutti i cassieri
-    grocerystore_t *gs;
-    queue_t *queue;             //clienti in coda
     cashier_state state;        //stato del cassiere
-    int product_service_time;   //quanto impiega a gestire un singolo prodotto
-    int fixed_service_time;     //tempo fisso per la gestione di un cliente
     pthread_mutex_t mutex;
     pthread_cond_t paused;      //il cassiere attende su questa condition variable quando la cassa non è attiva
     pthread_cond_t noclients;   //il cassiere attende su questa condition variable quando non ci sono clienti in coda
+} cashier_sync;
+
+typedef struct {
+    size_t id;                  //identificatore univoco di questo cassiere tra tutti i cassieri
+    grocerystore_t *gs;
+    queue_t *queue;             //clienti in coda
+    cashier_sync *ca_sync;
+    int product_service_time;   //quanto impiega a gestire un singolo prodotto
+    int fixed_service_time;     //tempo fisso per la gestione di un cliente
+    cashier_state state;        //stato del cassiere
+    pthread_mutex_t mutex;
+    pthread_cond_t paused;      //il cassiere attende su questa condition variable quando la cassa non è attiva
+    pthread_cond_t noclients;   //il cassiere attende su questa condition variable quando non ci sono clienti in coda
+
 } cashier_t;
 
 /**
