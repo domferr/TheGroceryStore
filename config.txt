@@ -7,6 +7,6 @@ T=200 			#massimo tempo per gli acquisti per un cliente
 P=100 			#massimo numero di prodotti che acquisterà un cliente
 S=20 			#ogni quanti millisecondi il cliente decide se spostarsi o meno
 S1=5 			#valore soglia per chiusura di una cassa
-S2=10 			#valore soglia per apertura di una cassa
+S2=15 			#valore soglia per apertura di una cassa
 D=1000			#ogni quanto tempo una cassa comunica con il direttore. espresso in millisecondi
 L=logfile.txt 	#nome del file di log generato dal programma

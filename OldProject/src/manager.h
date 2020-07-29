@@ -6,6 +6,9 @@
 #include "types.h"
 #include <pthread.h>
 
+/** Speciale struttura dati utilizzata dal manager
+ * per eseguire il suo algoritmo di apertura e chiusura casse
+ * */
 typedef struct {
     size_t size;
     size_t active_cashiers;
@@ -29,10 +32,21 @@ typedef struct {
  * @param args argomenti del manager
  */
 void *manager_fun(void *args);
+
 manager_arr_t *create_manager_arr(cashier_t **cashiers, size_t size, size_t active_cashiers);
+
+/** Distrugge gli argomenti passati al manager liberandone la memoria */
 int destroy_manager_arr(manager_arr_t *arr);
+
+/** Alloca in memoria gli argomenti da passare al manager */
 manager_args *alloc_manager(grocerystore_t *gs, int s1, int s2, int ka, manager_queue *mq, cashier_t **cashiers, size_t ncash);
+
+/** Ritorna la coda concorrente da utilizzare per le comunicazioni verso il manager.
+ *  Ritorna NULL in caso di erroe ed imposta errno
+ *  */
 manager_queue *alloc_manager_queue(void);
+
+/** Distrugge la coda concorrente del direttore */
 int destroy_manager_queue(manager_queue *mqueue);
 
 /**

@@ -5,14 +5,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define DEBUG_MANAGER
-
+//#define DEBUG_MANAGER
+/** Chiude una cassa quindi sceglie un cassiere casuale tra quelli aperti. */
 static int close_random_cashier(cashier_sync **ca_sync, size_t k);
+
+/** Apre una cassa, quindi attiva un cassiere tra quelli chiusi */
 static int activate_cashier(cashier_sync **ca_sync, size_t k);
+
+/** Esegue l'algoritmo di apertura e chiusura casse */
 static int run_cashiers_algorithm(manager_arr_t *marr, int s1, int s2);
 
 void *manager_fun(void *args) {
-    int err;
+    int err, store_is_open;
     gs_state store_state;
     manager_args *ma = (manager_args*) args;
     grocerystore_t *gs = ma->gs;
@@ -30,10 +34,15 @@ void *manager_fun(void *args) {
             NOTZERO(get_store_state(gs, &store_state), perror("get store state"); return NULL)
             PTH(err, pthread_mutex_lock(mutex), perror("manager lock"); return NULL)
         }
-        MINUS1(handle_notification(ma->queue, ma->marr), perror("handle_notification"); return NULL)
+        //Gestisci la notifica arrivata
+        store_is_open = handle_notification(ma->queue, ma->marr);
+        MINUS1(err, perror("handle_notification"); return NULL)
         PTH(err, pthread_mutex_unlock(mutex), perror("manager unlock"); return NULL)
-        MINUS1(run_cashiers_algorithm(ma->marr, ma->s1, ma->s2), perror("run cashiers algorithm"); return NULL)
-        NOTZERO(get_store_state(gs, &store_state), perror("get store state"); return NULL)
+        //Esegue l'algoritmo di apertura e chiusura casse se il supermercato è ancora aperto
+        //if (store_is_open == 1) {
+            MINUS1(run_cashiers_algorithm(ma->marr, ma->s1, ma->s2), perror("run cashiers algorithm"); return NULL)
+            NOTZERO(get_store_state(gs, &store_state), perror("get store state"); return NULL)
+        //}
     }
 #ifdef DEBUG_MANAGER
     printf("Manager: termino\n");
@@ -101,9 +110,9 @@ static int run_cashiers_algorithm(manager_arr_t *marr, int s1, int s2) {
             i++;
         }
         if (i < marr->size) {
-            i = close_random_cashier(marr->ca_sync, marr->size);
-            MINUS1(i, return -1)
-            counters[i] = 0;
+            found = close_random_cashier(marr->ca_sync, marr->size);
+            if (found == -1) return -1;
+            counters[found] = 0;
             marr->active_cashiers -= 1;
         }
     }

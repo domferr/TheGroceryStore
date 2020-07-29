@@ -12,7 +12,19 @@ LIBS    	= -lpthread
 SRCDIR  	= src
 OBJDIR   	= obj
 BINDIR   	= bin
-OBJS		= $(OBJDIR)/main.o			\
+OBJS		= 	$(OBJDIR)/scfiles.o			\
+				$(OBJDIR)/queue.o			\
+				$(OBJDIR)/threadpool.o		\
+				$(OBJDIR)/config.o			\
+			 	$(OBJDIR)/grocerystore.o	\
+				$(OBJDIR)/cashier.o			\
+				$(OBJDIR)/client.o			\
+				$(OBJDIR)/utils.o			\
+				$(OBJDIR)/client_in_queue.o	\
+				$(OBJDIR)/signal_handler.o	\
+				$(OBJDIR)/logger.o			\
+				$(OBJDIR)/main.o			\
+				$(OBJDIR)/manager.o			\
 
 TARGETS		= 	$(BINDIR)/grocerystore
 
@@ -36,3 +48,10 @@ clean:
 
 cleanall: clean
 	\rm -f $(OBJDIR)/*.o *~ *.a
+
+test2:
+	@echo "K=6\nKA=5\nKT=35\nC=50\nE=3\nT=200\nP=100\nS=20\nS1=5\nS2=15\nD=1000\nL=logfile.txt" > $(TEST2CONFIGFILE)
+	$(BINDIR)/grocerystore -c $(TEST2CONFIGFILE)
+	sleep 25 ;\
+    	kill -s HUP "$$!" ;\
+    	wait $$!

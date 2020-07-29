@@ -1,0 +1,3 @@
+C:/Users/Domenico/Documents/GitHub/TheGroceryStore/cmake-build-debug/CMakeFiles/TheGroceryStore.dir
+C:/Users/Domenico/Documents/GitHub/TheGroceryStore/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/Domenico/Documents/GitHub/TheGroceryStore/cmake-build-debug/CMakeFiles/rebuild_cache.dir

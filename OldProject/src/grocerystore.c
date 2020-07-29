@@ -43,13 +43,13 @@ int manage_entrance(grocerystore_t *gs, gs_state *state, int c, int e) {
         while (ISOPEN(gs->state) && gs->clients_inside > c-e) {
             PTH(err, pthread_cond_wait(&(gs->exit), &(gs->mutex)), return -1)
         }
-#ifdef DEBUG_GS
-        printf("Clienti nel supermercato: %d. Faccio entrare %d clienti\n", gs->clients_inside, e);
-#endif
         if (ISOPEN(gs->state)) {
             gs->can_enter = e;
             //Sveglio tutti i thread in attesa sull'entrata. Solo E di loro entreranno
             PTH(err, pthread_cond_broadcast(&(gs->entrance)), return -1)
+#ifdef DEBUG_GS
+            printf("Clienti nel supermercato: %d. Faccio entrare %d clienti\n", gs->clients_inside, e);
+#endif
         } else {
             run = 0;
         }
@@ -87,6 +87,12 @@ int exit_store(grocerystore_t *gs, gs_state *store_state) {
     return 0;
 }
 
+/**
+ * Aggiorna il puntatore passato per argomento con lo stato del supermercato. Ritorna 0 in caso di successo, -1 altrimenti
+ * @param gs struttura dati del supermercato
+ * @param state puntatore alla variabile da aggiornare con lo stato del supermercato
+ * @return 0 in caso di successo, -1 altrimenti
+ */
 int get_store_state(grocerystore_t *gs, gs_state *state) {
     int err;
     PTH(err, pthread_mutex_lock(&(gs->mutex)), return -1)

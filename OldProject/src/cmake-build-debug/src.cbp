@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="src"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="src">
+				<Option output="C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/cmake-build-debug/src.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/."/>
+					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/9.2.0/include"/>
+					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/9.2.0/../../../../include"/>
+					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/9.2.0/include-fixed"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 src"/>
+					<CompileFile command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="src/fast">
+				<Option output="C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/cmake-build-debug/src.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/."/>
+					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/9.2.0/include"/>
+					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/9.2.0/../../../../include"/>
+					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/9.2.0/include-fixed"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 src/fast"/>
+					<CompileFile command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/cashier.c">
+			<Option target="src"/>
+		</Unit>
+		<Unit filename="C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/cashier.h">
+			<Option target="src"/>
+		</Unit>
+		<Unit filename="C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/client.c">
+			<Option target="src"/>
+		</Unit>
+		<Unit filename="C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/client.h">
+			<Option target="src"/>
+		</Unit>
+		<Unit filename="C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/client_in_queue.c">
+			<Option target="src"/>
+		</Unit>
+		<Unit filename="C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/client_in_queue.h">
+			<Option target="src"/>
+		</Unit>
+		<Unit filename="C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/config.c">
+			<Option target="src"/>
+		</Unit>
+		<Unit filename="C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/config.h">
+			<Option target="src"/>
+		</Unit>
+		<Unit filename="C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/grocerystore.c">
+			<Option target="src"/>
+		</Unit>
+		<Unit filename="C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/grocerystore.h">
+			<Option target="src"/>
+		</Unit>
+		<Unit filename="C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/logger.c">
+			<Option target="src"/>
+		</Unit>
+		<Unit filename="C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/logger.h">
+			<Option target="src"/>
+		</Unit>
+		<Unit filename="C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/main.c">
+			<Option target="src"/>
+		</Unit>
+		<Unit filename="C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/manager.c">
+			<Option target="src"/>
+		</Unit>
+		<Unit filename="C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/manager.h">
+			<Option target="src"/>
+		</Unit>
+		<Unit filename="C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/queue.c">
+			<Option target="src"/>
+		</Unit>
+		<Unit filename="C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/queue.h">
+			<Option target="src"/>
+		</Unit>
+		<Unit filename="C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/scfiles.c">
+			<Option target="src"/>
+		</Unit>
+		<Unit filename="C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/scfiles.h">
+			<Option target="src"/>
+		</Unit>
+		<Unit filename="C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/signal_handler.c">
+			<Option target="src"/>
+		</Unit>
+		<Unit filename="C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/signal_handler.h">
+			<Option target="src"/>
+		</Unit>
+		<Unit filename="C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/threadpool.c">
+			<Option target="src"/>
+		</Unit>
+		<Unit filename="C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/threadpool.h">
+			<Option target="src"/>
+		</Unit>
+		<Unit filename="C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/types.h">
+			<Option target="src"/>
+		</Unit>
+		<Unit filename="C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/utils.c">
+			<Option target="src"/>
+		</Unit>
+		<Unit filename="C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/utils.h">
+			<Option target="src"/>
+		</Unit>
+		<Unit filename="C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>
