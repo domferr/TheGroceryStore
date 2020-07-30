@@ -4,7 +4,9 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_C
+  "C:/Users/Domenico/Documents/GitHub/TheGroceryStore/src/config.c" "C:/Users/Domenico/Documents/GitHub/TheGroceryStore/cmake-build-debug/CMakeFiles/TheGroceryStore.dir/src/config.c.obj"
   "C:/Users/Domenico/Documents/GitHub/TheGroceryStore/src/main.c" "C:/Users/Domenico/Documents/GitHub/TheGroceryStore/cmake-build-debug/CMakeFiles/TheGroceryStore.dir/src/main.c.obj"
+  "C:/Users/Domenico/Documents/GitHub/TheGroceryStore/src/utils.c" "C:/Users/Domenico/Documents/GitHub/TheGroceryStore/cmake-build-debug/CMakeFiles/TheGroceryStore.dir/src/utils.c.obj"
   )
 set(CMAKE_C_COMPILER_ID "GNU")
 

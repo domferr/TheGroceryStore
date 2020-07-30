@@ -74,7 +74,19 @@
 				</MakeCommands>
 			</Target>
 		</Build>
+		<Unit filename="C:/Users/Domenico/Documents/GitHub/TheGroceryStore/src/config.c">
+			<Option target="TheGroceryStore"/>
+		</Unit>
+		<Unit filename="C:/Users/Domenico/Documents/GitHub/TheGroceryStore/src/config.h">
+			<Option target="TheGroceryStore"/>
+		</Unit>
 		<Unit filename="C:/Users/Domenico/Documents/GitHub/TheGroceryStore/src/main.c">
+			<Option target="TheGroceryStore"/>
+		</Unit>
+		<Unit filename="C:/Users/Domenico/Documents/GitHub/TheGroceryStore/src/utils.c">
+			<Option target="TheGroceryStore"/>
+		</Unit>
+		<Unit filename="C:/Users/Domenico/Documents/GitHub/TheGroceryStore/src/utils.h">
 			<Option target="TheGroceryStore"/>
 		</Unit>
 		<Unit filename="C:/Users/Domenico/Documents/GitHub/TheGroceryStore/CMakeLists.txt">

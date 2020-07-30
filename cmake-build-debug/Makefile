@@ -122,6 +122,33 @@ TheGroceryStore/fast:
 	$(MAKE) -f CMakeFiles\TheGroceryStore.dir\build.make CMakeFiles/TheGroceryStore.dir/build
 .PHONY : TheGroceryStore/fast
 
+src/config.obj: src/config.c.obj
+
+.PHONY : src/config.obj
+
+# target to build an object file
+src/config.c.obj:
+	$(MAKE) -f CMakeFiles\TheGroceryStore.dir\build.make CMakeFiles/TheGroceryStore.dir/src/config.c.obj
+.PHONY : src/config.c.obj
+
+src/config.i: src/config.c.i
+
+.PHONY : src/config.i
+
+# target to preprocess a source file
+src/config.c.i:
+	$(MAKE) -f CMakeFiles\TheGroceryStore.dir\build.make CMakeFiles/TheGroceryStore.dir/src/config.c.i
+.PHONY : src/config.c.i
+
+src/config.s: src/config.c.s
+
+.PHONY : src/config.s
+
+# target to generate assembly for a file
+src/config.c.s:
+	$(MAKE) -f CMakeFiles\TheGroceryStore.dir\build.make CMakeFiles/TheGroceryStore.dir/src/config.c.s
+.PHONY : src/config.c.s
+
 src/main.obj: src/main.c.obj
 
 .PHONY : src/main.obj
@@ -149,6 +176,33 @@ src/main.c.s:
 	$(MAKE) -f CMakeFiles\TheGroceryStore.dir\build.make CMakeFiles/TheGroceryStore.dir/src/main.c.s
 .PHONY : src/main.c.s
 
+src/utils.obj: src/utils.c.obj
+
+.PHONY : src/utils.obj
+
+# target to build an object file
+src/utils.c.obj:
+	$(MAKE) -f CMakeFiles\TheGroceryStore.dir\build.make CMakeFiles/TheGroceryStore.dir/src/utils.c.obj
+.PHONY : src/utils.c.obj
+
+src/utils.i: src/utils.c.i
+
+.PHONY : src/utils.i
+
+# target to preprocess a source file
+src/utils.c.i:
+	$(MAKE) -f CMakeFiles\TheGroceryStore.dir\build.make CMakeFiles/TheGroceryStore.dir/src/utils.c.i
+.PHONY : src/utils.c.i
+
+src/utils.s: src/utils.c.s
+
+.PHONY : src/utils.s
+
+# target to generate assembly for a file
+src/utils.c.s:
+	$(MAKE) -f CMakeFiles\TheGroceryStore.dir\build.make CMakeFiles/TheGroceryStore.dir/src/utils.c.s
+.PHONY : src/utils.c.s
+
 # Help Target
 help:
 	@echo The following are some of the valid targets for this Makefile:
@@ -158,9 +212,15 @@ help:
 	@echo ... TheGroceryStore
 	@echo ... edit_cache
 	@echo ... rebuild_cache
+	@echo ... src/config.obj
+	@echo ... src/config.i
+	@echo ... src/config.s
 	@echo ... src/main.obj
 	@echo ... src/main.i
 	@echo ... src/main.s
+	@echo ... src/utils.obj
+	@echo ... src/utils.i
+	@echo ... src/utils.s
 .PHONY : help
 
 

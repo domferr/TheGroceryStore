@@ -12,9 +12,12 @@ LIBS    	= -lpthread
 SRCDIR  	= src
 OBJDIR   	= obj
 BINDIR   	= bin
-OBJS		= $(OBJDIR)/main.o			\
+OBJS		= 	$(OBJDIR)/main.o			\
+				$(OBJDIR)/utils.o			\
+				$(OBJDIR)/config.o
 
-TARGETS		= 	$(BINDIR)/grocerystore
+TARGETS		= 	$(BINDIR)/supermercato \
+				$(BINDIR)/direttore
 
 TEST2CONFIGFILE = configtest2.txt
 
@@ -28,8 +31,10 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.c $(SRCDIR)/%.h
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-$(BINDIR)/grocerystore: $(OBJS)
+$(BINDIR)/supermercato: $(OBJS)
 	$(CC) $(CFLAGS) $(INCLUDES) $(LDFLAGS) -o $@ $^ $(LIBS)
+
+$(BINDIR)/direttore:
 
 clean:
 	rm -f $(TARGETS)

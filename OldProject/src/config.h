@@ -11,7 +11,7 @@
 /**
  * Struttura dati che contiene tutti i parametri di configurazione
  */
-struct config {
+typedef struct {
     int k;  //numero di thread attivi come cassieri
     int kt; //tempo di gestione di un singolo prodotto da parte di un cassiere. Espresso in millisecondi
     int ka; //numero di casse aperte quando il supermercato viene inizialmente aperto
@@ -24,7 +24,7 @@ struct config {
     int s2; //valore soglia per apertura di una cassa
     int d;  //ogni quanto tempo una cassa comunica con il direttore
     char *logfilename;  //nome del file di log generato dal programma prima della sua chiusura
-};
+} config_t;
 
 typedef struct config Config;
 
