@@ -31,6 +31,8 @@ int main(int argc, char **args) {
     }
 
     free_config(config);
+    msleep(10000);
+    printf("ciao\n");
     return 0;
 }
 

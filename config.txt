@@ -9,4 +9,4 @@ S	= 20 			#ogni quanti millisecondi il cliente decide se spostarsi o meno
 S1	= 5 			#valore soglia per chiusura di una cassa
 S2	= 15 			#valore soglia per apertura di una cassa
 D	= 1000			#ogni quanto tempo una cassa comunica con il direttore. Espresso in millisecondi
-L	= logfile.txt 	#nome del file di log generato dal programma
+L	= logfile.csv 	#nome del file di log generato dal programma

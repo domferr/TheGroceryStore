@@ -82,7 +82,7 @@ config_t *load_config(char *path) {
                     set_int_value(&(config->s), value_ptr);
                 break;
             case 'L':
-                len = strcspn(value_ptr, " #");
+                len = strcspn(value_ptr, " #\n");
                 config->logfilename = (char *) malloc(sizeof(char)*(len+1));
                 EQNULL(config->logfilename, return NULL)
                 config->logfilename = strncpy(config->logfilename, value_ptr, len);
