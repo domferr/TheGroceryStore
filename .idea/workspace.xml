@@ -78,6 +78,9 @@
       </map>
     </option>
   </component>
+  <component name="OCResolveContextSettings">
+    <option name="configuration" value="0-Debug-TheGroceryStore" />
+  </component>
   <component name="ProjectId" id="1f2XU9yi7LtpT6DsZ1fXNQLcxbc" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -140,7 +143,7 @@
       <workItem from="1596190607541" duration="2000" />
       <workItem from="1596190684484" duration="452000" />
       <workItem from="1596191164597" duration="64000" />
-      <workItem from="1596191293917" duration="5870000" />
+      <workItem from="1596191293917" duration="11465000" />
     </task>
     <servers />
   </component>
@@ -174,6 +177,10 @@
       <screen x="0" y="0" width="1536" height="864" />
     </state>
     <state x="225" y="88" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1536.864@0.0.1536.864" timestamp="1596204572810" />
+    <state x="500" y="180" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1596210478376">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state x="500" y="180" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1536.864@0.0.1536.864" timestamp="1596210478376" />
     <state x="550" y="188" key="FileChooserDialogImpl" timestamp="1596204546296">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
@@ -206,9 +213,13 @@
       <screen x="0" y="0" width="1536" height="864" />
     </state>
     <state x="454" y="337" width="628" height="206" key="makefile.clean.confirm.dialog/0.0.1536.864@0.0.1536.864" timestamp="1596203990022" />
-    <state x="426" y="197" key="run.anything.popup" timestamp="1596122521251">
+    <state x="495" y="218" key="refactoring.ChangeSignatureDialog" timestamp="1596209277992">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state x="426" y="197" key="run.anything.popup/0.0.1536.864@0.0.1536.864" timestamp="1596122521251" />
+    <state x="495" y="218" key="refactoring.ChangeSignatureDialog/0.0.1536.864@0.0.1536.864" timestamp="1596209277992" />
+    <state x="426" y="197" key="run.anything.popup" timestamp="1596209389819">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state x="426" y="197" key="run.anything.popup/0.0.1536.864@0.0.1536.864" timestamp="1596209389819" />
   </component>
 </project>

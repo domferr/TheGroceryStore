@@ -1,1 +1,1 @@
-/usr/bin/cc -g   CMakeFiles/TheGroceryStore.dir/src/direttore.c.o CMakeFiles/TheGroceryStore.dir/src/config.c.o CMakeFiles/TheGroceryStore.dir/src/utils.c.o CMakeFiles/TheGroceryStore.dir/src/supermercato.c.o  -o TheGroceryStore 
+/usr/bin/cc -g   CMakeFiles/TheGroceryStore.dir/src/direttore.c.o CMakeFiles/TheGroceryStore.dir/src/config.c.o CMakeFiles/TheGroceryStore.dir/src/utils.c.o CMakeFiles/TheGroceryStore.dir/src/supermercato.c.o CMakeFiles/TheGroceryStore.dir/src/sig_handling.c.o  -o TheGroceryStore 

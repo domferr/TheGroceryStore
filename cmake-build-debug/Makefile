@@ -177,6 +177,33 @@ src/direttore.c.s:
 	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/direttore.c.s
 .PHONY : src/direttore.c.s
 
+src/sig_handling.o: src/sig_handling.c.o
+
+.PHONY : src/sig_handling.o
+
+# target to build an object file
+src/sig_handling.c.o:
+	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/sig_handling.c.o
+.PHONY : src/sig_handling.c.o
+
+src/sig_handling.i: src/sig_handling.c.i
+
+.PHONY : src/sig_handling.i
+
+# target to preprocess a source file
+src/sig_handling.c.i:
+	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/sig_handling.c.i
+.PHONY : src/sig_handling.c.i
+
+src/sig_handling.s: src/sig_handling.c.s
+
+.PHONY : src/sig_handling.s
+
+# target to generate assembly for a file
+src/sig_handling.c.s:
+	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/sig_handling.c.s
+.PHONY : src/sig_handling.c.s
+
 src/supermercato.o: src/supermercato.c.o
 
 .PHONY : src/supermercato.o
@@ -246,6 +273,9 @@ help:
 	@echo "... src/direttore.o"
 	@echo "... src/direttore.i"
 	@echo "... src/direttore.s"
+	@echo "... src/sig_handling.o"
+	@echo "... src/sig_handling.i"
+	@echo "... src/sig_handling.s"
 	@echo "... src/supermercato.o"
 	@echo "... src/supermercato.i"
 	@echo "... src/supermercato.s"

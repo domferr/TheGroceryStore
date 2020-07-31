@@ -1,7 +1,7 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#define MIN_T 10            //Minimo valore per il parametro T
+#define MIN_T 10 //Minimo valore per il parametro T
 
 /**
  * Struttura dati che contiene tutti i parametri di configurazione

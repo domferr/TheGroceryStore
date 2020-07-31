@@ -6,22 +6,22 @@
 #include <errno.h>
 
 #define EQNULL(w, then)     \
-        if ((w) == NULL) {    \
+        if ((w) == NULL) {  \
             then;           \
         }
 
-#define MINUS1(w, then) \
-        if ((w) == -1) {  \
-            then;       \
+#define MINUS1(w, then)     \
+        if ((w) == -1) {    \
+            then;           \
         }
 
 #define NOTZERO(w, then)    \
-        if ((w) != 0) {       \
+        if ((w) != 0) {     \
             then;           \
         }
 
 #define PTH(e, pcall, then)         \
-        if ((e = pcall) != 0) {     \
+        if (((e) = (pcall)) != 0) { \
             errno = e;              \
             then;                   \
         }
@@ -29,12 +29,12 @@
 /**
  * Conversione da millisecondi a secondi
  */
-#define MS_TO_SEC(ms) ms/1000
+#define MS_TO_SEC(ms) ((ms)/1000)
 
 /**
  * Quanti nanosecondi ci sono nei millisecondi specificati
  */
-#define MS_TO_NANOSEC(ms) (milliseconds%1000)*1000000
+#define MS_TO_NANOSEC(ms) (((milliseconds)%1000)*1000000)
 
 /**
  * Genera numero random tra min (incluso) e max (non incluso)

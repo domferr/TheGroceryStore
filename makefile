@@ -13,13 +13,18 @@ INCLUDES 	= -I $(INCDIR)
 LDFLAGS 	= -L.
 LIBS    	= -lpthread
 
-OBJS_SUPERM	=
-
+#dipendenze per l'eseguibile del supermercato
+OBJS_SUPERM	= 	$(OBJDIR)/supermercato.o	\
+				$(OBJDIR)/utils.o			\
+				$(OBJDIR)/config.o			\
+				$(OBJDIR)/sig_handling.o
+# dipendenze per l'eseguibile del direttore
 OBJS_DIRETT	=	$(OBJDIR)/direttore.o		\
              	$(OBJDIR)/utils.o			\
-				$(OBJDIR)/config.o
+				$(OBJDIR)/config.o			\
+				$(OBJDIR)/sig_handling.o
 
-TARGETS	= $(BINDIR)/direttore
+TARGETS	= $(BINDIR)/direttore $(BINDIR)/supermercato
 
 CONFIGFILE = configtest.txt
 LOGFILE = testlog.csv
@@ -28,11 +33,11 @@ LOGFILE = testlog.csv
 
 all: $(TARGETS)
 
-# generazione di un .o da un .c nella directory SRCDIR con il relativo .h come dipendenza
+# generazione di un .o da un .c con il relativo .h come dipendenza
 $(OBJDIR)/%.o: $(SRCDIR)/%.c $(INCDIR)/%.h
 	$(CC) $(CFLAGS) $(INCLUDES) -c -o $@ $<
 
-# generazione di un .o da un .c nella directory SRCDIR
+# generazione di un .o da un .c senza relativo .h
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	$(CC) $(CFLAGS) $(INCLUDES) -c -o $@ $<
 
