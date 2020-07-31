@@ -5,6 +5,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/TheGroceryStore.dir/src/supermercato.c.o"
   "CMakeFiles/TheGroceryStore.dir/src/sig_handling.c.o"
   "CMakeFiles/TheGroceryStore.dir/src/af_unix_conn.c.o"
+  "CMakeFiles/TheGroceryStore.dir/src/scfiles.c.o"
   "TheGroceryStore.pdb"
   "TheGroceryStore"
 )

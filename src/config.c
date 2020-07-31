@@ -43,9 +43,9 @@ static int parse_row(char *row, off_t *id_off, off_t *val_off);
  * valore intero, dest non viene impostato.
  *
  * @param dest puntatore ad una variabile intera
- * @param value_ptr puntatore ad una stringa
+ * @param str puntatore ad una stringa
  */
-static void string_to_int(int *dest, char *value_ptr);
+static void string_to_int(int *dest, char *str);
 
 config_t *load_config(char *path) {
     size_t len;
@@ -156,10 +156,10 @@ static config_t* alloc_config(void) {
     return config;
 }
 
-static void string_to_int(int *dest, char *value_ptr) {
+static void string_to_int(int *dest, char *str) {
     char *endPtr;
-    int value = strtol(value_ptr, &endPtr, 10);
-    if (endPtr != value_ptr)
+    int value = strtol(str, &endPtr, 10);
+    if (endPtr != str)
         *dest = value;
 }
 

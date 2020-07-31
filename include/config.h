@@ -1,19 +1,32 @@
+/**
+ * I parametri di configurazione sono scritti in un file di testo nella forma parametro = valore. E' possibile aggiungere
+ * commenti scrivendo il carattere "#" prima di ogni commento. Tuttavia, i caratteri speciali '=' e '#' possono essere
+ * cambiati modificando le relative macro presenti nel file config.c.
+ * Il parsing del file di configurazione viene svolto riga per riga e produce una struttura dati apposita (config_t)
+ * la quale contiene tutti i parametri. Un file di configurazione è definito valido se:
+ * - nessun parametro è mancante
+ * - tutti i parametri non sono negativi o pari a zero
+ * - T > MIN_T
+ * - 0 < E < C
+ * - 0 < KA <= K
+ */
+
 #ifndef CONFIG_H
 #define CONFIG_H
 
 #define MIN_T 10 //Minimo valore per il parametro T
 
 /**
- * Struttura dati che contiene tutti i parametri di configurazione
+ * Struttura che contiene tutti i parametri di configurazione
  */
 typedef struct {
     int k;  //numero di thread attivi come cassieri
     int kt; //tempo di gestione di un singolo prodotto da parte di un cassiere. Espresso in millisecondi
     int ka; //numero di casse aperte quando il supermercato viene inizialmente aperto
     int c;  //numero di thread attivi come clienti all'interno del supermercato
-    int e;  //quanto è grande il gruppo di clienti che entra nel supermercato.
+    int e;  //quanto è grande il gruppo di clienti che entra nel supermercato
     int t;  //massimo tempo per gli acquisti per un cliente. Deve essere > 10
-    int p;  //massimo numero di prodotti che acquisterà un cliente. Deve essere > 0
+    int p;  //massimo numero di prodotti che acquisterà un cliente
     int s;  //ogni quanti millisecondi il cliente decide se spostarsi o meno
     int s1; //valore soglia per chiusura di una cassa
     int s2; //valore soglia per apertura di una cassa
@@ -39,6 +52,7 @@ config_t *load_config(char *path);
  * - tutti i parametri non sono negativi o pari a zero
  * - t > MIN_T
  * - 0 < E < C
+ * - 0 < KA <= K
  *
  * @param config Struttura di configurazione da validare
  * @return 1 se la struttura è valida, 0 alrimenti e stampa sullo stderr il parametro non valido.

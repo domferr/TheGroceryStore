@@ -1,3 +1,7 @@
+/**
+ * Contiene macro utili per il controllo degli errori e funzioni utili per l'intero programma
+ */
+
 #ifndef UTILS_H
 #define UTILS_H
 
@@ -38,7 +42,7 @@
 /**
  * Genera numero random tra min (incluso) e max (non incluso)
  */
-#define RANDOM(seed, min, max) (rand_r(&seed)%(max-min)) + min
+#define RANDOM(seed, min, max) ((rand_r(&(seed))%((max)-(min))) + (min))
 
 /**
  * Mette il thread in attesa per un tempo pari ai millisecondi specificati.
@@ -49,7 +53,7 @@
 int msleep(int milliseconds);
 
 /**
- * Ritorna il tempo passato in millisecondi dai due istanti definiti da start ed end
+ * Ritorna il tempo passato in millisecondi tra i due istanti definiti da start ed end
  *
  * @param start istante di inizio
  * @param end istante di fine
