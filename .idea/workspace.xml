@@ -102,6 +102,7 @@
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\Domenico\Documents\GitHub\TheGroceryStore\include" />
+      <recent name="C:\Users\Domenico\Documents\GitHub\TheGroceryStore\bin" />
       <recent name="C:\Users\Domenico\CLionProjects\TheGroceryStore\src" />
     </key>
   </component>
@@ -143,7 +144,7 @@
       <workItem from="1596190607541" duration="2000" />
       <workItem from="1596190684484" duration="452000" />
       <workItem from="1596191164597" duration="64000" />
-      <workItem from="1596191293917" duration="11465000" />
+      <workItem from="1596191293917" duration="18574000" />
     </task>
     <servers />
   </component>
@@ -177,6 +178,10 @@
       <screen x="0" y="0" width="1536" height="864" />
     </state>
     <state x="225" y="88" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1536.864@0.0.1536.864" timestamp="1596204572810" />
+    <state x="534" y="235" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1596231949906">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state x="534" y="235" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1536.864@0.0.1536.864" timestamp="1596231949906" />
     <state x="500" y="180" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1596210478376">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
@@ -217,9 +222,9 @@
       <screen x="0" y="0" width="1536" height="864" />
     </state>
     <state x="495" y="218" key="refactoring.ChangeSignatureDialog/0.0.1536.864@0.0.1536.864" timestamp="1596209277992" />
-    <state x="426" y="197" key="run.anything.popup" timestamp="1596209389819">
+    <state x="426" y="197" key="run.anything.popup" timestamp="1596235297931">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state x="426" y="197" key="run.anything.popup/0.0.1536.864@0.0.1536.864" timestamp="1596209389819" />
+    <state x="426" y="197" key="run.anything.popup/0.0.1536.864@0.0.1536.864" timestamp="1596235297931" />
   </component>
 </project>

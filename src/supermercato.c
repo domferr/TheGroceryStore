@@ -1,14 +1,16 @@
 #include "../include/sig_handling.h"
+#include "../include/config.h"
+#include "../include/utils.h"
+#include "../include/af_unix_conn.h"
+#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
-#include "../include/config.h"
-#include "../include/utils.h"
 
 static void *thread_handler_fun(void *args);
 
 int main(int argc, char **args) {
-    int err;
+    int err, fd_skt;
     pthread_t handler_thread;
     if (argc != 2) {
         printf("Usage: Il processo supermercato deve essere eseguito dal direttore\n");
@@ -16,6 +18,8 @@ int main(int argc, char **args) {
     }
     //Gestione dei segnali mediante thread apposito
     MINUS1(handle_signals(&handler_thread, &thread_handler_fun, NULL), perror("handle_signals"); exit(EXIT_FAILURE))
+
+    MINUS1(fd_skt = connect_via_socket(), perror("connect_via_socket"); exit(EXIT_FAILURE))
     //Leggo file di configurazione
     config_t *config = load_config(args[1]);
     EQNULL(config, exit(EXIT_FAILURE))

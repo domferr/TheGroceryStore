@@ -17,11 +17,13 @@ LIBS    	= -lpthread
 OBJS_SUPERM	= 	$(OBJDIR)/supermercato.o	\
 				$(OBJDIR)/utils.o			\
 				$(OBJDIR)/config.o			\
+				$(OBJDIR)/af_unix_conn.o	\
 				$(OBJDIR)/sig_handling.o
 # dipendenze per l'eseguibile del direttore
 OBJS_DIRETT	=	$(OBJDIR)/direttore.o		\
              	$(OBJDIR)/utils.o			\
 				$(OBJDIR)/config.o			\
+				$(OBJDIR)/af_unix_conn.o	\
 				$(OBJDIR)/sig_handling.o
 
 TARGETS	= $(BINDIR)/direttore $(BINDIR)/supermercato

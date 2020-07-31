@@ -1,7 +1,6 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#define _POSIX_C_SOURCE 200809L
 #include <time.h>
 #include <errno.h>
 

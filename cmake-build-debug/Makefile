@@ -123,6 +123,33 @@ TheGroceryStore/fast:
 	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/build
 .PHONY : TheGroceryStore/fast
 
+src/af_unix_conn.o: src/af_unix_conn.c.o
+
+.PHONY : src/af_unix_conn.o
+
+# target to build an object file
+src/af_unix_conn.c.o:
+	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/af_unix_conn.c.o
+.PHONY : src/af_unix_conn.c.o
+
+src/af_unix_conn.i: src/af_unix_conn.c.i
+
+.PHONY : src/af_unix_conn.i
+
+# target to preprocess a source file
+src/af_unix_conn.c.i:
+	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/af_unix_conn.c.i
+.PHONY : src/af_unix_conn.c.i
+
+src/af_unix_conn.s: src/af_unix_conn.c.s
+
+.PHONY : src/af_unix_conn.s
+
+# target to generate assembly for a file
+src/af_unix_conn.c.s:
+	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/af_unix_conn.c.s
+.PHONY : src/af_unix_conn.c.s
+
 src/config.o: src/config.c.o
 
 .PHONY : src/config.o
@@ -267,6 +294,9 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... TheGroceryStore"
 	@echo "... edit_cache"
+	@echo "... src/af_unix_conn.o"
+	@echo "... src/af_unix_conn.i"
+	@echo "... src/af_unix_conn.s"
 	@echo "... src/config.o"
 	@echo "... src/config.i"
 	@echo "... src/config.s"

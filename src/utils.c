@@ -1,3 +1,4 @@
+#define _POSIX_C_SOURCE 200809L
 #include "../include/utils.h"
 
 #define LONG1E9 1000000000L //1e9
@@ -22,6 +23,6 @@ long get_elapsed_milliseconds(struct timespec *start, struct timespec *end) {
         diff.tv_nsec += LONG1E9;
     }
 
-    return (diff.tv_sec * 1000.0) + (diff.tv_nsec/1000000.0);
+    return diff.tv_sec * 1000L + diff.tv_nsec / 1000000L;
 }
 

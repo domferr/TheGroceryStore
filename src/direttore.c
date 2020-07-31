@@ -1,12 +1,12 @@
 #include "../include/sig_handling.h"
+#include "../include/utils.h"
+#include "../include/config.h"
+#include "../include/af_unix_conn.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <signal.h>
-#include <pthread.h>
 #include <unistd.h>
-#include "../include/config.h"
-#include "../include/utils.h"
 
 #define STORE_EXECUTABLE_PATH "./bin/supermercato"
 #define STORE_EXECUTABLE_NAME "supermercato"
@@ -25,30 +25,49 @@
  * specificato
  */
 char *parse_args(int argc, char **args);
+
+/**
+ * Funzione svolta dal thread gestore dei segnali
+ * @param args argomenti passati alla funzione
+ * @return 0 in caso di terminazione con successo
+ */
 static void *thread_handler_fun(void *args);
+
+/**
+ * Lancia il processo supermercato passando anche il nome del file di configurazione come parametro
+ *
+ * @param config_file path del file di configurazione
+ * @param pid viene impostato con il process id del processo supermercato.
+ * @return 0 in caso di successo, -1 in caso di errore e imposta errno
+ */
 static int fork_store(char *config_file, pid_t *pid);
 
 int main(int argc, char **args) {
-    int err;
-    pid_t pid_store;
+    int err, fd_store;
+    pid_t pid_store;    //pid del processo supermercato
     pthread_t handler_thread;   //thread che si occupa di gestire i segnali
 
     //Eseguo il parsing del nome del file di configurazione
     char *config_file_path = parse_args(argc, args);
     //Lancio il processo supermercato
-    MINUS1(fork_store(argc, config_file_path, &pid_store), perror("fork_store"); exit(EXIT_FAILURE))
+    MINUS1(fork_store(config_file_path, &pid_store), perror("fork_store"); exit(EXIT_FAILURE))
+    //Creo una connessione con il supermercato via socket AF_UNIX
+    MINUS1(fd_store = accept_socket_conn(), perror("create_socket_conn"); exit(EXIT_FAILURE))
     //Gestione dei segnali mediante thread apposito
     MINUS1(handle_signals(&handler_thread, &thread_handler_fun, (void*)&pid_store), perror("handle_signals"); exit(EXIT_FAILURE))
     //Leggo il file di configurazione
     config_t *config = load_config(config_file_path);
     EQNULL(config, perror(ERROR_READ_CONFIG_FILE); exit(EXIT_FAILURE))
-    if (!validate(config))
+    if (!validate(config)) {
+        close(fd_store);
         exit(EXIT_FAILURE);
+    }
     printf(MESSAGE_VALID_CONFIG_FILE);
     print_config(config);
 
     //join sul thread signal handler
     PTH(err, pthread_join(handler_thread, NULL), perror("join thread handler"); exit(EXIT_FAILURE))
+    close(fd_store);
     //cleanup
     free_config(config);
     printf("\rDIRETTORE: Goodbye!\n");
