@@ -1,17 +1,17 @@
-CC			= gcc -std=c99
-# flags passati al compilatore per debugging e warning e altro
-CFLAGS		= 	-g -Wall -pedantic -Wextra \
-				-Wwrite-strings -Wstrict-prototypes -Wold-style-definition \
-				-Wformat=2 -Wno-unused-parameter -Wshadow \
-				-Wredundant-decls -Wnested-externs -Wmissing-include-dirs
-INCLUDES 	= -I.
-LDFLAGS 	= -L.
-# librerie da linkare
-LIBS    	= -lpthread
+CC		= gcc -std=c99
+CFLAGS	= -g -Wall -pedantic -Wextra \
+			-Wwrite-strings -Wstrict-prototypes -Wold-style-definition \
+			-Wformat=2 -Wno-unused-parameter -Wshadow \
+			-Wredundant-decls -Wnested-externs -Wmissing-include-dirs
 
-SRCDIR  	= src
-OBJDIR   	= obj
-BINDIR   	= bin
+SRCDIR  	= ./src
+INCDIR		= ./include
+OBJDIR   	= ./obj
+BINDIR   	= ./bin
+
+INCLUDES 	= -I $(INCDIR)
+LDFLAGS 	= -L.
+LIBS    	= -lpthread
 
 OBJS_SUPERM	=
 
@@ -21,7 +21,6 @@ OBJS_DIRETT	=	$(OBJDIR)/direttore.o		\
 
 TARGETS	= $(BINDIR)/direttore
 
-
 CONFIGFILE = configtest.txt
 LOGFILE = testlog.csv
 
@@ -29,19 +28,24 @@ LOGFILE = testlog.csv
 
 all: $(TARGETS)
 
-$(OBJDIR)/%.o: $(SRCDIR)/%.c $(SRCDIR)/%.h
-	$(CC) $(CFLAGS) -c -o $@ $<
+# generazione di un .o da un .c nella directory SRCDIR con il relativo .h come dipendenza
+$(OBJDIR)/%.o: $(SRCDIR)/%.c $(INCDIR)/%.h
+	$(CC) $(CFLAGS) $(INCLUDES) -c -o $@ $<
 
+# generazione di un .o da un .c nella directory SRCDIR
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
-	$(CC) $(CFLAGS) -c -o $@ $<
+	$(CC) $(CFLAGS) $(INCLUDES) -c -o $@ $<
 
-#$(BINDIR)/supermercato: $(OBJS_SUPERM)
-	#$(CC) $(CFLAGS) $(INCLUDES) $(LDFLAGS) -o $@ $^ $(LIBS)
+# da .c ad eseguibile del supermercato
+$(BINDIR)/supermercato: $(OBJS_SUPERM)
+	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $^ $(LDFLAGS) $(LIBS)
 
+# da .c ad eseguibile del direttore
 $(BINDIR)/direttore: $(OBJS_DIRETT)
 	$(CC) $(CFLAGS) $(INCLUDES) $(LDFLAGS) -o $@ $^ $(LIBS)
 
-test1:
+test1: all
+	@echo "Running test1"
 	@echo "K = 2"  		>$(CONFIGFILE)
 	@echo "KT = 35"  	>>$(CONFIGFILE)
 	@echo "KA = 1"  	>>$(CONFIGFILE)
@@ -54,12 +58,12 @@ test1:
 	@echo "S1 = 2"  	>>$(CONFIGFILE)
 	@echo "S2 = 6"  	>>$(CONFIGFILE)
 	@echo "L = $(LOGFILE)" >>$(CONFIGFILE)
-	valgrind --leak-check=full --trace-children=yes ./$(BINDIR)/direttore -c $(CONFIGFILE) & sleep 15; \
-	kill -s 3 $$!;
+	valgrind --leak-check=full --trace-children=yes $(BINDIR)/direttore -c $(CONFIGFILE) & sleep 15; \
+	kill -s 3 $$!; \
+	wait $$!
 
-#wait $$!
-
-test2:
+test2: all
+	@echo "Running test2"
 	@echo "K = 6"  		>$(CONFIGFILE)
 	@echo "KT = 35"  	>>$(CONFIGFILE)
 	@echo "KA = 5"  	>>$(CONFIGFILE)
@@ -80,4 +84,4 @@ clean:
 	rm -f $(TARGETS)
 
 cleanall: clean
-	\rm -f $(OBJDIR)/*.o *~ *.a
+	\rm -f $(OBJDIR)/*.o *~ *.a $(CONFIGFILE)

@@ -2,15 +2,15 @@
 #include <stdlib.h>
 #include <string.h>
 #include <fcntl.h>
-#include "config.h"
-#include "utils.h"
+#include "../include/config.h"
+#include "../include/utils.h"
 
 #define COMMENT_CHAR '#'    //Carattere utilizzato per iniziare un commento
 #define ASSIGNMENT_CHAR '='    //Carattere utilizzato per indicare il valore da assegnare ad un parametro
 #define MAX_ROW_LENGTH 128  //Massima dimensione del buffer per leggere una riga del file
 #define MISSING -1
 #define LESS_OR_EQUAL(value, upper_limit, val_id)                               \
-    if (value <= upper_limit) {                                                 \
+    if ((value) <= (upper_limit)) {                                                 \
         fprintf(stderr, "File di configurazione non valido: "val_id" mancante oppure minore o uguale a %d\n", upper_limit); \
         return 0;                                                               \
     }                                                                           \
@@ -38,7 +38,14 @@ static config_t* alloc_config(void);
  */
 static int parse_row(char *row, off_t *id_off, off_t *val_off);
 
-static void set_int_value(int *dest, char *value_ptr);
+/**
+ * Imposta dest con il valore intero equivalente alla stringa passata per argomento. Se la stringa non presenta alcun
+ * valore intero, dest non viene impostato.
+ *
+ * @param dest puntatore ad una variabile intera
+ * @param value_ptr puntatore ad una stringa
+ */
+static void string_to_int(int *dest, char *value_ptr);
 
 config_t *load_config(char *path) {
     size_t len;
@@ -55,31 +62,31 @@ config_t *load_config(char *path) {
         switch(row[id_off]) {
             case 'K':
                 if (row[id_off+1] == 'T')
-                    set_int_value(&(config->kt), value_ptr);
+                    string_to_int(&(config->kt), value_ptr);
                 else if (row[id_off+1] == 'A')
-                    set_int_value(&(config->ka), value_ptr);
+                    string_to_int(&(config->ka), value_ptr);
                 else
-                    set_int_value(&(config->k), value_ptr);
+                    string_to_int(&(config->k), value_ptr);
                 break;
             case 'C':
-                set_int_value(&(config->c), value_ptr);
+                string_to_int(&(config->c), value_ptr);
                 break;
             case 'E':
-                set_int_value(&(config->e), value_ptr);
+                string_to_int(&(config->e), value_ptr);
                 break;
             case 'T':
-                set_int_value(&(config->t), value_ptr);
+                string_to_int(&(config->t), value_ptr);
                 break;
             case 'P':
-                set_int_value(&(config->p), value_ptr);
+                string_to_int(&(config->p), value_ptr);
                 break;
             case 'S':
                 if (row[id_off+1] == '1')
-                    set_int_value(&(config->s1), value_ptr);
+                    string_to_int(&(config->s1), value_ptr);
                 else if (row[id_off+1] == '2')
-                    set_int_value(&(config->s2), value_ptr);
+                    string_to_int(&(config->s2), value_ptr);
                 else
-                    set_int_value(&(config->s), value_ptr);
+                    string_to_int(&(config->s), value_ptr);
                 break;
             case 'L':
                 len = strcspn(value_ptr, " #\n");
@@ -89,7 +96,7 @@ config_t *load_config(char *path) {
                 (config->logfilename)[len] = '\0';
                 break;
             case 'D':
-                set_int_value(&(config->d), value_ptr);
+                string_to_int(&(config->d), value_ptr);
                 break;
 
         }
@@ -149,14 +156,7 @@ static config_t* alloc_config(void) {
     return config;
 }
 
-/**
- * Imposta dest con il valore intero equivalente alla stringa passata per argomento. Se la stringa non presenta alcun
- * valore intero, dest non viene impostato.
- *
- * @param dest puntatore ad una variabile intera
- * @param value_ptr puntatore ad una stringa
- */
-static void set_int_value(int *dest, char *value_ptr) {
+static void string_to_int(int *dest, char *value_ptr) {
     char *endPtr;
     int value = strtol(value_ptr, &endPtr, 10);
     if (endPtr != value_ptr)

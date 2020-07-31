@@ -1,12 +1,10 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/TheGroceryStore.dir/src/config.c.obj"
-  "CMakeFiles/TheGroceryStore.dir/src/direttore.c.obj"
-  "CMakeFiles/TheGroceryStore.dir/src/supermercato.c.obj"
-  "CMakeFiles/TheGroceryStore.dir/src/utils.c.obj"
-  "TheGroceryStore.exe"
-  "TheGroceryStore.exe.manifest"
+  "CMakeFiles/TheGroceryStore.dir/src/direttore.c.o"
+  "CMakeFiles/TheGroceryStore.dir/src/config.c.o"
+  "CMakeFiles/TheGroceryStore.dir/src/utils.c.o"
+  "CMakeFiles/TheGroceryStore.dir/src/supermercato.c.o"
   "TheGroceryStore.pdb"
-  "libTheGroceryStore.dll.a"
+  "TheGroceryStore"
 )
 
 # Per-language clean rules from dependency scanning.

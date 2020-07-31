@@ -1,3 +1,1 @@
-"C:\Program Files\JetBrains\CLion 2020.1.2\bin\cmake\win\bin\cmake.exe" -E rm -f CMakeFiles\TheGroceryStore.dir/objects.a
-C:\MinGW\bin\ar.exe cr CMakeFiles\TheGroceryStore.dir/objects.a @CMakeFiles\TheGroceryStore.dir\objects1.rsp
-C:\MinGW\bin\gcc.exe -g   -Wl,--whole-archive CMakeFiles\TheGroceryStore.dir/objects.a -Wl,--no-whole-archive  -o TheGroceryStore.exe -Wl,--out-implib,libTheGroceryStore.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\TheGroceryStore.dir\linklibs.rsp
+/usr/bin/cc -g   CMakeFiles/TheGroceryStore.dir/src/direttore.c.o CMakeFiles/TheGroceryStore.dir/src/config.c.o CMakeFiles/TheGroceryStore.dir/src/utils.c.o CMakeFiles/TheGroceryStore.dir/src/supermercato.c.o  -o TheGroceryStore 

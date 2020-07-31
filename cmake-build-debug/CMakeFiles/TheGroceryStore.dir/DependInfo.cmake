@@ -4,10 +4,10 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_C
-  "C:/Users/Domenico/Documents/GitHub/TheGroceryStore/src/config.c" "C:/Users/Domenico/Documents/GitHub/TheGroceryStore/cmake-build-debug/CMakeFiles/TheGroceryStore.dir/src/config.c.obj"
-  "C:/Users/Domenico/Documents/GitHub/TheGroceryStore/src/direttore.c" "C:/Users/Domenico/Documents/GitHub/TheGroceryStore/cmake-build-debug/CMakeFiles/TheGroceryStore.dir/src/direttore.c.obj"
-  "C:/Users/Domenico/Documents/GitHub/TheGroceryStore/src/supermercato.c" "C:/Users/Domenico/Documents/GitHub/TheGroceryStore/cmake-build-debug/CMakeFiles/TheGroceryStore.dir/src/supermercato.c.obj"
-  "C:/Users/Domenico/Documents/GitHub/TheGroceryStore/src/utils.c" "C:/Users/Domenico/Documents/GitHub/TheGroceryStore/cmake-build-debug/CMakeFiles/TheGroceryStore.dir/src/utils.c.obj"
+  "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/config.c" "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/cmake-build-debug/CMakeFiles/TheGroceryStore.dir/src/config.c.o"
+  "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/direttore.c" "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/cmake-build-debug/CMakeFiles/TheGroceryStore.dir/src/direttore.c.o"
+  "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/supermercato.c" "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/cmake-build-debug/CMakeFiles/TheGroceryStore.dir/src/supermercato.c.o"
+  "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/utils.c" "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/cmake-build-debug/CMakeFiles/TheGroceryStore.dir/src/utils.c.o"
   )
 set(CMAKE_C_COMPILER_ID "GNU")
 

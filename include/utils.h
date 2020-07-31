@@ -5,19 +5,18 @@
 #include <time.h>
 #include <errno.h>
 
-
 #define EQNULL(w, then)     \
-        if (w == NULL) {    \
+        if ((w) == NULL) {    \
             then;           \
         }
 
 #define MINUS1(w, then) \
-        if (w == -1) {  \
+        if ((w) == -1) {  \
             then;       \
         }
 
 #define NOTZERO(w, then)    \
-        if (w != 0) {       \
+        if ((w) != 0) {       \
             then;           \
         }
 
