@@ -9,6 +9,7 @@
 #define ERROR_READ_CONFIG_FILE "Impossibile leggere il file di configurazione"
 #define MESSAGE_VALID_CONFIG_FILE "File di configurazione: "
 
+
 /**
  * Esegue il parsing degli argomenti passati al programma via linea di comando. Ritorna il path del file
  * di configurazione indicato dall'utente oppure il path di default se l'utente non ha specificato nulla.
@@ -32,7 +33,7 @@ int main(int argc, char **args) {
 
     free_config(config);
     msleep(10000);
-    printf("ciao\n");
+
     return 0;
 }
 

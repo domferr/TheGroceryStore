@@ -1,5 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
   <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true">
     <generated>
       <config projectName="TheGroceryStore" targetName="TheGroceryStore" />
@@ -32,6 +50,7 @@
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="cf.first.check.clang-format" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -39,19 +58,40 @@
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="nodejs_package_manager_path" value="npm" />
+    <property name="settings.editor.selected.configurable" value="MakefileSettings" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\Domenico\CLionProjects\TheGroceryStore\src" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Makefile Application.Run">
+    <configuration name="Run" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="TheGroceryStore" TARGET_NAME="TheGroceryStore" CONFIG_NAME="Debug" version="1" RUN_PATH="$PROJECT_DIR$/bin/direttore">
+      <method v="2">
+        <option name="CLION.COMPOUND.BUILD" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="TheGroceryStore" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="TheGroceryStore" TARGET_NAME="TheGroceryStore" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="TheGroceryStore" RUN_TARGET_NAME="TheGroceryStore">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.cpp.gradle.execution.GradleNativeBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="CMake Application.TheGroceryStore" />
+      <item itemvalue="Makefile Application.Run" />
+    </list>
   </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -65,14 +105,62 @@
       <workItem from="1595417175710" duration="86000" />
       <workItem from="1595417343199" duration="87000" />
       <workItem from="1596031806041" duration="3524000" />
-      <workItem from="1596104875104" duration="12863000" />
+      <workItem from="1596104875104" duration="13895000" />
+      <workItem from="1596126721096" duration="197000" />
+      <workItem from="1596127172922" duration="3397000" />
     </task>
     <servers />
   </component>
+  <component name="TerminalProjectNonSharedOptionsProvider">
+    <option name="shellPath" value="C:\Windows\System32\bash.exe" />
+  </component>
   <component name="TypeScriptGeneratedFilesManager">
-    <option name="version" value="2" />
+    <option name="version" value="3" />
+  </component>
+  <component name="UnknownFeatures">
+    <option featureType="com.intellij.fileTypeFactory" implementationName="Makefile" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="WindowStateProjectService">
+    <state x="225" y="88" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1596129227759">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state x="225" y="88" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1536.864@0.0.1536.864" timestamp="1596129227759" />
+    <state x="550" y="188" key="FileChooserDialogImpl" timestamp="1596129462469">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state x="550" y="188" key="FileChooserDialogImpl/0.0.1536.864@0.0.1536.864" timestamp="1596129462469" />
+    <state width="1493" height="224" key="GridCell.Tab.0.bottom" timestamp="1596129397940">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state width="1493" height="224" key="GridCell.Tab.0.bottom/0.0.1536.864@0.0.1536.864" timestamp="1596129397940" />
+    <state width="1493" height="224" key="GridCell.Tab.0.center" timestamp="1596129397940">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state width="1493" height="224" key="GridCell.Tab.0.center/0.0.1536.864@0.0.1536.864" timestamp="1596129397940" />
+    <state width="1493" height="224" key="GridCell.Tab.0.left" timestamp="1596129397936">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state width="1493" height="224" key="GridCell.Tab.0.left/0.0.1536.864@0.0.1536.864" timestamp="1596129397936" />
+    <state width="1493" height="224" key="GridCell.Tab.0.right" timestamp="1596129397940">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state width="1493" height="224" key="GridCell.Tab.0.right/0.0.1536.864@0.0.1536.864" timestamp="1596129397940" />
+    <state x="278" y="78" key="SettingsEditor" timestamp="1596129485797">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state x="278" y="78" key="SettingsEditor/0.0.1536.864@0.0.1536.864" timestamp="1596129485797" />
     <state x="0" y="0" width="1169" height="583" key="dock-window-1" timestamp="1596107162491">
       <screen x="0" y="0" width="1536" height="864" />
     </state>

@@ -1,6 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/TheGroceryStore.dir/src/config.c.obj"
-  "CMakeFiles/TheGroceryStore.dir/src/main.c.obj"
+  "CMakeFiles/TheGroceryStore.dir/src/direttore.c.obj"
+  "CMakeFiles/TheGroceryStore.dir/src/supermercato.c.obj"
   "CMakeFiles/TheGroceryStore.dir/src/utils.c.obj"
   "TheGroceryStore.exe"
   "TheGroceryStore.exe.manifest"

@@ -80,7 +80,10 @@
 		<Unit filename="C:/Users/Domenico/Documents/GitHub/TheGroceryStore/src/config.h">
 			<Option target="TheGroceryStore"/>
 		</Unit>
-		<Unit filename="C:/Users/Domenico/Documents/GitHub/TheGroceryStore/src/main.c">
+		<Unit filename="C:/Users/Domenico/Documents/GitHub/TheGroceryStore/src/direttore.c">
+			<Option target="TheGroceryStore"/>
+		</Unit>
+		<Unit filename="C:/Users/Domenico/Documents/GitHub/TheGroceryStore/src/supermercato.c">
 			<Option target="TheGroceryStore"/>
 		</Unit>
 		<Unit filename="C:/Users/Domenico/Documents/GitHub/TheGroceryStore/src/utils.c">

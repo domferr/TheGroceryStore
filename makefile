@@ -1,8 +1,8 @@
 CC			= gcc -std=c99
 # flags passati al compilatore per debugging e warning e altro
 CFLAGS		= 	-g -Wall -pedantic -Wextra \
-				-Wformat=2 -Wno-unused-parameter -Wshadow \
 				-Wwrite-strings -Wstrict-prototypes -Wold-style-definition \
+				-Wformat=2 -Wno-unused-parameter -Wshadow \
 				-Wredundant-decls -Wnested-externs -Wmissing-include-dirs
 INCLUDES 	= -I.
 LDFLAGS 	= -L.
@@ -12,13 +12,14 @@ LIBS    	= -lpthread
 SRCDIR  	= src
 OBJDIR   	= obj
 BINDIR   	= bin
+
 OBJS_SUPERM	=
 
-OBJS_DIRETT	=	$(OBJDIR)/main.o			\
+OBJS_DIRETT	=	$(OBJDIR)/direttore.o		\
              	$(OBJDIR)/utils.o			\
 				$(OBJDIR)/config.o
 
-TARGETS		= 	$(BINDIR)/direttore
+TARGETS	= $(BINDIR)/direttore
 
 
 CONFIGFILE = configtest.txt
