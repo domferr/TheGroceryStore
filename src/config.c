@@ -102,7 +102,7 @@ config_t *load_config(char *path) {
         }
     }
 
-    fclose(file);
+    MINUS1(fclose(file), return NULL)
     return config;
 }
 

@@ -9,6 +9,7 @@
 #include <signal.h>
 #include <unistd.h>
 #include <sys/select.h>
+#include <wait.h>
 
 #define STORE_EXECUTABLE_PATH "./bin/supermercato"
 #define STORE_EXECUTABLE_NAME "supermercato"
@@ -38,12 +39,16 @@ static char *parse_args(int argc, char **args);
  */
 static int fork_store(char *config_file, pid_t *pid);
 
+static int handle_notification(int fd_store, config_t *config, int *casse);
+
+static int handle_ask_exit(int fd_store, int client_id);
+
 int main(int argc, char **args) {
-    int err, fd_store, sigh_pipe[2], sig_arrived, msg_param, run = 1;
-    fd_set set, rd_set;
-    pid_t pid_store;            //pid del processo supermercato
+    int err, i, fd_store, sig_arrived, sigh_pipe[2], *casse, param2;
+    pid_t pid_store;                //pid del processo supermercato
     pthread_t sig_handler_thread;   //thread che si occupa di gestire i segnali
-    config_t *config;           //Struttura con i parametri di configurazione
+    config_t *config;               //Struttura con i parametri di configurazione
+    fd_set set, rd_set;
     msg_header_t msg_hdr;
 
     //Eseguo il parsing del nome del file di configurazione
@@ -55,7 +60,13 @@ int main(int argc, char **args) {
     }
     printf(MESSAGE_VALID_CONFIG_FILE);
     print_config(config);
-
+    EQNULL(casse = malloc(sizeof(int) * config->k), perror("calloc"); exit(EXIT_FAILURE))
+    for (i = 0; i < config->k; ++i) {
+        if (i < config->ka)
+            casse[i] = 0;
+        else
+            casse[i] = -1;
+    }
     //Lancio il processo supermercato
     MINUS1(fork_store(config_file_path, &pid_store), perror("fork_store"); exit(EXIT_FAILURE))
     printf("DIRETTORE: Connesso con il supermercato via socket AF_UNIX\n");
@@ -69,46 +80,41 @@ int main(int argc, char **args) {
     FD_SET(fd_store, &set); //imposto il descrittore per comunicare con il supermercato via socket AF_UNIX
     FD_SET(sigh_pipe[0], &set); //imposto il descrittore per comunicare via pipe con il thread signal handler
 
-    while (run) {
+    //Esco solo se ricevo qualcosa dal thread sig handler via pipe oppure se il la comunicazione via socket viene meno
+    //a seguito di una terminazione imprevista del processo supermercato
+    while (1) {
         rd_set = set;
         MINUS1(select(fd_store+1, &rd_set, NULL, NULL, NULL), perror("select"); exit(EXIT_FAILURE))
         if (FD_ISSET(fd_store, &rd_set)) {
             printf("Comunicazione dal supermercato\n");
             MINUS1(err = readn(fd_store, &msg_hdr, sizeof(msg_header_t)), perror("readn"); exit(EXIT_FAILURE))
-            if (err == 0) { //EOF quindi il processo supermercato è terminato!
-                run = 0;
-                printf("IL SUPERMERCATO E' STATO TERMINATO!!!");
+            if (err == 0) { //EOF quindi il processo supermercato è terminato in maniera imprevista! Segnalo il sighandler e termino
                 PTH(err, pthread_kill(sig_handler_thread, SIGINT), perror("pthread_kill"); exit(EXIT_FAILURE))
-            }
-            switch (msg_hdr) {
-                case head_notify:   //on notification recvd
-                    MINUS1(readn(fd_store, &msg_param, sizeof(int)), perror("readn"); exit(EXIT_FAILURE))
-                    printf("Ho ricevuto che nella cassa %d ", msg_param);
-                    MINUS1(readn(fd_store, &msg_param, sizeof(int)), perror("readn"); exit(EXIT_FAILURE))
-                    printf("ci sono %d clienti in coda\n", msg_param);
-                    //Rispondo aprendo la cassa
-                    msg_hdr = head_open;
-                    MINUS1(writen(fd_store, &msg_hdr, sizeof(msg_header_t)), perror("writen"); exit(EXIT_FAILURE))
-                    msg_param = 25;
-                    MINUS1(writen(fd_store, &msg_param, sizeof(int)), perror("writen"); exit(EXIT_FAILURE))
-                    break;
-                case head_ask_exit: //on exit request recvd
-                    //leggo l'id del cliente che vuole uscire
-                    MINUS1(readn(fd_store, &msg_param, sizeof(int)), perror("readn"); exit(EXIT_FAILURE))
-                    msg_hdr = head_can_exit;
-                    MINUS1(writen(fd_store, &msg_hdr, sizeof(msg_header_t)), perror("writen"); exit(EXIT_FAILURE))
-                    //Scrivo l'id del cliente che vuole uscire
-                    MINUS1(writen(fd_store, &msg_param, sizeof(int)), perror("writen"); exit(EXIT_FAILURE))
-                    msg_param = 0;
-                    MINUS1(writen(fd_store, &msg_param, sizeof(int)), perror("writen"); exit(EXIT_FAILURE))
-                    break;
-                default:
-                    break;
+                break;
+            } else {    //altrimenti gestisco il messaggio ricevuto
+                switch (msg_hdr) {
+                    case head_notify: //Ricevuta notifica. Eseguo algoritmo di apertura/chiusura cassa ed eventualmente apro/chiudo una cassa
+                        //leggo idcassa e numero di clienti in coda
+                        MINUS1(readn(fd_store, &i, sizeof(int)), return -1)
+                        MINUS1(readn(fd_store, &param2, sizeof(int)), return -1)
+                        printf("Ho ricevuto che nella cassa %d ci sono %d clienti in coda\n", i, param2);
+                        casse[i] = param2;
+                        MINUS1(handle_notification(fd_store, config, casse), perror("handle_notification"); exit(EXIT_FAILURE))
+                        break;
+                    case head_ask_exit: //Ricevuta richiesta per uscire dal supermercato. Dò sempre il permesso
+                        //leggo l'id del cliente che vuole uscire
+                        MINUS1(readn(fd_store, &i, sizeof(int)), return -1)
+                        //rispondo facendo uscire il cliente
+                        MINUS1(handle_ask_exit(fd_store, i), perror("handle_ask_exit"); exit(EXIT_FAILURE))
+                        break;
+                    default:
+                        break;
+                }
             }
         } else {
-            run = 0;
             MINUS1(readn(sigh_pipe[0], &sig_arrived, sizeof(int)), perror("readn"); exit(EXIT_FAILURE))
             MINUS1(kill(pid_store, sig_arrived), perror("kill"); exit(EXIT_FAILURE))
+            break;
         }
     }
 
@@ -118,9 +124,53 @@ int main(int argc, char **args) {
     close(fd_store);
     close(sigh_pipe[0]);
     close(sigh_pipe[1]);
+    //attendo il processo supermercato
+    MINUS1(waitpid(pid_store, &err, 0), perror("waitpid"); exit(EXIT_FAILURE))
     //memory cleanup
     free_config(config);
+    free(casse);
     printf("\rDIRETTORE: Goodbye!\n");
+    return 0;
+}
+
+static int handle_notification(int fd_store, config_t *config, int *casse) {
+    int i, attive = 0, count_s1 = 0, count_s2 = 0, cassa_s1 = -1, cassa_s2 = -1;
+    unsigned int seed = getpid();
+    msg_header_t msg_hdr;
+    for (i = 0; i < config->k; ++i) {
+        if (casse[i] >= 0) attive++;
+        if (casse[i] == 0 || casse[i] == 1) count_s1++;
+        if (casse[i] >= config->s2) count_s2++;
+    }
+
+    while (cassa_s1 == -1 || cassa_s2 == -1) {
+        i = RANDOM(seed, 0, config->k)
+        if (casse[i] == -1 && cassa_s2 == -1)
+            cassa_s2 = i;
+        else if (casse[i] != -1 && cassa_s1 == -1)
+            cassa_s1 = i;
+    }
+    //Se è aperta più di una cassa e sono nella soglia, allora posso chiudere una cassa
+    if (attive > 1 && count_s1 >= config->s1) {
+        msg_hdr = head_close;
+        MINUS1(writen(fd_store, &msg_hdr, sizeof(msg_header_t)), return -1)
+        MINUS1(writen(fd_store, &cassa_s1, sizeof(int)), return -1)
+    }
+    //Se sono aperte meno di k casse e sono nella soglia, allora posso aprire un'altra cassa
+    if (attive < config->k && count_s2 > 0) {
+        msg_hdr = head_open;
+        MINUS1(writen(fd_store, &msg_hdr, sizeof(msg_header_t)), return -1)
+        MINUS1(writen(fd_store, &cassa_s2, sizeof(int)), return -1)
+    }
+    return 0;
+}
+
+static int handle_ask_exit(int fd_store, int client_id) {
+    int msg_param = 1;
+    msg_header_t msg_hdr = head_can_exit;
+    MINUS1(writen(fd_store, &msg_hdr, sizeof(msg_header_t)), return -1)
+    MINUS1(writen(fd_store, &client_id, sizeof(int)), return -1)
+    MINUS1(writen(fd_store, &msg_param, sizeof(int)), return -1)
     return 0;
 }
 

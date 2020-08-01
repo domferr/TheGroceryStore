@@ -67,9 +67,7 @@ test1: all
 	@echo "S1 = 2"  	>>$(CONFIGFILE)
 	@echo "S2 = 6"  	>>$(CONFIGFILE)
 	@echo "L = $(LOGFILE)" >>$(CONFIGFILE)
-	valgrind --leak-check=full --trace-children=yes $(BINDIR)/direttore -c $(CONFIGFILE) & sleep 15; \
-	kill -s 3 $$!; \
-	wait $$!
+	@valgrind $(BINDIR)/direttore -c $(CONFIGFILE) & sleep 3; kill -s 2 $$!; wait $$!
 
 test2: all
 	@echo "Running test2"
@@ -85,9 +83,8 @@ test2: all
 	@echo "S2 = 15"  	>>$(CONFIGFILE)
 	@echo "D = 1000"  	>>$(CONFIGFILE)
 	@echo "L = $(LOGFILE)" >>$(CONFIGFILE)
-	./$(BINDIR)/direttore -c $(CONFIGFILE) & sleep 5; \
-	kill -s 1 $$!;	\
-	./analisi.sh
+	@$(BINDIR)/direttore -c $(CONFIGFILE) & sleep 5; kill -s 1 $$!; wait $$!
+	@./analisi.sh
 
 clean:
 	rm -f $(TARGETS)

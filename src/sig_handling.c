@@ -5,12 +5,12 @@
 #include <pthread.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 int handle_signals(pthread_t *handler, void* (*thread_fun)(void*), void* args) {
     int err;
-    struct sigaction sa;
     sigset_t set;
-    //Ignoro SIGPIPE
+    struct sigaction sa = {0};  //Ignoro SIGPIPE
     sa.sa_handler = SIG_IGN;
     MINUS1(sigaction(SIGPIPE, &sa, NULL), return -1)
     MINUS1(sigfillset(&set), return -1)
@@ -24,10 +24,10 @@ int handle_signals(pthread_t *handler, void* (*thread_fun)(void*), void* args) {
 void *thread_sig_handler_fun(void *args) {
     int sig, err, *h_pipe = (int*) args;
     sigset_t set;
-    sigemptyset(&set);
-    sigaddset(&set, SIGINT);
-    sigaddset(&set, SIGQUIT);
-    sigaddset(&set, SIGHUP);
+    MINUS1(sigemptyset(&set), perror("sigemptyset"); return NULL)
+    MINUS1(sigaddset(&set, SIGINT), perror("sigaddset"); return NULL)
+    MINUS1(sigaddset(&set, SIGQUIT), perror("sigaddset"); return NULL)
+    MINUS1(sigaddset(&set, SIGHUP), perror("sigaddset"); return NULL)
     //Aspetta sul set che arrivi uno dei segnali di cui sopra
     PTH(err, sigwait(&set, &sig), perror("sigwait"); return NULL)
     //Invio il segnale sulla pipe e termino

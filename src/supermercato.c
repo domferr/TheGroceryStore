@@ -11,6 +11,16 @@
 #include <signal.h>
 #include <sys/select.h>
 
+/**
+ * Notifica al direttore che nella cassa identificata dal parametro cassa_id ci sono queue_len clienti in coda.
+ *
+ * @param fd file descriptor per la comunicazione via socket AX_UNIX
+ * @param cassa_id identificatore della cassa
+ * @param queue_len quanti clienti sono in coda in cassa
+ * @return 0 in caso di successo, -1 altrimenti e imposta errno
+ */
+static int notify(int fd, int cassa_id, int queue_len);
+
 int main(int argc, char **args) {
     int err, fd_skt, sigh_pipe[2], run = 1, msg_param, sig_arrived, client_id, can_exit;
     pthread_t sig_handler_thread;
@@ -32,12 +42,7 @@ int main(int argc, char **args) {
     if (!validate(config))
         exit(EXIT_FAILURE);
 
-    msg_hdr = head_notify;
-    MINUS1(writen(fd_skt, &msg_hdr, sizeof(msg_header_t)), return -1)
-    msg_param = 10;
-    MINUS1(writen(fd_skt, &msg_param, sizeof(int)), return -1)
-    msg_param = 48;
-    MINUS1(writen(fd_skt, &msg_param, sizeof(int)), return -1)
+    MINUS1(notify(fd_skt, 2, 45), perror("notify"); exit(EXIT_FAILURE))
 
     FD_ZERO(&set);  //azzero il set
     FD_SET(fd_skt, &set); //imposto il descrittore per comunicare con il supermercato via socket AF_UNIX
@@ -51,8 +56,8 @@ int main(int argc, char **args) {
             MINUS1(err = readn(fd_skt, &msg_hdr, sizeof(msg_header_t)), perror("readn"); exit(EXIT_FAILURE))
             if (err == 0) { //EOF quindi il processo direttore è terminato!
                 run = 0;
-                printf("IL DIRETTORE E' STATO TERMINATO!!!");
                 PTH(err, pthread_kill(sig_handler_thread, SIGINT), perror("pthread_kill"); exit(EXIT_FAILURE))
+                break;
             }
             switch (msg_hdr) {
                 case head_open:
@@ -87,5 +92,13 @@ int main(int argc, char **args) {
     //cleanup
     free_config(config);
     printf("\rSUPERMERCATO: Goodbye!\n");
+    return 0;
+}
+
+static int notify(int fd, int cassa_id, int queue_len) {
+    msg_header_t msg_hdr = head_notify;
+    MINUS1(writen(fd, &msg_hdr, sizeof(msg_header_t)), return -1)
+    MINUS1(writen(fd, &cassa_id, sizeof(int)), return -1)
+    MINUS1(writen(fd, &queue_len, sizeof(int)), return -1)
     return 0;
 }

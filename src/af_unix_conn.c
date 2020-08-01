@@ -28,7 +28,7 @@ int connect_via_socket(void) {
     //Avvia una connessione con il direttore via socket AF_UNIX
     while (connect(fd_skt, (struct sockaddr *) &sa, sizeof(sa)) == -1 ) {
         if (errno == ENOENT)
-            msleep(CONN_INTERVAL); /* sock non esiste, aspetto CONN_INTERVAL millisecondi e poi riprovo */
+            msleep(CONN_INTERVAL); /* sock ancora non esiste, aspetto CONN_INTERVAL millisecondi e poi riprovo */
         else
             return -1;
     }
