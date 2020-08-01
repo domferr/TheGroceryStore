@@ -1,8 +1,14 @@
 #ifndef AF_UNIX_CONN_H
 #define AF_UNIX_CONN_H
 
+#define CONN_INTERVAL 1000  //intervallo di tempo tra due tentativi di connessione
+#define CONN_ATTEMPTS 3     //massimo numero di tentativi di connessione
+#define UNIX_PATH_MAX 108
+#define SOCKNAME "./sockfile.sock"
+
 /**
- * Headers utilizzati nei messaggi scambiati via socket AF_UNIX. Tutti i parametri, se presenti, sono di tipo unsigned int
+ * Headers utilizzati nei messaggi scambiati via socket AF_UNIX. L'header viene utilizzato per identificare la tipologia
+ * del messaggio. In base all'header, i parametri assumono uno specifico significato.
  */
 typedef enum {
     head_notify = 1,    // i parametri sono {numero cassa, numero di clienti in coda}
@@ -11,19 +17,6 @@ typedef enum {
     head_ask_exit,      // il parametro è l'identificatore univoco del cliente che vuole uscire
     head_can_exit       // i parametri sono {id univoco cliente, 1 se il cliente può uscire dal supermercato, 0 altrimenti}
 } msg_header_t;
-
-/**
- * Struttura del messaggio inviato via socket AF_UNIX per la comunicazione tra processi. L'header viene utilizzato
- * per identificare la tipologia del messaggio. In base all'header i parametri assumono uno specifico significato.
- */
-typedef struct {
-    msg_header_t hdr;   // l'header del messaggio che identifica il tipo di messaggio
-    int npar;           // quanti parametri ci sono nel messaggio
-    int params[];       // i parametri del messaggio
-} sock_msg_t;
-
-int send_message(int fd, msg_header_t head, char *params);
-int receive_message(int fd, msg_header_t *head_recvd, char **params_recvd);
 
 /**
  * Crea un socket AF_UNIX ed accetta una connessione su di esso. Ritorna il file descriptor del client che ha accettato

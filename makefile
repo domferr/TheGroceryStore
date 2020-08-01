@@ -93,4 +93,4 @@ clean:
 	rm -f $(TARGETS)
 
 cleanall: clean
-	\rm -f $(OBJDIR)/*.o *~ *.a $(CONFIGFILE)
+	\rm -f $(OBJDIR)/*.o *~ *.a *.sock $(CONFIGFILE)

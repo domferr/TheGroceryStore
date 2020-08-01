@@ -112,6 +112,11 @@
         <option name="CLION.COMPOUND.BUILD" enabled="true" />
       </method>
     </configuration>
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
     <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
         <option name="com.jetbrains.cidr.cpp.gradle.execution.GradleNativeBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -140,7 +145,7 @@
       <workItem from="1596190684484" duration="452000" />
       <workItem from="1596191164597" duration="64000" />
       <workItem from="1596191293917" duration="23159000" />
-      <workItem from="1596271103055" duration="838000" />
+      <workItem from="1596271103055" duration="19139000" />
     </task>
     <servers />
   </component>
@@ -174,10 +179,10 @@
       <screen x="0" y="0" width="1536" height="864" />
     </state>
     <state x="225" y="88" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1536.864@0.0.1536.864" timestamp="1596204572810" />
-    <state x="534" y="235" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1596231949906">
+    <state x="534" y="235" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1596294135212">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state x="534" y="235" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1536.864@0.0.1536.864" timestamp="1596231949906" />
+    <state x="534" y="235" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1536.864@0.0.1536.864" timestamp="1596294135212" />
     <state x="500" y="180" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1596210478376">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
