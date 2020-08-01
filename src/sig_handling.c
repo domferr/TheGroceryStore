@@ -1,8 +1,8 @@
 #include "../include/sig_handling.h"
+#include "../include/utils.h"
 #include <signal.h>
 #include <pthread.h>
 #include <unistd.h>
-#include "../include/utils.h"
 
 int handle_signals(pthread_t *handler, void* (*thread_fun)(void*), void* args) {
     int err;

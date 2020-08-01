@@ -19,6 +19,7 @@
 /**
  * Esegue il parsing degli argomenti passati al programma via linea di comando. Ritorna il path del file
  * di configurazione indicato dall'utente oppure il path di default se l'utente non ha specificato nulla.
+ *
  * @param argc numero di argomenti
  * @param args gli argomenti passati al programma
  * @return il path del file di configurazione indicato dall'utente oppure il path di default se l'utente non lo ha
@@ -27,14 +28,15 @@
 char *parse_args(int argc, char **args);
 
 /**
- * Funzione svolta dal thread gestore dei segnali
+ * Funzione svolta dal thread gestore dei segnali.
+ *
  * @param args argomenti passati alla funzione
  * @return 0 in caso di terminazione con successo
  */
 static void *thread_handler_fun(void *args);
 
 /**
- * Lancia il processo supermercato passando anche il nome del file di configurazione come parametro
+ * Lancia il processo supermercato passando anche il nome del file di configurazione come parametro.
  *
  * @param config_file path del file di configurazione
  * @param pid viene impostato con il process id del processo supermercato.
@@ -44,8 +46,9 @@ static int fork_store(char *config_file, pid_t *pid);
 
 int main(int argc, char **args) {
     int err, fd_store;
-    pid_t pid_store;    //pid del processo supermercato
+    pid_t pid_store;            //pid del processo supermercato
     pthread_t handler_thread;   //thread che si occupa di gestire i segnali
+    config_t *config;           //Struttura con i parametri di configurazione
 
     //Eseguo il parsing del nome del file di configurazione
     char *config_file_path = parse_args(argc, args);
@@ -56,8 +59,7 @@ int main(int argc, char **args) {
     //Gestione dei segnali mediante thread apposito
     MINUS1(handle_signals(&handler_thread, &thread_handler_fun, (void*)&pid_store), perror("handle_signals"); exit(EXIT_FAILURE))
     //Leggo il file di configurazione
-    config_t *config = load_config(config_file_path);
-    EQNULL(config, perror(ERROR_READ_CONFIG_FILE); exit(EXIT_FAILURE))
+    EQNULL(config = load_config(config_file_path), perror(ERROR_READ_CONFIG_FILE); exit(EXIT_FAILURE))
     if (!validate(config)) {
         close(fd_store);
         exit(EXIT_FAILURE);

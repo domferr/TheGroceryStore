@@ -5,8 +5,9 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#include <time.h>
 #include <errno.h>
+#include <time.h>
+#include <pthread.h>
 
 #define EQNULL(w, then)     \
         if ((w) == NULL) {  \
