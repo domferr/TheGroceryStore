@@ -16,10 +16,11 @@ int main(int argc, char **args) {
         printf("Usage: Il processo supermercato deve essere eseguito dal direttore\n");
         exit(EXIT_FAILURE);
     }
+    //Stabilisco connessione via socket AF_UNIX con il direttore
+    MINUS1(fd_skt = connect_via_socket(), perror("connect_via_socket"); exit(EXIT_FAILURE))
     //Gestione dei segnali mediante thread apposito
     MINUS1(handle_signals(&handler_thread, &thread_handler_fun, NULL), perror("handle_signals"); exit(EXIT_FAILURE))
-
-    MINUS1(fd_skt = connect_via_socket(), perror("connect_via_socket"); exit(EXIT_FAILURE))
+    printf("SUPERMERCATO: Connesso con il direttore\n");
     //Leggo file di configurazione
     config_t *config = load_config(args[1]);
     EQNULL(config, exit(EXIT_FAILURE))

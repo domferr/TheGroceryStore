@@ -25,7 +25,7 @@
  * @return il path del file di configurazione indicato dall'utente oppure il path di default se l'utente non lo ha
  * specificato
  */
-char *parse_args(int argc, char **args);
+static char *parse_args(int argc, char **args);
 
 /**
  * Funzione svolta dal thread gestore dei segnali.
@@ -52,20 +52,21 @@ int main(int argc, char **args) {
 
     //Eseguo il parsing del nome del file di configurazione
     char *config_file_path = parse_args(argc, args);
-    //Lancio il processo supermercato
-    MINUS1(fork_store(config_file_path, &pid_store), perror("fork_store"); exit(EXIT_FAILURE))
-    //Creo una connessione con il supermercato via socket AF_UNIX
-    MINUS1(fd_store = accept_socket_conn(), perror("create_socket_conn"); exit(EXIT_FAILURE))
-    //Gestione dei segnali mediante thread apposito
-    MINUS1(handle_signals(&handler_thread, &thread_handler_fun, (void*)&pid_store), perror("handle_signals"); exit(EXIT_FAILURE))
     //Leggo il file di configurazione
     EQNULL(config = load_config(config_file_path), perror(ERROR_READ_CONFIG_FILE); exit(EXIT_FAILURE))
     if (!validate(config)) {
-        close(fd_store);
         exit(EXIT_FAILURE);
     }
     printf(MESSAGE_VALID_CONFIG_FILE);
     print_config(config);
+    //Lancio il processo supermercato
+    MINUS1(fork_store(config_file_path, &pid_store), perror("fork_store"); exit(EXIT_FAILURE))
+    //Creo una connessione con il supermercato via socket AF_UNIX
+    printf("DIRETTORE: Attendo connessione con il supermercato\n");
+    MINUS1(fd_store = accept_socket_conn(), perror("accept_socket_conn"); exit(EXIT_FAILURE))
+    printf("DIRETTORE: Connesso con il supermercato\n");
+    //Gestione dei segnali mediante thread apposito
+    MINUS1(handle_signals(&handler_thread, &thread_handler_fun, (void*)&pid_store), perror("handle_signals"); exit(EXIT_FAILURE))
 
     //join sul thread signal handler
     PTH(err, pthread_join(handler_thread, NULL), perror("join thread handler"); exit(EXIT_FAILURE))
@@ -76,7 +77,7 @@ int main(int argc, char **args) {
     return 0;
 }
 
-char *parse_args(int argc, char **args) {
+static char *parse_args(int argc, char **args) {
     int i = 1;
     while(i < argc && strcmp(args[i], ARG_CONFIG_FILE) != 0) {
         i++;
