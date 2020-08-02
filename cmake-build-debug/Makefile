@@ -150,6 +150,33 @@ src/af_unix_conn.c.s:
 	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/af_unix_conn.c.s
 .PHONY : src/af_unix_conn.c.s
 
+src/client.o: src/client.c.o
+
+.PHONY : src/client.o
+
+# target to build an object file
+src/client.c.o:
+	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/client.c.o
+.PHONY : src/client.c.o
+
+src/client.i: src/client.c.i
+
+.PHONY : src/client.i
+
+# target to preprocess a source file
+src/client.c.i:
+	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/client.c.i
+.PHONY : src/client.c.i
+
+src/client.s: src/client.c.s
+
+.PHONY : src/client.s
+
+# target to generate assembly for a file
+src/client.c.s:
+	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/client.c.s
+.PHONY : src/client.c.s
+
 src/config.o: src/config.c.o
 
 .PHONY : src/config.o
@@ -405,6 +432,9 @@ help:
 	@echo "... src/af_unix_conn.o"
 	@echo "... src/af_unix_conn.i"
 	@echo "... src/af_unix_conn.s"
+	@echo "... src/client.o"
+	@echo "... src/client.i"
+	@echo "... src/client.s"
 	@echo "... src/config.o"
 	@echo "... src/config.i"
 	@echo "... src/config.s"

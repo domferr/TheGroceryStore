@@ -56,6 +56,7 @@ int main(int argc, char **args) {
     //Leggo il file di configurazione
     EQNULL(config = load_config(config_file_path), perror(ERROR_READ_CONFIG_FILE); exit(EXIT_FAILURE))
     if (!validate(config)) {
+        free_config(config);
         exit(EXIT_FAILURE);
     }
     printf(MESSAGE_VALID_CONFIG_FILE);
@@ -83,7 +84,11 @@ int main(int argc, char **args) {
     while (1) {
         rd_set = set;
         MINUS1(select(fd_store+1, &rd_set, NULL, NULL, NULL), perror("select"); exit(EXIT_FAILURE))
-        if (FD_ISSET(fd_store, &rd_set)) {
+        if (FD_ISSET(sigh_pipe[0], &rd_set)) {
+            MINUS1(readn(sigh_pipe[0], &sig_arrived, sizeof(int)), perror("readn"); exit(EXIT_FAILURE))
+            MINUS1(kill(pid_store, sig_arrived), perror("kill"); exit(EXIT_FAILURE))
+            break;
+        } else {
             printf("Comunicazione dal supermercato\n");
             MINUS1(err = readn(fd_store, &msg_hdr, sizeof(msg_header_t)), perror("readn"); exit(EXIT_FAILURE))
             if (err == 0) { //EOF quindi il processo supermercato è terminato in maniera imprevista! Segnalo il sighandler e termino
@@ -109,10 +114,6 @@ int main(int argc, char **args) {
                         break;
                 }
             }
-        } else {
-            MINUS1(readn(sigh_pipe[0], &sig_arrived, sizeof(int)), perror("readn"); exit(EXIT_FAILURE))
-            MINUS1(kill(pid_store, sig_arrived), perror("kill"); exit(EXIT_FAILURE))
-            break;
         }
     }
 

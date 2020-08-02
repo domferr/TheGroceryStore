@@ -23,6 +23,16 @@ store_t *store_create(size_t c, size_t e);
  */
 int store_destroy(store_t *store);
 
+/**
+ * Aggiorna il puntatore passato per argomento con lo stato del supermercato. Ritorna 0 in caso di successo, -1 altrimenti
+ * @param store struttura dati del supermercato
+ * @param state puntatore alla variabile da aggiornare con lo stato del supermercato
+ * @return 0 in caso di successo, -1 altrimenti
+ */
+int get_store_state(store_t *store, store_state *state);
+
+int close_store(store_t *store, store_state closing_state);
+
 int enter_store(store_t *store);
 
 int exit_store(store_t *store);

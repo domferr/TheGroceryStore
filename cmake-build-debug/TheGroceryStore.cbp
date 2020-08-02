@@ -81,6 +81,9 @@
 		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/include/af_unix_conn.h">
 			<Option target="TheGroceryStore"/>
 		</Unit>
+		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/include/client.h">
+			<Option target="TheGroceryStore"/>
+		</Unit>
 		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/include/config.h">
 			<Option target="TheGroceryStore"/>
 		</Unit>
@@ -103,6 +106,9 @@
 			<Option target="TheGroceryStore"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/af_unix_conn.c">
+			<Option target="TheGroceryStore"/>
+		</Unit>
+		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/client.c">
 			<Option target="TheGroceryStore"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/config.c">

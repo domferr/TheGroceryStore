@@ -22,7 +22,14 @@ typedef struct {
 } store_t;
 
 typedef struct {
-
+    size_t id;
+    store_t *store;
+    //cashier_t **cashiers;
+    size_t no_of_cashiers;
+    int t;  //tempo massimo per acquistare prima di mettersi in una coda
+    int p;  //numero massimo di prodotti che acquista
+    int s;  //ogni quanto tempo il cliente decide se cambiare cassa
+    int *shared_pipe;
 } client_t;
 
 #endif //STORETYPES_H
