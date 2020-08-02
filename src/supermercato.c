@@ -47,6 +47,7 @@ int main(int argc, char **args) {
     if (!validate(config)) exit(EXIT_FAILURE);
 
     EQNULL(store = store_create(config->c, config->e), perror("malloc"); exit(EXIT_FAILURE))
+
     MINUS1(notify(fd_skt, 2, 45), perror("notify"); exit(EXIT_FAILURE))
 
     FD_ZERO(&set);  //azzero il set

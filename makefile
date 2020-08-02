@@ -19,6 +19,7 @@ OBJS_SUPERM	= 	$(OBJDIR)/supermercato.o	\
 				$(OBJDIR)/config.o			\
 				$(OBJDIR)/scfiles.o			\
 				$(OBJDIR)/queue.o			\
+				$(OBJDIR)/threadpool.o		\
 				$(OBJDIR)/af_unix_conn.o	\
 				$(OBJDIR)/sig_handling.o	\
 				$(OBJDIR)/store.o
@@ -28,6 +29,7 @@ OBJS_DIRETT	=	$(OBJDIR)/direttore.o		\
 				$(OBJDIR)/config.o			\
 				$(OBJDIR)/scfiles.o			\
 				$(OBJDIR)/queue.o			\
+				$(OBJDIR)/threadpool.o		\
 				$(OBJDIR)/af_unix_conn.o	\
 				$(OBJDIR)/sig_handling.o
 

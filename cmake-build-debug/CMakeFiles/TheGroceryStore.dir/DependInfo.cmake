@@ -12,6 +12,7 @@ set(CMAKE_DEPENDS_CHECK_C
   "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/sig_handling.c" "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/cmake-build-debug/CMakeFiles/TheGroceryStore.dir/src/sig_handling.c.o"
   "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/store.c" "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/cmake-build-debug/CMakeFiles/TheGroceryStore.dir/src/store.c.o"
   "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/supermercato.c" "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/cmake-build-debug/CMakeFiles/TheGroceryStore.dir/src/supermercato.c.o"
+  "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/threadpool.c" "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/cmake-build-debug/CMakeFiles/TheGroceryStore.dir/src/threadpool.c.o"
   "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/utils.c" "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/cmake-build-debug/CMakeFiles/TheGroceryStore.dir/src/utils.c.o"
   )
 set(CMAKE_C_COMPILER_ID "GNU")

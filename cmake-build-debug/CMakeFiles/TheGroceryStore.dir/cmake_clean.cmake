@@ -8,6 +8,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/TheGroceryStore.dir/src/scfiles.c.o"
   "CMakeFiles/TheGroceryStore.dir/src/queue.c.o"
   "CMakeFiles/TheGroceryStore.dir/src/store.c.o"
+  "CMakeFiles/TheGroceryStore.dir/src/threadpool.c.o"
   "TheGroceryStore.pdb"
   "TheGroceryStore"
 )
