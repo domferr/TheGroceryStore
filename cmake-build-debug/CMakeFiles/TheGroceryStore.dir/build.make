@@ -225,6 +225,54 @@ CMakeFiles/TheGroceryStore.dir/src/scfiles.c.o.provides: CMakeFiles/TheGrocerySt
 CMakeFiles/TheGroceryStore.dir/src/scfiles.c.o.provides.build: CMakeFiles/TheGroceryStore.dir/src/scfiles.c.o
 
 
+CMakeFiles/TheGroceryStore.dir/src/queue.c.o: CMakeFiles/TheGroceryStore.dir/flags.make
+CMakeFiles/TheGroceryStore.dir/src/queue.c.o: ../src/queue.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building C object CMakeFiles/TheGroceryStore.dir/src/queue.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/TheGroceryStore.dir/src/queue.c.o   -c /mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/queue.c
+
+CMakeFiles/TheGroceryStore.dir/src/queue.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/TheGroceryStore.dir/src/queue.c.i"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/queue.c > CMakeFiles/TheGroceryStore.dir/src/queue.c.i
+
+CMakeFiles/TheGroceryStore.dir/src/queue.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/TheGroceryStore.dir/src/queue.c.s"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/queue.c -o CMakeFiles/TheGroceryStore.dir/src/queue.c.s
+
+CMakeFiles/TheGroceryStore.dir/src/queue.c.o.requires:
+
+.PHONY : CMakeFiles/TheGroceryStore.dir/src/queue.c.o.requires
+
+CMakeFiles/TheGroceryStore.dir/src/queue.c.o.provides: CMakeFiles/TheGroceryStore.dir/src/queue.c.o.requires
+	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/queue.c.o.provides.build
+.PHONY : CMakeFiles/TheGroceryStore.dir/src/queue.c.o.provides
+
+CMakeFiles/TheGroceryStore.dir/src/queue.c.o.provides.build: CMakeFiles/TheGroceryStore.dir/src/queue.c.o
+
+
+CMakeFiles/TheGroceryStore.dir/src/store.c.o: CMakeFiles/TheGroceryStore.dir/flags.make
+CMakeFiles/TheGroceryStore.dir/src/store.c.o: ../src/store.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building C object CMakeFiles/TheGroceryStore.dir/src/store.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/TheGroceryStore.dir/src/store.c.o   -c /mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/store.c
+
+CMakeFiles/TheGroceryStore.dir/src/store.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/TheGroceryStore.dir/src/store.c.i"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/store.c > CMakeFiles/TheGroceryStore.dir/src/store.c.i
+
+CMakeFiles/TheGroceryStore.dir/src/store.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/TheGroceryStore.dir/src/store.c.s"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/store.c -o CMakeFiles/TheGroceryStore.dir/src/store.c.s
+
+CMakeFiles/TheGroceryStore.dir/src/store.c.o.requires:
+
+.PHONY : CMakeFiles/TheGroceryStore.dir/src/store.c.o.requires
+
+CMakeFiles/TheGroceryStore.dir/src/store.c.o.provides: CMakeFiles/TheGroceryStore.dir/src/store.c.o.requires
+	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/store.c.o.provides.build
+.PHONY : CMakeFiles/TheGroceryStore.dir/src/store.c.o.provides
+
+CMakeFiles/TheGroceryStore.dir/src/store.c.o.provides.build: CMakeFiles/TheGroceryStore.dir/src/store.c.o
+
+
 # Object files for target TheGroceryStore
 TheGroceryStore_OBJECTS = \
 "CMakeFiles/TheGroceryStore.dir/src/direttore.c.o" \
@@ -233,7 +281,9 @@ TheGroceryStore_OBJECTS = \
 "CMakeFiles/TheGroceryStore.dir/src/supermercato.c.o" \
 "CMakeFiles/TheGroceryStore.dir/src/sig_handling.c.o" \
 "CMakeFiles/TheGroceryStore.dir/src/af_unix_conn.c.o" \
-"CMakeFiles/TheGroceryStore.dir/src/scfiles.c.o"
+"CMakeFiles/TheGroceryStore.dir/src/scfiles.c.o" \
+"CMakeFiles/TheGroceryStore.dir/src/queue.c.o" \
+"CMakeFiles/TheGroceryStore.dir/src/store.c.o"
 
 # External object files for target TheGroceryStore
 TheGroceryStore_EXTERNAL_OBJECTS =
@@ -245,9 +295,11 @@ TheGroceryStore: CMakeFiles/TheGroceryStore.dir/src/supermercato.c.o
 TheGroceryStore: CMakeFiles/TheGroceryStore.dir/src/sig_handling.c.o
 TheGroceryStore: CMakeFiles/TheGroceryStore.dir/src/af_unix_conn.c.o
 TheGroceryStore: CMakeFiles/TheGroceryStore.dir/src/scfiles.c.o
+TheGroceryStore: CMakeFiles/TheGroceryStore.dir/src/queue.c.o
+TheGroceryStore: CMakeFiles/TheGroceryStore.dir/src/store.c.o
 TheGroceryStore: CMakeFiles/TheGroceryStore.dir/build.make
 TheGroceryStore: CMakeFiles/TheGroceryStore.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Linking C executable TheGroceryStore"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Linking C executable TheGroceryStore"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/TheGroceryStore.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -262,6 +314,8 @@ CMakeFiles/TheGroceryStore.dir/requires: CMakeFiles/TheGroceryStore.dir/src/supe
 CMakeFiles/TheGroceryStore.dir/requires: CMakeFiles/TheGroceryStore.dir/src/sig_handling.c.o.requires
 CMakeFiles/TheGroceryStore.dir/requires: CMakeFiles/TheGroceryStore.dir/src/af_unix_conn.c.o.requires
 CMakeFiles/TheGroceryStore.dir/requires: CMakeFiles/TheGroceryStore.dir/src/scfiles.c.o.requires
+CMakeFiles/TheGroceryStore.dir/requires: CMakeFiles/TheGroceryStore.dir/src/queue.c.o.requires
+CMakeFiles/TheGroceryStore.dir/requires: CMakeFiles/TheGroceryStore.dir/src/store.c.o.requires
 
 .PHONY : CMakeFiles/TheGroceryStore.dir/requires
 

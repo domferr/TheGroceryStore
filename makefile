@@ -18,13 +18,16 @@ OBJS_SUPERM	= 	$(OBJDIR)/supermercato.o	\
 				$(OBJDIR)/utils.o			\
 				$(OBJDIR)/config.o			\
 				$(OBJDIR)/scfiles.o			\
+				$(OBJDIR)/queue.o			\
 				$(OBJDIR)/af_unix_conn.o	\
-				$(OBJDIR)/sig_handling.o
+				$(OBJDIR)/sig_handling.o	\
+				$(OBJDIR)/store.o
 # dipendenze per l'eseguibile del direttore
 OBJS_DIRETT	=	$(OBJDIR)/direttore.o		\
              	$(OBJDIR)/utils.o			\
 				$(OBJDIR)/config.o			\
 				$(OBJDIR)/scfiles.o			\
+				$(OBJDIR)/queue.o			\
 				$(OBJDIR)/af_unix_conn.o	\
 				$(OBJDIR)/sig_handling.o
 
@@ -67,7 +70,7 @@ test1: all
 	@echo "S1 = 2"  	>>$(CONFIGFILE)
 	@echo "S2 = 6"  	>>$(CONFIGFILE)
 	@echo "L = $(LOGFILE)" >>$(CONFIGFILE)
-	@valgrind $(BINDIR)/direttore -c $(CONFIGFILE) & sleep 3; kill -s 2 $$!; wait $$!
+	@valgrind --leak-check=full --trace-children=yes $(BINDIR)/direttore -c $(CONFIGFILE) & sleep 3; kill -s 3 $$!; wait $$!
 
 test2: all
 	@echo "Running test2"

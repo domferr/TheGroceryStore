@@ -3,6 +3,8 @@
 #include "../include/utils.h"
 #include "../include/af_unix_conn.h"
 #include "../include/scfiles.h"
+#include "storetypes.h"
+#include "../include/store.h"
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -10,6 +12,8 @@
 #include <pthread.h>
 #include <signal.h>
 #include <sys/select.h>
+
+#define DBGPRINTF(str) printf("\rSUPERMERCATO: "str);
 
 /**
  * Notifica al direttore che nella cassa identificata dal parametro cassa_id ci sono queue_len clienti in coda.
@@ -22,10 +26,12 @@
 static int notify(int fd, int cassa_id, int queue_len);
 
 int main(int argc, char **args) {
-    int err, fd_skt, sigh_pipe[2], run = 1, msg_param, sig_arrived, client_id, can_exit;
+    int err, fd_skt, sigh_pipe[2], run = 1, sig_arrived, param1, param2;
     pthread_t sig_handler_thread;
     msg_header_t msg_hdr;
     fd_set set, rd_set;
+    config_t *config;
+    store_t *store;
     if (argc != 2) {
         printf("Usage: Il processo supermercato deve essere eseguito dal direttore\n");
         exit(EXIT_FAILURE);
@@ -35,13 +41,12 @@ int main(int argc, char **args) {
     //Gestione dei segnali mediante thread apposito
     MINUS1(pipe(sigh_pipe), perror("pipe"); exit(EXIT_FAILURE))
     MINUS1(handle_signals(&sig_handler_thread, &thread_sig_handler_fun, (void*)sigh_pipe), perror("handle_signals"); exit(EXIT_FAILURE))
-    printf("SUPERMERCATO: Connesso con il direttore via socket AF_UNIX\n");
+    DBGPRINTF("Connesso con il direttore via socket AF_UNIX\n");
     //Leggo file di configurazione
-    config_t *config = load_config(args[1]);
-    EQNULL(config, exit(EXIT_FAILURE))
-    if (!validate(config))
-        exit(EXIT_FAILURE);
+    EQNULL(config = load_config(args[1]), perror("load_config"); exit(EXIT_FAILURE))
+    if (!validate(config)) exit(EXIT_FAILURE);
 
+    EQNULL(store = store_create(config->c, config->e), perror("malloc"); exit(EXIT_FAILURE))
     MINUS1(notify(fd_skt, 2, 45), perror("notify"); exit(EXIT_FAILURE))
 
     FD_ZERO(&set);  //azzero il set
@@ -61,18 +66,18 @@ int main(int argc, char **args) {
             }
             switch (msg_hdr) {
                 case head_open:
-                    MINUS1(readn(fd_skt, &msg_param, sizeof(int)), return -1)
-                    printf("Il direttore dice di aprire la cassa %d\n", msg_param);
+                    MINUS1(readn(fd_skt, &param1, sizeof(int)), return -1)
+                    printf("Il direttore dice di aprire la cassa %d\n", param1);
                     break;
                 case head_close:
-                    MINUS1(readn(fd_skt, &msg_param, sizeof(int)), return -1)
-                    printf("Il direttore dice di chiudere la cassa %d\n", msg_param);
+                    MINUS1(readn(fd_skt, &param1, sizeof(int)), return -1)
+                    printf("Il direttore dice di chiudere la cassa %d\n", param1);
                     break;
                 case head_can_exit:
-                    MINUS1(readn(fd_skt, &client_id, sizeof(int)), return -1)
-                    printf("Il direttore dice che il cliente %d ", client_id);
-                    MINUS1(readn(fd_skt, &can_exit, sizeof(int)), return -1)
-                    if (!can_exit)
+                    MINUS1(readn(fd_skt, &param1, sizeof(int)), return -1)
+                    printf("Il direttore dice che il cliente %d ", param1);
+                    MINUS1(readn(fd_skt, &param2, sizeof(int)), return -1)
+                    if (!param2)
                         printf("non ");
                     printf("può uscire!\n");
                     break;
@@ -90,8 +95,9 @@ int main(int argc, char **args) {
     close(sigh_pipe[0]);
     close(sigh_pipe[1]);
     //cleanup
+    store_destroy(store);
     free_config(config);
-    printf("\rSUPERMERCATO: Goodbye!\n");
+    DBGPRINTF("Termino!\n");
     return 0;
 }
 

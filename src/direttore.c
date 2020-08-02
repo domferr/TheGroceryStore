@@ -62,7 +62,7 @@ int main(int argc, char **args) {
     print_config(config);
     EQNULL(casse = malloc(sizeof(int) * config->k), perror("calloc"); exit(EXIT_FAILURE))
     for (i = 0; i < config->k; ++i) {
-        casse[i] = i < config->ka ? 0:-1;
+        casse[i] = i < config->ka ? 0:-1;   //le prime ka casse sono aperte
     }
     casse_attive = config->ka;
     //Lancio il processo supermercato

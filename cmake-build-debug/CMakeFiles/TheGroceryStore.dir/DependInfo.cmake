@@ -7,8 +7,10 @@ set(CMAKE_DEPENDS_CHECK_C
   "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/af_unix_conn.c" "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/cmake-build-debug/CMakeFiles/TheGroceryStore.dir/src/af_unix_conn.c.o"
   "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/config.c" "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/cmake-build-debug/CMakeFiles/TheGroceryStore.dir/src/config.c.o"
   "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/direttore.c" "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/cmake-build-debug/CMakeFiles/TheGroceryStore.dir/src/direttore.c.o"
+  "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/queue.c" "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/cmake-build-debug/CMakeFiles/TheGroceryStore.dir/src/queue.c.o"
   "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/scfiles.c" "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/cmake-build-debug/CMakeFiles/TheGroceryStore.dir/src/scfiles.c.o"
   "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/sig_handling.c" "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/cmake-build-debug/CMakeFiles/TheGroceryStore.dir/src/sig_handling.c.o"
+  "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/store.c" "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/cmake-build-debug/CMakeFiles/TheGroceryStore.dir/src/store.c.o"
   "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/supermercato.c" "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/cmake-build-debug/CMakeFiles/TheGroceryStore.dir/src/supermercato.c.o"
   "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/utils.c" "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/cmake-build-debug/CMakeFiles/TheGroceryStore.dir/src/utils.c.o"
   )

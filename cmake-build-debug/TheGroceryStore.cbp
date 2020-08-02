@@ -84,10 +84,16 @@
 		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/include/config.h">
 			<Option target="TheGroceryStore"/>
 		</Unit>
+		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/include/queue.h">
+			<Option target="TheGroceryStore"/>
+		</Unit>
 		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/include/scfiles.h">
 			<Option target="TheGroceryStore"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/include/sig_handling.h">
+			<Option target="TheGroceryStore"/>
+		</Unit>
+		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/include/store.h">
 			<Option target="TheGroceryStore"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/include/utils.h">
@@ -102,10 +108,19 @@
 		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/direttore.c">
 			<Option target="TheGroceryStore"/>
 		</Unit>
+		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/queue.c">
+			<Option target="TheGroceryStore"/>
+		</Unit>
 		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/scfiles.c">
 			<Option target="TheGroceryStore"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/sig_handling.c">
+			<Option target="TheGroceryStore"/>
+		</Unit>
+		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/store.c">
+			<Option target="TheGroceryStore"/>
+		</Unit>
+		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/storetypes.h">
 			<Option target="TheGroceryStore"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/supermercato.c">

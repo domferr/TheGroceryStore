@@ -3,4 +3,4 @@ project(TheGroceryStore C)
 
 set(CMAKE_C_STANDARD 99)
 
-add_executable(TheGroceryStore src/direttore.c src/config.c include/config.h src/utils.c include/utils.h src/supermercato.c src/sig_handling.c include/sig_handling.h src/af_unix_conn.c include/af_unix_conn.h src/scfiles.c include/scfiles.h)
+add_executable(TheGroceryStore src/direttore.c src/config.c include/config.h src/utils.c include/utils.h src/supermercato.c src/sig_handling.c include/sig_handling.h src/af_unix_conn.c include/af_unix_conn.h src/scfiles.c include/scfiles.h src/queue.c include/queue.h src/storetypes.h src/store.c include/store.h)

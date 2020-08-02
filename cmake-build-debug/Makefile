@@ -204,6 +204,33 @@ src/direttore.c.s:
 	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/direttore.c.s
 .PHONY : src/direttore.c.s
 
+src/queue.o: src/queue.c.o
+
+.PHONY : src/queue.o
+
+# target to build an object file
+src/queue.c.o:
+	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/queue.c.o
+.PHONY : src/queue.c.o
+
+src/queue.i: src/queue.c.i
+
+.PHONY : src/queue.i
+
+# target to preprocess a source file
+src/queue.c.i:
+	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/queue.c.i
+.PHONY : src/queue.c.i
+
+src/queue.s: src/queue.c.s
+
+.PHONY : src/queue.s
+
+# target to generate assembly for a file
+src/queue.c.s:
+	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/queue.c.s
+.PHONY : src/queue.c.s
+
 src/scfiles.o: src/scfiles.c.o
 
 .PHONY : src/scfiles.o
@@ -257,6 +284,33 @@ src/sig_handling.s: src/sig_handling.c.s
 src/sig_handling.c.s:
 	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/sig_handling.c.s
 .PHONY : src/sig_handling.c.s
+
+src/store.o: src/store.c.o
+
+.PHONY : src/store.o
+
+# target to build an object file
+src/store.c.o:
+	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/store.c.o
+.PHONY : src/store.c.o
+
+src/store.i: src/store.c.i
+
+.PHONY : src/store.i
+
+# target to preprocess a source file
+src/store.c.i:
+	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/store.c.i
+.PHONY : src/store.c.i
+
+src/store.s: src/store.c.s
+
+.PHONY : src/store.s
+
+# target to generate assembly for a file
+src/store.c.s:
+	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/store.c.s
+.PHONY : src/store.c.s
 
 src/supermercato.o: src/supermercato.c.o
 
@@ -330,12 +384,18 @@ help:
 	@echo "... src/direttore.o"
 	@echo "... src/direttore.i"
 	@echo "... src/direttore.s"
+	@echo "... src/queue.o"
+	@echo "... src/queue.i"
+	@echo "... src/queue.s"
 	@echo "... src/scfiles.o"
 	@echo "... src/scfiles.i"
 	@echo "... src/scfiles.s"
 	@echo "... src/sig_handling.o"
 	@echo "... src/sig_handling.i"
 	@echo "... src/sig_handling.s"
+	@echo "... src/store.o"
+	@echo "... src/store.i"
+	@echo "... src/store.s"
 	@echo "... src/supermercato.o"
 	@echo "... src/supermercato.i"
 	@echo "... src/supermercato.s"
