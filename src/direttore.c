@@ -39,12 +39,12 @@ static char *parse_args(int argc, char **args);
  */
 static int fork_store(char *config_file, pid_t *pid);
 
-static int handle_notification(int fd_store, config_t *config, int *casse);
+static int handle_notification(int fd_store, config_t *config, int *casse, int *casse_attive);
 
 static int handle_ask_exit(int fd_store, int client_id);
 
 int main(int argc, char **args) {
-    int err, i, fd_store, sig_arrived, sigh_pipe[2], *casse, param2;
+    int err, i, param2, fd_store, sig_arrived, sigh_pipe[2], *casse, casse_attive;
     pid_t pid_store;                //pid del processo supermercato
     pthread_t sig_handler_thread;   //thread che si occupa di gestire i segnali
     config_t *config;               //Struttura con i parametri di configurazione
@@ -62,11 +62,9 @@ int main(int argc, char **args) {
     print_config(config);
     EQNULL(casse = malloc(sizeof(int) * config->k), perror("calloc"); exit(EXIT_FAILURE))
     for (i = 0; i < config->k; ++i) {
-        if (i < config->ka)
-            casse[i] = 0;
-        else
-            casse[i] = -1;
+        casse[i] = i < config->ka ? 0:-1;
     }
+    casse_attive = config->ka;
     //Lancio il processo supermercato
     MINUS1(fork_store(config_file_path, &pid_store), perror("fork_store"); exit(EXIT_FAILURE))
     printf("DIRETTORE: Connesso con il supermercato via socket AF_UNIX\n");
@@ -99,7 +97,7 @@ int main(int argc, char **args) {
                         MINUS1(readn(fd_store, &param2, sizeof(int)), return -1)
                         printf("Ho ricevuto che nella cassa %d ci sono %d clienti in coda\n", i, param2);
                         casse[i] = param2;
-                        MINUS1(handle_notification(fd_store, config, casse), perror("handle_notification"); exit(EXIT_FAILURE))
+                        MINUS1(handle_notification(fd_store, config, casse, &casse_attive), perror("handle_notification"); exit(EXIT_FAILURE))
                         break;
                     case head_ask_exit: //Ricevuta richiesta per uscire dal supermercato. Dò sempre il permesso
                         //leggo l'id del cliente che vuole uscire
@@ -133,34 +131,39 @@ int main(int argc, char **args) {
     return 0;
 }
 
-static int handle_notification(int fd_store, config_t *config, int *casse) {
-    int i, attive = 0, count_s1 = 0, count_s2 = 0, cassa_s1 = -1, cassa_s2 = -1;
+static int handle_notification(int fd_store, config_t *config, int *casse, int *casse_attive) {
+    int i, count_attive = 0, count_nonattive = 0,
+        count_s1 = 0, count_s2 = 0,
+        cassa_s1 = -1, cassa_s2 = -1;
     unsigned int seed = getpid();
     msg_header_t msg_hdr;
     for (i = 0; i < config->k; ++i) {
-        if (casse[i] >= 0) attive++;
+        if (casse[i] >= 0) {
+            count_attive++;
+            if (cassa_s1 == -1 && (count_attive == *casse_attive || RANDOM(seed, 0, 2)))
+                cassa_s1 = i;
+        } else {
+            count_nonattive++;
+            if (cassa_s2 == -1 && (count_nonattive == config->k - *casse_attive || RANDOM(seed, 0, 2)))
+                cassa_s2 = i;
+        }
         if (casse[i] == 0 || casse[i] == 1) count_s1++;
         if (casse[i] >= config->s2) count_s2++;
     }
 
-    while (cassa_s1 == -1 || cassa_s2 == -1) {
-        i = RANDOM(seed, 0, config->k)
-        if (casse[i] == -1 && cassa_s2 == -1)
-            cassa_s2 = i;
-        else if (casse[i] != -1 && cassa_s1 == -1)
-            cassa_s1 = i;
-    }
     //Se è aperta più di una cassa e sono nella soglia, allora posso chiudere una cassa
-    if (attive > 1 && count_s1 >= config->s1) {
+    if (*casse_attive > 1 && count_s1 >= config->s1) {
         msg_hdr = head_close;
         MINUS1(writen(fd_store, &msg_hdr, sizeof(msg_header_t)), return -1)
         MINUS1(writen(fd_store, &cassa_s1, sizeof(int)), return -1)
+        *casse_attive = *casse_attive - 1;
     }
     //Se sono aperte meno di k casse e sono nella soglia, allora posso aprire un'altra cassa
-    if (attive < config->k && count_s2 > 0) {
+    if (*casse_attive < config->k && count_s2 > 0) {
         msg_hdr = head_open;
         MINUS1(writen(fd_store, &msg_hdr, sizeof(msg_header_t)), return -1)
         MINUS1(writen(fd_store, &cassa_s2, sizeof(int)), return -1)
+        *casse_attive = *casse_attive + 1;
     }
     return 0;
 }

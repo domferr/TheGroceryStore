@@ -43,7 +43,7 @@
 /**
  * Genera numero random tra min (incluso) e max (non incluso)
  */
-#define RANDOM(seed_ptr, min, max) ((rand_r(&(seed_ptr))%((max)-(min))) + (min));
+#define RANDOM(seed_ptr, min, max) ((rand_r(&(seed_ptr))%((max)-(min))) + (min))
 
 /**
  * Mette il thread in attesa per un tempo pari ai millisecondi specificati.
