@@ -35,6 +35,14 @@ int accept_socket_conn(void);
  */
 int connect_via_socket(void);
 
+/**
+ * Invia una richiesta di permesso di uscita. Utilizzato dal thread cliente per richiedere al direttore il permesso per
+ * uscire dal supermercato.
+ *
+ * @param fd descrittore del file utilizzato per la comunicazione con il direttore
+ * @param client_id identificatore univoco del thread cliente
+ * @return 0 in caso di successo, -1 altrimenti ed imposta errno
+ */
 int ask_exit_permission(int fd, int client_id);
 
 /**

@@ -1,5 +1,6 @@
 #ifndef SCFILES_H
 #define SCFILES_H
+
 #include <sys/types.h>
 
 /**

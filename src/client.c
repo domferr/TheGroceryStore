@@ -10,7 +10,7 @@
 
 #define DEBUGCLIENT
 
-client_t *alloc_client(size_t id, store_t *store, int t, int p, int s, int fd, int k) {
+client_t *alloc_client(size_t id, store_t *store, int t, int p, int s, int k, safe_fd_t *fd) {
     int err;
     client_t *client = (client_t*) malloc(sizeof(client_t));
     EQNULL(client, return NULL)
@@ -22,7 +22,7 @@ client_t *alloc_client(size_t id, store_t *store, int t, int p, int s, int fd, i
     client->t = t;
     client->p = p;
     client->s = s;
-    client->fd = fd;
+    client->sfd = fd;
 
     client->can_exit = -1;
     PTH(err, pthread_mutex_init(&(client->mutex), NULL), return NULL)
@@ -41,7 +41,7 @@ int client_destroy(client_t *client) {
 
 void *client_thread_fun(void *args) {
     client_t *cl = (client_t *) args;
-    int random_time, client_id, products, chosen_queue, served;
+    int err, random_time, client_id, products, chosen_queue, served;
     unsigned int seed = cl->id;
     store_state st_state;
     struct timespec store_entrance, store_exit, queue_entrance, queue_exit;
@@ -65,7 +65,9 @@ void *client_thread_fun(void *args) {
 #endif
                 //Chiedo il permesso di uscire ad aspetto che mi venga dato
                 if (ISOPEN(st_state)) {
-                    MINUS1(ask_exit_permission(cl->fd, cl->id), perror("ask exit permission"); return NULL)
+                    PTH(err, pthread_mutex_lock(&((cl->sfd)->mtx)), perror("lock"); return NULL)
+                    MINUS1(ask_exit_permission((cl->sfd)->fd, cl->id), perror("ask exit permission"); return NULL)
+                    PTH(err, pthread_mutex_unlock(&((cl->sfd)->mtx)), perror("unlock"); return NULL)
                     MINUS1(wait_permission(cl), perror("wait permission"); return NULL)
                 }
             } else {
@@ -108,7 +110,7 @@ int set_exit_permission(client_t *client, int can_exit) {
     return 0;
 }
 
-int wait_permission(client_t *cl) {  //TODO scrivere documentazione
+int wait_permission(client_t *cl) {
     int err;
     cl->can_exit = 0;
     PTH(err, pthread_mutex_lock(&(cl->mutex)), return -1)
@@ -191,7 +193,7 @@ int wait_to_be_served(void) {
                 break;
             case on_exit:
                 if (cl_in_q->products == 0) {
-                    //TODO Aspetto il permesso del direttore e poi esco dal supermercato
+
                 }
 #ifdef DEBUGCLIENT
                     printf("Thread cliente %ld: esco dal supermercato\n", cl->id);

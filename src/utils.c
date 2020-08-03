@@ -1,4 +1,6 @@
 #define _POSIX_C_SOURCE 200809L
+
+#include <stdlib.h>
 #include "../include/utils.h"
 
 #define LONG1E9 1000000000L //1e9
@@ -26,3 +28,17 @@ long get_elapsed_milliseconds(struct timespec *start, struct timespec *end) {
     return diff.tv_sec * 1000L + diff.tv_nsec / 1000000L;
 }
 
+safe_fd_t *get_safe_fd(void) {
+    int err;
+    safe_fd_t *sfd;
+    EQNULL(sfd = (safe_fd_t*) malloc(sizeof(safe_fd_t)), return NULL)
+    PTH(err, pthread_mutex_init(&(sfd->mtx), NULL), return NULL)
+    return sfd;
+}
+
+int free_safe_fd(safe_fd_t *sfd) {
+    int err;
+    PTH(err, pthread_mutex_destroy(&(sfd->mtx)), return -1)
+    free(sfd);
+    return 0;
+}
