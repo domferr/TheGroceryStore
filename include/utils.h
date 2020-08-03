@@ -5,6 +5,7 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+#define _POSIX_C_SOURCE 200809L
 #include <errno.h>
 #include <time.h>
 #include <pthread.h>
@@ -44,27 +45,6 @@
  * Genera numero random tra min (incluso) e max (non incluso)
  */
 #define RANDOM(seed_ptr, min, max) ((rand_r(&(seed_ptr))%((max)-(min))) + (min))
-
-typedef struct {
-    int fd;
-    pthread_mutex_t mtx;
-} safe_fd_t;
-
-/**
- * Ritorna una struttura dati che associa ad un file descriptor una mutex. Tutte le operazioni che devono essere atomiche,
- * possono essere svolte prendendo la lock della mutex associata.
- *
- * @return descrittore thread safe oppure NULL in caso di errore ed imposta errno
- */
-safe_fd_t *get_safe_fd(void);
-
-/**
- * Libera la memoria del descrittore thread safe.
- *
- * @param sfd descrittore thread safe
- * @return 0 in caso di successo, -1 altrimenti ed imposta errno
- */
-int free_safe_fd(safe_fd_t *sfd);
 
 /**
  * Mette il thread in attesa per un tempo pari ai millisecondi specificati.

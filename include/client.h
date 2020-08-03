@@ -1,7 +1,7 @@
 #ifndef CLIENT_H
 #define CLIENT_H
 
-#include "../src/storetypes.h"
+#include "storetypes.h"
 
 /**
  * Funzione svolta dal thread cliente. Il thread, dopo aver simulato il cliente all'interno del supermercato, viene
@@ -24,9 +24,10 @@ void *client_thread_fun(void *args);
  * @param s ogni quanto tempo (in millisecondi) il cliente decide se cambiare cassa o meno
  * @param k quante casse sono presenti nel supermercato
  * @param fd descrittore del file utilizzato per la comunicazione delle richieste di uscita dal supermercato
+ * @param fd_mtx puntatore alla mutex da utilizzare per svolgere le operazioni in mutua esclusione sul file descriptor
  * @return struttura dati oppure NULL in caso di errore ed imposta errno
  */
-client_t *alloc_client(size_t id, store_t *store, int t, int p, int s, int k, safe_fd_t *fd);
+client_t *alloc_client(size_t id, store_t *store, int t, int p, int s, int k, int fd, pthread_mutex_t *fd_mtx);
 
 /**
  * Distrugge la struttura dati del cliente, liberandone la memoria occupata. Dopo la chiamata di questa funzione, il

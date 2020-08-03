@@ -10,6 +10,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/TheGroceryStore.dir/src/store.c.o"
   "CMakeFiles/TheGroceryStore.dir/src/threadpool.c.o"
   "CMakeFiles/TheGroceryStore.dir/src/client.c.o"
+  "CMakeFiles/TheGroceryStore.dir/src/cassiere.c.o"
   "TheGroceryStore.pdb"
   "TheGroceryStore"
 )

@@ -1,8 +1,8 @@
 #ifndef STORETYPES_H
 #define STORETYPES_H
 
+#include "queue.h"
 #include <pthread.h>
-#include "../include/utils.h"
 
 typedef enum {
     open_state,       //Il supermercato è aperto. I clienti possono entrare
@@ -22,6 +22,17 @@ typedef struct {
 } store_t;
 
 typedef struct {
+    store_t *store;
+    size_t id;
+    int fd;  //descrittore del file utilizzato per comunicare con il direttore. Le scritture sono thread safe
+    pthread_mutex_t *fd_mtx;    //mutex per scrivere in mutua esclusione sul file descriptor
+    queue_t *queue;             //clienti in coda
+    int product_service_time;   //quanto impiega a gestire un singolo prodotto
+    int fixed_service_time;     //tempo fisso per la gestione di un cliente
+    int interval;   //intervallo tra una notifica ed un'altra. espresso in millisecondi
+} cassiere_t;
+
+typedef struct {
     pthread_mutex_t mutex;
     pthread_cond_t exit_permission;  //Il thread cliente rimane attesa su questa condition variable per aspettare il permesso di uscita
     int can_exit;
@@ -32,7 +43,8 @@ typedef struct {
     int t;  //tempo massimo per acquistare prima di mettersi in una coda
     int p;  //numero massimo di prodotti che acquista
     int s;  //ogni quanto tempo il cliente decide se cambiare cassa
-    safe_fd_t *sfd;  //descrittore del file utilizzato per comunicare con il direttore. Le scritture sono thread safe
+    int fd;  //descrittore del file utilizzato per comunicare con il direttore. Le scritture sono thread safe
+    pthread_mutex_t *fd_mtx;    //mutex per scrivere in mutua esclusione sul file descriptor
 } client_t;
 
 #endif //STORETYPES_H

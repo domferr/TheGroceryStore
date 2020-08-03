@@ -2,15 +2,15 @@
 
 #include "../include/client.h"
 #include "../include/store.h"
-#include "../include/utils.h"
 #include "../include/config.h"
 #include "../include/af_unix_conn.h"
+#include "../include/utils.h"
 #include <stdlib.h>
 #include <stdio.h>
 
 #define DEBUGCLIENT
 
-client_t *alloc_client(size_t id, store_t *store, int t, int p, int s, int k, safe_fd_t *fd) {
+client_t *alloc_client(size_t id, store_t *store, int t, int p, int s, int k, int fd, pthread_mutex_t *fd_mtx) {
     int err;
     client_t *client = (client_t*) malloc(sizeof(client_t));
     EQNULL(client, return NULL)
@@ -22,7 +22,8 @@ client_t *alloc_client(size_t id, store_t *store, int t, int p, int s, int k, sa
     client->t = t;
     client->p = p;
     client->s = s;
-    client->sfd = fd;
+    client->fd = fd;
+    client->fd_mtx = fd_mtx;
 
     client->can_exit = -1;
     PTH(err, pthread_mutex_init(&(client->mutex), NULL), return NULL)
@@ -65,9 +66,9 @@ void *client_thread_fun(void *args) {
 #endif
                 //Chiedo il permesso di uscire ad aspetto che mi venga dato
                 if (ISOPEN(st_state)) {
-                    PTH(err, pthread_mutex_lock(&((cl->sfd)->mtx)), perror("lock"); return NULL)
-                    MINUS1(ask_exit_permission((cl->sfd)->fd, cl->id), perror("ask exit permission"); return NULL)
-                    PTH(err, pthread_mutex_unlock(&((cl->sfd)->mtx)), perror("unlock"); return NULL)
+                    PTH(err, pthread_mutex_lock(cl->fd_mtx), perror("lock"); return NULL)
+                    MINUS1(ask_exit_permission(cl->fd, cl->id), perror("ask exit permission"); return NULL)
+                    PTH(err, pthread_mutex_unlock(cl->fd_mtx), perror("unlock"); return NULL)
                     MINUS1(wait_permission(cl), perror("wait permission"); return NULL)
                 }
             } else {

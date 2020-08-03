@@ -17,6 +17,7 @@ LIBS    	= -lpthread
 OBJS_SUPERM	= 	$(OBJDIR)/supermercato.o	\
 				$(OBJDIR)/store.o			\
 				$(OBJDIR)/client.o			\
+				$(OBJDIR)/cassiere.o		\
 				$(OBJDIR)/utils.o			\
 				$(OBJDIR)/config.o			\
 				$(OBJDIR)/scfiles.o			\
@@ -29,7 +30,6 @@ OBJS_DIRETT	=	$(OBJDIR)/direttore.o		\
              	$(OBJDIR)/utils.o			\
 				$(OBJDIR)/config.o			\
 				$(OBJDIR)/scfiles.o			\
-				$(OBJDIR)/queue.o			\
 				$(OBJDIR)/threadpool.o		\
 				$(OBJDIR)/af_unix_conn.o	\
 				$(OBJDIR)/sig_handling.o

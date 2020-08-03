@@ -1,7 +1,7 @@
 #ifndef STORE_H
 #define STORE_H
 
-#include "../src/storetypes.h"
+#include "storetypes.h"
 #define ISOPEN(st) (st) == open_state
 
 /**
