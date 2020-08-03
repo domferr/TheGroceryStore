@@ -64,7 +64,7 @@ void *client_thread_fun(void *args) {
 #ifdef DEBUGCLIENT
                 printf("Thread cliente %ld: Chiedo permesso di uscita\n", cl->id);
 #endif
-                //Chiedo il permesso di uscire ad aspetto che mi venga dato
+                //Se il supermercato è ancora aperto, chiedo il permesso di uscire ad aspetto che mi venga dato
                 if (ISOPEN(st_state)) {
                     PTH(err, pthread_mutex_lock(cl->fd_mtx), perror("lock"); return NULL)
                     MINUS1(ask_exit_permission(cl->fd, cl->id), perror("ask exit permission"); return NULL)

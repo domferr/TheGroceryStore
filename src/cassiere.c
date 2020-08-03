@@ -43,7 +43,7 @@ void *cassiere_thread_fun(void *args) {
     int err;
     pthread_t th_notifier;
     store_state st_state;
-    notifier_t *notifier = alloc_notifier(ca);
+    notifier_t *notifier = alloc_notifier(ca, ca->state == cassa_open_state);
     EQNULL(notifier, perror("alloc notifier"); exit(EXIT_FAILURE))
     PTH(err, pthread_create(&th_notifier, NULL, &notifier_thread_fun, notifier), perror("create notifier thread"); return NULL)
 
@@ -51,6 +51,7 @@ void *cassiere_thread_fun(void *args) {
     while(ISOPEN(st_state)) {
         break;
     }
+    MINUS1(set_notifier_state(notifier, notifier_quit), perror("set notifier state"); return NULL)
     PTH(err, pthread_join(th_notifier, NULL), perror("join notifier"); return NULL)
     MINUS1(destroy_notifier(notifier), perror("destroy notifier"); return NULL)
     return 0;
