@@ -15,6 +15,8 @@ typedef struct {
     size_t size;        //numero di thread nel pool
     pthread_t *threads; //array di threads
     pthread_mutex_t mtx;
+    void **args;
+    void **retvalues;
 } thread_pool_t;
 
 /**
@@ -28,12 +30,11 @@ thread_pool_t *thread_pool_create(int max_size);
 /**
  * Attende che tutti i thread del pool termino. Esegue pthread_join() su ogni thread del thread pool. Chiamata bloccante.
  * Il controllo viene passato al chiamante solo quando tutti i thread del thread pool hanno finito la loro esecuzione.
- * Salva tutti i valori di ritorno nel puntatore passato per argomento
+ * Salva tutti i valori di ritorno nell'array retvalues presente nella struttura dati del pool.
  *
  * @param pool l'attesa viene eseguita sugli elementi di questo thread pool
- * @param retvalues array nel quale contenere i valori di ritorno dei thread
  */
-int thread_pool_join(thread_pool_t *pool, void **retvalues);
+int thread_pool_join(thread_pool_t *pool);
 
 /**
  * Libera la memoria occupata dal thread pool passato per argomento. Quando il controllo viene passato al chiamante, il

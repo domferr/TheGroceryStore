@@ -107,14 +107,14 @@
     </key>
   </component>
   <component name="RunManager">
-    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="Run" type="CLionNativeAppRunConfigurationType" PROGRAM_PARAMS="-c ../config.txt" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="TheGroceryStore" TARGET_NAME="all" CONFIG_NAME="all" version="1" RUN_PATH="$PROJECT_DIR$/bin/direttore">
       <method v="2">
         <option name="CLION.COMPOUND.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
     <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true">
@@ -146,7 +146,8 @@
       <workItem from="1596191164597" duration="64000" />
       <workItem from="1596191293917" duration="23159000" />
       <workItem from="1596271103055" duration="35458000" />
-      <workItem from="1596365365272" duration="15279000" />
+      <workItem from="1596365365272" duration="15393000" />
+      <workItem from="1596447868350" duration="9559000" />
     </task>
     <servers />
   </component>
@@ -220,13 +221,17 @@
       <screen x="0" y="0" width="1536" height="864" />
     </state>
     <state x="454" y="337" width="628" height="206" key="makefile.clean.confirm.dialog/0.0.1536.864@0.0.1536.864" timestamp="1596203990022" />
-    <state x="565" y="201" key="refactoring.ChangeSignatureDialog" timestamp="1596410530583">
+    <state x="565" y="201" key="refactoring.ChangeSignatureDialog" timestamp="1596458036004">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state x="565" y="201" key="refactoring.ChangeSignatureDialog/0.0.1536.864@0.0.1536.864" timestamp="1596410530583" />
+    <state x="565" y="201" key="refactoring.ChangeSignatureDialog/0.0.1536.864@0.0.1536.864" timestamp="1596458036004" />
     <state x="426" y="197" key="run.anything.popup" timestamp="1596321211209">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
     <state x="426" y="197" key="run.anything.popup/0.0.1536.864@0.0.1536.864" timestamp="1596321211209" />
+    <state x="431" y="182" width="672" height="678" key="search.everywhere.popup" timestamp="1596453687155">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state x="431" y="182" width="672" height="678" key="search.everywhere.popup/0.0.1536.864@0.0.1536.864" timestamp="1596453687155" />
   </component>
 </project>

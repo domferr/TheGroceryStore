@@ -30,7 +30,6 @@ void *thread_sig_handler_fun(void *args) {
     MINUS1(sigaddset(&set, SIGHUP), perror("sigaddset"); return NULL)
     //Aspetta sul set che arrivi uno dei segnali di cui sopra
     PTH(err, sigwait(&set, &sig), perror("sigwait"); return NULL)
-    printf("Arrivato segnale\n");
     //Invio il segnale sulla pipe e termino
     MINUS1(writen(h_pipe[1], &sig, sizeof(int)), perror("writen"); return NULL)
     return 0;

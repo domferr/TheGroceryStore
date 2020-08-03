@@ -35,4 +35,16 @@ int accept_socket_conn(void);
  */
 int connect_via_socket(void);
 
+int ask_exit_permission(int fd, int client_id);
+
+/**
+ * Notifica al direttore che nella cassa identificata dal parametro cassa_id ci sono queue_len clienti in coda.
+ *
+ * @param fd file descriptor per la comunicazione via socket AX_UNIX
+ * @param cassa_id identificatore della cassa
+ * @param queue_len quanti clienti sono in coda in cassa
+ * @return 0 in caso di successo, -1 altrimenti e imposta errno
+ */
+int notify(int fd, int cassa_id, int queue_len);
+
 #endif //AF_UNIX_CONN_H

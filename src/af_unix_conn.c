@@ -1,5 +1,6 @@
 #include "../include/utils.h"
 #include "../include/af_unix_conn.h"
+#include "../include/scfiles.h"
 #include <string.h>
 #include <sys/socket.h>
 #include <sys/un.h>
@@ -33,4 +34,19 @@ int connect_via_socket(void) {
             return -1;
     }
     return fd_skt;
+}
+
+int ask_exit_permission(int fd, int client_id) {
+    msg_header_t msg_hdr = head_ask_exit;
+    MINUS1(writen(fd, &msg_hdr, sizeof(msg_header_t)), return -1)
+    MINUS1(writen(fd, &client_id, sizeof(int)), return -1)
+    return 0;
+}
+
+int notify(int fd, int cassa_id, int queue_len) {
+    msg_header_t msg_hdr = head_notify;
+    MINUS1(writen(fd, &msg_hdr, sizeof(msg_header_t)), return -1)
+    MINUS1(writen(fd, &cassa_id, sizeof(int)), return -1)
+    MINUS1(writen(fd, &queue_len, sizeof(int)), return -1)
+    return 0;
 }

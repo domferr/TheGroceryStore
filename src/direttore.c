@@ -170,7 +170,7 @@ static int handle_notification(int fd_store, config_t *config, int *casse, int *
 }
 
 static int handle_ask_exit(int fd_store, int client_id) {
-    int msg_param = 1;
+    int msg_param = 1;  //Concedi sempre il permesso
     msg_header_t msg_hdr = head_can_exit;
     MINUS1(writen(fd_store, &msg_hdr, sizeof(msg_header_t)), return -1)
     MINUS1(writen(fd_store, &client_id, sizeof(int)), return -1)
