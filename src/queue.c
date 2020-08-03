@@ -5,7 +5,6 @@
 #include "../include/queue.h"
 #include "../include/utils.h"
 #include <stdlib.h>
-#include <stdio.h>
 
 static int internal_foreach(node_t *node, int (*fun)(void*, void*), void *args);
 

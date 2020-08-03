@@ -21,15 +21,23 @@ typedef struct {
     size_t total_clients;   //contatore per dare un nuovo identificatore ai clienti che entrano nel supermercato
 } store_t;
 
+typedef enum {
+    cassa_open_state,
+    cassa_closed_state,
+    cassa_quit_state
+} cassiere_state;
+
 typedef struct {
     store_t *store;
     size_t id;
-    int fd;  //descrittore del file utilizzato per comunicare con il direttore. Le scritture sono thread safe
-    pthread_mutex_t *fd_mtx;    //mutex per scrivere in mutua esclusione sul file descriptor
+    cassiere_state state;
     queue_t *queue;             //clienti in coda
+    pthread_mutex_t mutex;
     int product_service_time;   //quanto impiega a gestire un singolo prodotto
     int fixed_service_time;     //tempo fisso per la gestione di un cliente
     int interval;   //intervallo tra una notifica ed un'altra. espresso in millisecondi
+    int fd;  //descrittore del file utilizzato per comunicare con il direttore. Le scritture sono thread safe
+    pthread_mutex_t *fd_mtx;    //mutex per scrivere in mutua esclusione sul file descriptor
 } cassiere_t;
 
 typedef struct {

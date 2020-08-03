@@ -258,6 +258,33 @@ src/direttore.c.s:
 	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/direttore.c.s
 .PHONY : src/direttore.c.s
 
+src/notifier.o: src/notifier.c.o
+
+.PHONY : src/notifier.o
+
+# target to build an object file
+src/notifier.c.o:
+	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/notifier.c.o
+.PHONY : src/notifier.c.o
+
+src/notifier.i: src/notifier.c.i
+
+.PHONY : src/notifier.i
+
+# target to preprocess a source file
+src/notifier.c.i:
+	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/notifier.c.i
+.PHONY : src/notifier.c.i
+
+src/notifier.s: src/notifier.c.s
+
+.PHONY : src/notifier.s
+
+# target to generate assembly for a file
+src/notifier.c.s:
+	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/notifier.c.s
+.PHONY : src/notifier.c.s
+
 src/queue.o: src/queue.c.o
 
 .PHONY : src/queue.o
@@ -471,6 +498,9 @@ help:
 	@echo "... src/direttore.o"
 	@echo "... src/direttore.i"
 	@echo "... src/direttore.s"
+	@echo "... src/notifier.o"
+	@echo "... src/notifier.i"
+	@echo "... src/notifier.s"
 	@echo "... src/queue.o"
 	@echo "... src/queue.i"
 	@echo "... src/queue.s"

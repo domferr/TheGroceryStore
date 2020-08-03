@@ -18,6 +18,7 @@ OBJS_SUPERM	= 	$(OBJDIR)/supermercato.o	\
 				$(OBJDIR)/store.o			\
 				$(OBJDIR)/client.o			\
 				$(OBJDIR)/cassiere.o		\
+				$(OBJDIR)/notifier.o		\
 				$(OBJDIR)/utils.o			\
 				$(OBJDIR)/config.o			\
 				$(OBJDIR)/scfiles.o			\

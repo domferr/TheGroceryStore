@@ -90,6 +90,9 @@
 		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/include/config.h">
 			<Option target="TheGroceryStore"/>
 		</Unit>
+		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/include/notifier.h">
+			<Option target="TheGroceryStore"/>
+		</Unit>
 		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/include/queue.h">
 			<Option target="TheGroceryStore"/>
 		</Unit>
@@ -124,6 +127,9 @@
 			<Option target="TheGroceryStore"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/direttore.c">
+			<Option target="TheGroceryStore"/>
+		</Unit>
+		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/notifier.c">
 			<Option target="TheGroceryStore"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/queue.c">

@@ -154,12 +154,13 @@ static thread_pool_t *run_clients(store_t *store, config_t *config, int fd, pthr
 }
 
 static thread_pool_t *run_cassieri(store_t *store, config_t *config, int fd, pthread_mutex_t *fd_mtx) {
-    int i;
+    int i, is_open;
     cassiere_t *arg;
     thread_pool_t *pool = thread_pool_create(config->k);
     EQNULL(pool, return NULL)
     for (i = 0; i < config->k; ++i) {
-        EQNULL(arg = alloc_cassiere(i, store, fd, fd_mtx, config->kt, config->d), return NULL)
+        is_open = i < config->ka;   //all'inizio le prime ka casse sono aperte
+        EQNULL(arg = alloc_cassiere(i, store, is_open, fd, fd_mtx, config->kt, config->d), return NULL)
         MINUS1(thread_create(pool, cassiere_thread_fun, arg), return NULL)
     }
     return pool;
