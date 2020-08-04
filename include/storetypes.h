@@ -23,8 +23,7 @@ typedef struct {
 
 typedef enum {
     cassa_open_state,
-    cassa_closed_state,
-    cassa_quit_state
+    cassa_closed_state
 } cassiere_state;
 
 typedef struct {
@@ -33,6 +32,8 @@ typedef struct {
     cassiere_state state;
     queue_t *queue;             //clienti in coda
     pthread_mutex_t mutex;
+    pthread_cond_t noclients;   //il cassiere aspetta su questa variabile di condizione quando non ci sono clienti
+    pthread_cond_t waiting;     //il cassiere attende su questa variabile di condizione quando la cassa viene chiusa
     int product_service_time;   //quanto impiega a gestire un singolo prodotto
     int fixed_service_time;     //tempo fisso per la gestione di un cliente
     int interval;   //intervallo tra una notifica ed un'altra. espresso in millisecondi

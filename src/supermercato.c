@@ -15,7 +15,7 @@
 #include <signal.h>
 #include <sys/select.h>
 
-#define DBGPRINTF(str) printf("\rSUPERMERCATO: "str);
+//#define DEBUGSUPERM
 
 static thread_pool_t *run_clients(store_t *store, config_t *config, int fd, pthread_mutex_t *fd_mtx);
 static thread_pool_t *run_cassieri(store_t *store, config_t *config, int fd, pthread_mutex_t *fd_mtx);
@@ -43,7 +43,9 @@ int main(int argc, char **args) {
     //Gestione dei segnali mediante thread apposito
     MINUS1(pipe(sigh_pipe), perror("pipe"); exit(EXIT_FAILURE))
     MINUS1(handle_signals(&sig_handler_thread, &thread_sig_handler_fun, (void*)sigh_pipe), perror("handle_signals"); exit(EXIT_FAILURE))
-    DBGPRINTF("Connesso con il direttore via socket AF_UNIX\n");
+#ifdef DEBUGSUPERM
+    printf("Connesso con il direttore via socket AF_UNIX\n");
+#endif
     //Leggo file di configurazione
     EQNULL(config = load_config(args[1]), perror("load_config"); exit(EXIT_FAILURE))
     if (!validate(config)) exit(EXIT_FAILURE);
@@ -74,7 +76,6 @@ int main(int argc, char **args) {
                     break;
             }
         } else {
-            printf("Comunicazione dal direttore\n");
             MINUS1(err = readn(fd_skt, &msg_hdr, sizeof(msg_header_t)), perror("readn"); exit(EXIT_FAILURE))
             if (err == 0) { //EOF quindi il processo direttore è terminato!
                 run = 0;
@@ -91,20 +92,28 @@ int main(int argc, char **args) {
             switch (msg_hdr) {
                 case head_open:
                     MINUS1(readn(fd_skt, &param1, sizeof(int)), perror("readn"); exit(EXIT_FAILURE))
+#ifdef DEBUGSUPERM
                     printf("Il direttore dice di aprire la cassa %d\n", param1);
+#endif
+                    MINUS1(set_cassa_state(cassieri_pool->args[param1], 1), perror("set cassa state"); exit(EXIT_FAILURE))
                     break;
                 case head_close:
                     MINUS1(readn(fd_skt, &param1, sizeof(int)), perror("readn"); exit(EXIT_FAILURE))
+#ifdef DEBUGSUPERM
                     printf("Il direttore dice di chiudere la cassa %d\n", param1);
+#endif
+                    MINUS1(set_cassa_state(cassieri_pool->args[param1], 0), perror("set cassa state"); exit(EXIT_FAILURE))
                     break;
                 case head_can_exit:
                     MINUS1(readn(fd_skt, &param1, sizeof(int)), perror("readn"); exit(EXIT_FAILURE))
-                    printf("Il direttore dice che il cliente %d ", param1);
                     MINUS1(readn(fd_skt, &param2, sizeof(int)), perror("readn"); exit(EXIT_FAILURE))
+                    MINUS1(set_exit_permission((clients_pool->args)[param1], param2), perror("set exit permission"); exit(EXIT_FAILURE))
+#ifdef DEBUGSUPERM
+                    printf("Il direttore dice che il cliente %d ", param1);
                     if (!param2)
                         printf("non ");
                     printf("può uscire!\n");
-                    MINUS1(set_exit_permission((clients_pool->args)[param1], param2), perror("set exit permission"); exit(EXIT_FAILURE))
+#endif
                     break;
                 default:
                     break;
@@ -117,6 +126,10 @@ int main(int argc, char **args) {
     //sveglio i clienti in attesa di uscita permettendogli di uscire
     for (i = 0; i < clients_pool->size; ++i) {
         MINUS1(set_exit_permission((clients_pool->args)[i], 1), perror("set exit permission"); exit(EXIT_FAILURE))
+    }
+    //sveglio tutti i cassieri che sono dormienti
+    for (i = 0; i < cassieri_pool->size; ++i) {
+        MINUS1(cassiere_quit(cassieri_pool->args[i]), perror("cassiere quit"); exit(EXIT_FAILURE))
     }
     //join sul thread signal handler
     PTH(err, pthread_join(sig_handler_thread, NULL), perror("join thread handler"); exit(EXIT_FAILURE))
@@ -137,7 +150,9 @@ int main(int argc, char **args) {
     }
     MINUS1(thread_pool_free(clients_pool), perror("thread pool free"); exit(EXIT_FAILURE))
     PTH(err, pthread_mutex_destroy(&(fd_mtx)), return -1)
-    DBGPRINTF("Termino!\n");
+#ifdef DEBUGSUPERM
+    printf("Supermercato: Termino!\n");
+#endif
     return 0;
 }
 

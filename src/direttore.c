@@ -39,6 +39,7 @@ static char *parse_args(int argc, char **args);
  */
 static int fork_store(char *config_file, pid_t *pid);
 
+//TODO fare queste due documentazioni
 static int handle_notification(int fd_store, config_t *config, int *casse, int *casse_attive);
 
 static int handle_ask_exit(int fd_store, int client_id);
@@ -89,7 +90,6 @@ int main(int argc, char **args) {
             MINUS1(kill(pid_store, sig_arrived), perror("kill"); exit(EXIT_FAILURE))
             break;
         } else {
-            printf("Comunicazione dal supermercato\n");
             MINUS1(err = readn(fd_store, &msg_hdr, sizeof(msg_header_t)), perror("readn"); exit(EXIT_FAILURE))
             if (err == 0) { //EOF quindi il processo supermercato è terminato in maniera imprevista! Segnalo il sighandler e termino
                 PTH(err, pthread_kill(sig_handler_thread, SIGINT), perror("pthread_kill"); exit(EXIT_FAILURE))

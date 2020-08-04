@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#define DEBUGCLIENT
+//#define DEBUGCLIENT
 
 client_t *alloc_client(size_t id, store_t *store, int t, int p, int s, int k, int fd, pthread_mutex_t *fd_mtx) {
     int err;

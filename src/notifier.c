@@ -4,6 +4,8 @@
 #include "../include/utils.h"
 #include "../include/af_unix_conn.h"
 
+//#define DEBUGNOTIFIER
+
 void *notifier_thread_fun(void *args) {
     int err, queue_len;
     notifier_t *no = (notifier_t*) args;
@@ -31,6 +33,9 @@ void *notifier_thread_fun(void *args) {
             notify(ca->fd, ca->id, queue_len);
             PTH(err, pthread_mutex_unlock(ca->fd_mtx), perror("unlock"); return NULL)
 
+#ifdef DEBUGNOTIFIER
+            printf("Notificatore %ld: ho inviato una notifica\n", ca->id);
+#endif
             //Attendo l'intervallo
             msleep(ca->interval);
 
@@ -38,7 +43,9 @@ void *notifier_thread_fun(void *args) {
         }
     }
     PTH(err, pthread_mutex_unlock(&(no->mutex)), perror("unlock"); return NULL)
-
+#ifdef DEBUGNOTIFIER
+    printf("Notificatore %ld: termino\n", ca->id);
+#endif
     return 0;
 }
 
@@ -47,8 +54,8 @@ notifier_t *alloc_notifier(cassiere_t *cassiere, int start_notify) {
     notifier_t *notifier = (notifier_t*) malloc(sizeof(notifier_t));
     EQNULL(notifier, return NULL)
     notifier->cassiere = cassiere;
-    PTH(err, pthread_mutex_init(&(notifier->mutex), NULL), return NULL);
-    PTH(err, pthread_cond_init(&(notifier->paused), NULL), return NULL);
+    PTH(err, pthread_mutex_init(&(notifier->mutex), NULL), return NULL)
+    PTH(err, pthread_cond_init(&(notifier->paused), NULL), return NULL)
     notifier->state = start_notify? notifier_run:notifier_pause;
     return notifier;
 }
