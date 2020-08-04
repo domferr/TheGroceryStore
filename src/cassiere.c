@@ -28,6 +28,7 @@ cassiere_t *alloc_cassiere(size_t id, store_t *store, int isopen, int fd, pthrea
     PTH(err, pthread_mutex_init(&(cassiere->mutex), NULL), return NULL)
     PTH(err, pthread_cond_init(&(cassiere->noclients), NULL), return NULL)
     PTH(err, pthread_cond_init(&(cassiere->waiting), NULL), return NULL)
+
     return cassiere;
 }
 
@@ -44,8 +45,10 @@ int cassiere_destroy(cassiere_t *cassiere) {
 void *cassiere_thread_fun(void *args) {
     cassiere_t *ca = (cassiere_t*) args;
     store_t *store = ca->store;
-    int err, serve;
+    unsigned int seed = ca->id;
+    int err;
     void *client;
+    struct timespec open_start;
     pthread_t th_notifier;
     store_state st_state;
     notifier_t *notifier = alloc_notifier(ca, ca->state == cassa_open_state);
@@ -62,31 +65,31 @@ void *cassiere_thread_fun(void *args) {
                     //TODO avvisa il cliente in coda che la cassa è chiusa
                     //wakeup_client(client, 0);
                 }
-                //Aspetto fino a quando non vengo aperto perchè il supermercato chiude o perchè il direttore apre la cassa
+                //Aspetto fino a quando il supermercato chiude o quando il direttore apre la cassa
                 while (ISOPEN(st_state) && ca->state == cassa_closed_state) {
                     PTH(err, pthread_cond_wait(&(ca->waiting), &(ca->mutex)), perror("cond wait"); return NULL)
                     PTH(err, pthread_mutex_unlock(&(ca->mutex)), perror("unlock"); return NULL)
                     NOTZERO(get_store_state(store, &st_state), perror("get store state"); return NULL)
                     PTH(err, pthread_mutex_lock(&(ca->mutex)), perror("lock"); return NULL)
                 }
+                if (ISOPEN(st_state) && ca->state == cassa_open_state)
+                    MINUS1(clock_gettime(CLOCK_MONOTONIC, &open_start), perror("clock_gettime"); return NULL)
                 break;
             case cassa_open_state:
                 PTH(err, pthread_mutex_unlock(&(ca->mutex)), perror("unlock"); return NULL)
                 MINUS1(set_notifier_state(notifier, notifier_run), perror("set notifier state"); return NULL)
 
                 PTH(err, pthread_mutex_lock(&(ca->mutex)), perror("lock"); return NULL)
-                //esco se lo store viene chiuso o se la cassa viene chiusa o se arriva un cliente
-                //TODO segnalare su noclients quando chiudo la cassa, quando chiudo il supermercato, quando arriva un cliente
+                //esco se il supermercato viene chiuso o se la cassa viene chiusa o se arriva un cliente
                 while (ISOPEN(st_state) && ca->state == cassa_open_state && ca->queue->size == 0) {
                     PTH(err, pthread_cond_wait(&(ca->noclients), &(ca->mutex)), perror("cond wait"); return NULL)
                     PTH(err, pthread_mutex_unlock(&(ca->mutex)), perror("unlock"); return NULL)
                     NOTZERO(get_store_state(store, &st_state), perror("get store state"); return NULL)
                     PTH(err, pthread_mutex_lock(&(ca->mutex)), perror("lock"); return NULL)
                 }
-                //qua ho la lock del cassiere
-                //Caso in cui è arrivato un cliente e sia la cassa che il supermercato sono aperti
+                //C'è un cliente e sia la cassa che il supermercato sono aperti
                 if (ISOPEN(st_state) && ca->state == cassa_open_state) {
-                    //client = pop(ca->queue);
+                    client = pop(ca->queue);
                     //serve_client(client);
                 }
                 break;
@@ -148,7 +151,7 @@ int set_cassa_state(cassiere_t *cassiere, int open) {
     return 0;
 }
 
-int cassiere_quit(cassiere_t *cassiere) {
+int cassiere_wake_up(cassiere_t *cassiere) {
     int err;
 
     PTH(err, pthread_mutex_lock(&(cassiere->mutex)), return -1)

@@ -129,7 +129,7 @@ int main(int argc, char **args) {
     }
     //sveglio tutti i cassieri che sono dormienti
     for (i = 0; i < cassieri_pool->size; ++i) {
-        MINUS1(cassiere_quit(cassieri_pool->args[i]), perror("cassiere quit"); exit(EXIT_FAILURE))
+        MINUS1(cassiere_wake_up(cassieri_pool->args[i]), perror("cassiere quit"); exit(EXIT_FAILURE))
     }
     //join sul thread signal handler
     PTH(err, pthread_join(sig_handler_thread, NULL), perror("join thread handler"); exit(EXIT_FAILURE))

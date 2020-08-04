@@ -22,14 +22,14 @@ typedef struct {
 } store_t;
 
 typedef enum {
-    cassa_open_state,
-    cassa_closed_state
+    cassa_open_state,   //la cassa è aperta
+    cassa_closed_state  //la cassa è chiusa
 } cassiere_state;
 
 typedef struct {
     store_t *store;
-    size_t id;
-    cassiere_state state;
+    size_t id;                  //identificatore univoco del cassiere
+    cassiere_state state;       //stato del cassiere
     queue_t *queue;             //clienti in coda
     pthread_mutex_t mutex;
     pthread_cond_t noclients;   //il cassiere aspetta su questa variabile di condizione quando non ci sono clienti

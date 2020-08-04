@@ -39,9 +39,26 @@ static char *parse_args(int argc, char **args);
  */
 static int fork_store(char *config_file, pid_t *pid);
 
-//TODO fare queste due documentazioni
+/**
+ * Gestisce l'arrivo di una notifica dal processo supermercato. Ritorna 0 in caso di successo, -1 altrimenti ed imposta
+ * errno.
+ *
+ * @param fd_store descrittore del file utilizzato per la comunicazione socket AF_UNIX con il supermercato
+ * @param config struttura di configurazione
+ * @param casse array nel quale l'elemento in posizione i corrisponde al numero di clienti presenti nella cassa i
+ * @param casse_attive contatore di quante casse sono attive
+ * @return 0 in caso di successo, -1 altrimenti ed imposta errno
+ */
 static int handle_notification(int fd_store, config_t *config, int *casse, int *casse_attive);
 
+/**
+ * Gestisce la richiesta di uscita di un cliente. Il permesso viene sempre concesso. Ritorna 0 in caso di successo,
+ * altrimenti -1 ed imposta errno.
+ *
+ * @param fd_store descrittore del file utilizzato per la comunicazione socket AF_UNIX con il supermercato
+ * @param client_id identificatore univoco del cliente che ha richiesto l'uscita
+ * @return 0 in caso di successo, -1 altrimenti ed imposta errno
+ */
 static int handle_ask_exit(int fd_store, int client_id);
 
 int main(int argc, char **args) {
