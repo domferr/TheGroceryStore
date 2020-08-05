@@ -37,7 +37,8 @@ OBJS_DIRETT	=	$(OBJDIR)/direttore.o		\
 
 TARGETS	= $(BINDIR)/direttore $(BINDIR)/supermercato
 
-CONFIGFILE = configtest.txt
+CONFIGTEST1FILE = configtest1.txt
+CONFIGTEST2FILE = configtest2.txt
 LOGFILE = testlog.csv
 
 .PHONY: all clean cleanall test1 test2
@@ -60,41 +61,49 @@ $(BINDIR)/supermercato: $(OBJS_SUPERM)
 $(BINDIR)/direttore: $(OBJS_DIRETT)
 	$(CC) $(CFLAGS) $(INCLUDES) $(LDFLAGS) -o $@ $^ $(LIBS)
 
-test1: all
-	@echo "Running test1"
-	@echo "K = 2"  		>$(CONFIGFILE)
-	@echo "KT = 35"  	>>$(CONFIGFILE)
-	@echo "KA = 1"  	>>$(CONFIGFILE)
-	@echo "C = 20" 		>>$(CONFIGFILE)
-	@echo "E = 5"  		>>$(CONFIGFILE)
-	@echo "T = 500"  	>>$(CONFIGFILE)
-	@echo "P = 80"  	>>$(CONFIGFILE)
-	@echo "D = 1000"  	>>$(CONFIGFILE)
-	@echo "S = 30"  	>>$(CONFIGFILE)
-	@echo "S1 = 2"  	>>$(CONFIGFILE)
-	@echo "S2 = 6"  	>>$(CONFIGFILE)
-	@echo "L = $(LOGFILE)" >>$(CONFIGFILE)
-	@valgrind --leak-check=full --trace-children=yes $(BINDIR)/direttore -c $(CONFIGFILE) & sleep 3; kill -s 3 $$!; wait $$!
+# scrittura del file di configurazione per il test1
+$(CONFIGTEST1FILE):
+	@echo "K = 2"  		>$@
+	@echo "KT = 35"  	>>$@
+	@echo "KA = 1"  	>>$@
+	@echo "C = 20" 		>>$@
+	@echo "E = 5"  		>>$@
+	@echo "T = 500"  	>>$@
+	@echo "P = 80"  	>>$@
+	@echo "D = 1000"  	>>$@
+	@echo "S = 30"  	>>$@
+	@echo "S1 = 2"  	>>$@
+	@echo "S2 = 6"  	>>$@
+	@echo "L = $(LOGFILE)" >>$@
 
-test2: all
+# scrittura del file di configurazione per il test2
+$(CONFIGTEST2FILE):
+	@echo "K = 6"  		>$@
+	@echo "KT = 35"  	>>$@
+	@echo "KA = 5"  	>>$@
+	@echo "C = 50" 		>>$@
+	@echo "E = 3"  		>>$@
+	@echo "T = 200"  	>>$@
+	@echo "P = 100"  	>>$@
+	@echo "S = 20"  	>>$@
+	@echo "S1 = 5"  	>>$@
+	@echo "S2 = 15"  	>>$@
+	@echo "D = 1000"  	>>$@
+	@echo "L = $(LOGFILE)" >>$@
+
+# lancio del primo test. Necessario che il file di configurazione sia stato creato e che l'eseguibile sia stato generato
+test1: $(CONFIGTEST1FILE) all
+	@echo "Running test1"
+	@valgrind --leak-check=full --trace-children=yes $(BINDIR)/direttore -c $< & sleep 10; kill -s 1 $$!; wait $$!
+
+# lancio del secondo test. Necessario che il file di configurazione sia stato creato e che l'eseguibile sia stato generato
+test2: $(CONFIGTEST2FILE) all
 	@echo "Running test2"
-	@echo "K = 6"  		>$(CONFIGFILE)
-	@echo "KT = 35"  	>>$(CONFIGFILE)
-	@echo "KA = 5"  	>>$(CONFIGFILE)
-	@echo "C = 50" 		>>$(CONFIGFILE)
-	@echo "E = 3"  		>>$(CONFIGFILE)
-	@echo "T = 200"  	>>$(CONFIGFILE)
-	@echo "P = 100"  	>>$(CONFIGFILE)
-	@echo "S = 20"  	>>$(CONFIGFILE)
-	@echo "S1 = 5"  	>>$(CONFIGFILE)
-	@echo "S2 = 15"  	>>$(CONFIGFILE)
-	@echo "D = 1000"  	>>$(CONFIGFILE)
-	@echo "L = $(LOGFILE)" >>$(CONFIGFILE)
-	@$(BINDIR)/direttore -c $(CONFIGFILE) & sleep 5; kill -s 1 $$!; wait $$!
+	@$(BINDIR)/direttore -c $< & sleep 5; kill -s 1 $$!; wait $$!
 	@./analisi.sh
 
 clean:
 	rm -f $(TARGETS)
 
 cleanall: clean
-	\rm -f $(OBJDIR)/*.o *~ *.a *.sock $(CONFIGFILE)
+	\rm -f $(OBJDIR)/*.o *~ *.a *.sock configtest*

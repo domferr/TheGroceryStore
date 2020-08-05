@@ -15,8 +15,8 @@ int accept_socket_conn(void) {
     MINUS1(bind(fd_skt, (struct sockaddr *) &sa, sizeof(sa)), return -1)
     MINUS1(listen(fd_skt, SOMAXCONN), return -1)
     MINUS1(fd_store = accept(fd_skt, NULL, 0), return -1)
-    unlink(SOCKNAME);
     close(fd_skt);
+    unlink(SOCKNAME);
     return fd_store;
 }
 
@@ -28,10 +28,11 @@ int connect_via_socket(void) {
     MINUS1(fd_skt = socket(AF_UNIX, SOCK_STREAM, 0), return -1)
     //Avvia una connessione con il direttore via socket AF_UNIX
     while (connect(fd_skt, (struct sockaddr *) &sa, sizeof(sa)) == -1 ) {
-        if (errno == ENOENT)
-            msleep(CONN_INTERVAL); /* sock ancora non esiste, aspetto CONN_INTERVAL millisecondi e poi riprovo */
-        else
+        if (errno == ENOENT) {
+            MINUS1(msleep(CONN_INTERVAL),return -1) /* sock ancora non esiste, aspetto CONN_INTERVAL millisecondi e poi riprovo */
+        } else {
             return -1;
+        }
     }
     return fd_skt;
 }

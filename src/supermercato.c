@@ -38,11 +38,11 @@ int main(int argc, char **args) {
         exit(EXIT_FAILURE);
     }
     PTH(err, pthread_mutex_init(&(fd_mtx), NULL), perror("mutex init"); exit(EXIT_FAILURE))
-    //Stabilisco connessione via socket AF_UNIX con il direttore
-    MINUS1(fd_skt = connect_via_socket(), perror("connect_via_socket"); exit(EXIT_FAILURE))
     //Gestione dei segnali mediante thread apposito
     MINUS1(pipe(sigh_pipe), perror("pipe"); exit(EXIT_FAILURE))
     MINUS1(handle_signals(&sig_handler_thread, &thread_sig_handler_fun, (void*)sigh_pipe), perror("handle_signals"); exit(EXIT_FAILURE))
+    //Stabilisco connessione via socket AF_UNIX con il direttore
+    MINUS1(fd_skt = connect_via_socket(), perror("connect_via_socket"); exit(EXIT_FAILURE))
 #ifdef DEBUGSUPERM
     printf("Connesso con il direttore via socket AF_UNIX\n");
 #endif

@@ -80,15 +80,15 @@ int main(int argc, char **args) {
     printf(MESSAGE_VALID_CONFIG_FILE);
     print_config(config);
     EQNULL(casse = malloc(sizeof(int) * config->k), perror("calloc"); exit(EXIT_FAILURE))
+    casse_attive = config->ka;
     for (i = 0; i < config->k; ++i) {
         casse[i] = i < config->ka ? 0:-1;   //le prime ka casse sono aperte
     }
-    casse_attive = config->ka;
     //Lancio il processo supermercato
     MINUS1(fork_store(config_file_path, &pid_store), perror("fork_store"); exit(EXIT_FAILURE))
     printf("DIRETTORE: Connesso con il supermercato via socket AF_UNIX\n");
-    MINUS1(pipe(sigh_pipe), perror("pipe"); exit(EXIT_FAILURE))
     //Gestione dei segnali mediante thread apposito
+    MINUS1(pipe(sigh_pipe), perror("pipe"); exit(EXIT_FAILURE))
     MINUS1(handle_signals(&sig_handler_thread, &thread_sig_handler_fun, (void*)sigh_pipe), perror("handle_signals"); exit(EXIT_FAILURE))
     //Creo una connessione con il supermercato via socket AF_UNIX
     MINUS1(fd_store = accept_socket_conn(), perror("accept_socket_conn"); exit(EXIT_FAILURE))
