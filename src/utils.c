@@ -18,8 +18,10 @@ int msleep(int milliseconds) {
     return res;
 }
 
-long get_elapsed_milliseconds(struct timespec *start, struct timespec *end) {
-    struct timespec diff = {end->tv_sec - start->tv_sec, end->tv_nsec - start->tv_nsec};
+long elapsed_time(struct timespec *start) {
+    struct timespec now = {0,0};
+    MINUS1(clock_gettime(CLOCK_MONOTONIC, &now), return -1)
+    struct timespec diff = {now.tv_sec - start->tv_sec, now.tv_nsec - start->tv_nsec};
     if (diff.tv_nsec < 0) {
         diff.tv_sec -= 1;
         diff.tv_nsec += LONG1E9;

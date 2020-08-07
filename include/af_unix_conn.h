@@ -2,7 +2,6 @@
 #define AF_UNIX_CONN_H
 
 #define CONN_INTERVAL 1000  //intervallo di tempo tra due tentativi di connessione
-#define CONN_ATTEMPTS 3     //massimo numero di tentativi di connessione
 #define UNIX_PATH_MAX 108
 #define SOCKNAME "./sockfile.sock"
 
@@ -35,24 +34,7 @@ int accept_socket_conn(void);
  */
 int connect_via_socket(void);
 
-/**
- * Invia una richiesta di permesso di uscita. Utilizzato dal thread cliente per richiedere al direttore il permesso per
- * uscire dal supermercato.
- *
- * @param fd descrittore del file utilizzato per la comunicazione con il direttore
- * @param client_id identificatore univoco del thread cliente
- * @return 0 in caso di successo, -1 altrimenti ed imposta errno
- */
-int ask_exit_permission(int fd, int client_id);
-
-/**
- * Notifica al direttore che nella cassa identificata dal parametro cassa_id ci sono queue_len clienti in coda.
- *
- * @param fd file descriptor per la comunicazione via socket AX_UNIX
- * @param cassa_id identificatore della cassa
- * @param queue_len quanti clienti sono in coda in cassa
- * @return 0 in caso di successo, -1 altrimenti e imposta errno
- */
-int notify(int fd, int cassa_id, int queue_len);
+//TODO questa documentazione
+int send_via_socket(int fd, msg_header_t *msg_hdr, int params, ...);
 
 #endif //AF_UNIX_CONN_H

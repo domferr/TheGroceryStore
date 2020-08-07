@@ -18,12 +18,14 @@ OBJS_SUPERM	= 	$(OBJDIR)/supermercato.o	\
 				$(OBJDIR)/store.o			\
 				$(OBJDIR)/client.o			\
 				$(OBJDIR)/cassiere.o		\
+				$(OBJDIR)/client_in_queue.o	\
 				$(OBJDIR)/notifier.o		\
 				$(OBJDIR)/utils.o			\
 				$(OBJDIR)/config.o			\
 				$(OBJDIR)/scfiles.o			\
 				$(OBJDIR)/queue.o			\
 				$(OBJDIR)/threadpool.o		\
+				$(OBJDIR)/stats.o			\
 				$(OBJDIR)/af_unix_conn.o	\
 				$(OBJDIR)/sig_handling.o
 # dipendenze per l'eseguibile del direttore
@@ -32,6 +34,7 @@ OBJS_DIRETT	=	$(OBJDIR)/direttore.o		\
 				$(OBJDIR)/config.o			\
 				$(OBJDIR)/scfiles.o			\
 				$(OBJDIR)/threadpool.o		\
+				$(OBJDIR)/stats.o			\
 				$(OBJDIR)/af_unix_conn.o	\
 				$(OBJDIR)/sig_handling.o
 
@@ -41,7 +44,7 @@ CONFIGTEST1FILE = configtest1.txt
 CONFIGTEST2FILE = configtest2.txt
 LOGFILE = testlog.csv
 
-.PHONY: all clean cleanall test1 test2
+.PHONY: all clean cleanall test1 test2 $(CONFIGTEST1FILE) $(CONFIGTEST2FILE)
 
 all: $(TARGETS)
 
@@ -106,4 +109,4 @@ clean:
 	rm -f $(TARGETS)
 
 cleanall: clean
-	\rm -f $(OBJDIR)/*.o *~ *.a *.sock configtest*
+	\rm -f $(OBJDIR)/*.o *~ *.a *.sock $(CONFIGTEST1FILE) $(CONFIGTEST2FILE)

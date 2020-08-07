@@ -27,7 +27,7 @@ void *client_thread_fun(void *args);
  * @param fd_mtx puntatore alla mutex da utilizzare per svolgere le operazioni in mutua esclusione sul file descriptor
  * @return struttura dati oppure NULL in caso di errore ed imposta errno
  */
-client_t *alloc_client(size_t id, store_t *store, int t, int p, int s, int k, int fd, pthread_mutex_t *fd_mtx);
+client_t *alloc_client(size_t id, store_t *store, cassiere_t **casse, int t, int p, int s, int k);
 
 /**
  * Distrugge la struttura dati del cliente, liberandone la memoria occupata. Dopo la chiamata di questa funzione, il
@@ -55,8 +55,8 @@ int set_exit_permission(client_t *client, int can_exit);
  */
 int wait_permission(client_t *cl);
 
-int enter_best_queue(struct timespec *queue_entrance);
+int enter_best_queue(client_t *cl, client_in_queue *clq, struct timespec *queue_entrance);
 
-int wait_to_be_served(void);
+int wait_to_be_served(int s, client_in_queue *clq, store_state *st_state);
 
 #endif //CLIENT_H

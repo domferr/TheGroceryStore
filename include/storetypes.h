@@ -11,14 +11,10 @@ typedef enum {
 } store_state;
 
 typedef struct {
-    pthread_mutex_t mutex;
     pthread_cond_t entrance;    //I thread clienti rimangono in attesa su questa condition variable. Vengono svegliati quando ci sono C-E clienti dentro al supermercato
-    store_state state;  //stato del supermercato
-    int clients_inside; //numero di clienti dentro al supermercato
-    int max_clients;    //parametro c
+    int clients_outside;        //numero di clienti usciti dal supermercato
     int group_size;     //parametro e
-    int can_enter;          //vale tanto quanto il numero di clienti che possono entrare.
-    size_t total_clients;   //contatore per dare un nuovo identificatore ai clienti che entrano nel supermercato
+    int can_enter;          //vale tanto quanto il numero di clienti che possono entrare
 } store_t;
 
 typedef enum {
@@ -37,23 +33,32 @@ typedef struct {
     int product_service_time;   //quanto impiega a gestire un singolo prodotto
     int fixed_service_time;     //tempo fisso per la gestione di un cliente
     int interval;   //intervallo tra una notifica ed un'altra. espresso in millisecondi
-    int fd;  //descrittore del file utilizzato per comunicare con il direttore. Le scritture sono thread safe
-    pthread_mutex_t *fd_mtx;    //mutex per scrivere in mutua esclusione sul file descriptor
 } cassiere_t;
 
 typedef struct {
+    size_t id;
     pthread_mutex_t mutex;
     pthread_cond_t exit_permission;  //Il thread cliente rimane attesa su questa condition variable per aspettare il permesso di uscita
     int can_exit;
-    size_t id;
     store_t *store;
-    //cashier_t **casse;
+    cassiere_t **casse;
     int k;  //massimo numero di casse del supermercato
     int t;  //tempo massimo per acquistare prima di mettersi in una coda
     int p;  //numero massimo di prodotti che acquista
     int s;  //ogni quanto tempo il cliente decide se cambiare cassa
-    int fd;  //descrittore del file utilizzato per comunicare con il direttore. Le scritture sono thread safe
-    pthread_mutex_t *fd_mtx;    //mutex per scrivere in mutua esclusione sul file descriptor
 } client_t;
+
+/**
+ * Struttura dati utilizzata per interfacciare cassieri e clienti. Utile per information hiding in quanto il cliente
+ * non può accedere direttamente al cassiere ed il cassiere può accedere solo a ciò che è per lui fondamentale, ovvero
+ * la lock e la condition variable sulla quale il cliente sta attendendo mentre si trova in coda.
+ */
+typedef struct {
+    size_t id;
+    int products;   //prodotti acquistati
+    pthread_mutex_t *mutex;
+    pthread_cond_t waiting; //variabile di condizione sulla quale il cliente aspetta di essere servito
+    int served;   //vale 1 se è stato servito, 0 altrimenti
+} client_in_queue;
 
 #endif //STORETYPES_H

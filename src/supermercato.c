@@ -17,14 +17,15 @@
 
 //#define DEBUGSUPERM
 
-static thread_pool_t *run_clients(store_t *store, config_t *config, int fd, pthread_mutex_t *fd_mtx);
-static thread_pool_t *run_cassieri(store_t *store, config_t *config, int fd, pthread_mutex_t *fd_mtx);
+static thread_pool_t *run_clients(store_t *store, config_t *config, cassiere_t **casse);
+static thread_pool_t *run_cassieri(store_t *store, config_t *config);
+
+static pthread_mutex_t mtx_skt = PTHREAD_MUTEX_INITIALIZER; //Mutex per comunicare con il direttore in mutua esclusiome
+static int fd_skt;  //descrittore per comunicazione via socket af_unix con il direttore
 
 int main(int argc, char **args) {
-    int err, fd_skt, sigh_pipe[2], run = 1, param1, param2;
-    pthread_mutex_t fd_mtx;
+    int err, sigh_pipe[2], run = 1, param1, param2;
     size_t i;
-    pthread_t sig_handler_thread;
     msg_header_t msg_hdr;
     fd_set set, rd_set;
     config_t *config;
@@ -37,10 +38,10 @@ int main(int argc, char **args) {
         printf("Usage: Il processo supermercato deve essere lanciato dal direttore\n");
         exit(EXIT_FAILURE);
     }
-    PTH(err, pthread_mutex_init(&(fd_mtx), NULL), perror("mutex init"); exit(EXIT_FAILURE))
+
     //Gestione dei segnali mediante thread apposito
     MINUS1(pipe(sigh_pipe), perror("pipe"); exit(EXIT_FAILURE))
-    MINUS1(handle_signals(&sig_handler_thread, &thread_sig_handler_fun, (void*)sigh_pipe), perror("handle_signals"); exit(EXIT_FAILURE))
+    MINUS1(handle_signals(&thread_sig_handler_fun, (void*)sigh_pipe), perror("handle_signals"); exit(EXIT_FAILURE))
     //Stabilisco connessione via socket AF_UNIX con il direttore
     MINUS1(fd_skt = connect_via_socket(), perror("connect_via_socket"); exit(EXIT_FAILURE))
 #ifdef DEBUGSUPERM
@@ -55,8 +56,8 @@ int main(int argc, char **args) {
     FD_SET(sigh_pipe[0], &set); //imposto il descrittore per comunicare via pipe con il thread signal handler
 
     EQNULL(store = store_create(config->c, config->e), perror("malloc"); exit(EXIT_FAILURE))
-    EQNULL(cassieri_pool = run_cassieri(store, config, fd_skt, &fd_mtx), perror("run cassieri"); exit(EXIT_FAILURE))
-    EQNULL(clients_pool = run_clients(store, config, fd_skt, &fd_mtx), perror("run clients"); exit(EXIT_FAILURE))
+    EQNULL(cassieri_pool = run_cassieri(store, config), perror("run cassieri"); exit(EXIT_FAILURE))
+    EQNULL(clients_pool = run_clients(store, config, (cassiere_t **) cassieri_pool->args), perror("run clients"); exit(EXIT_FAILURE))
 
     while (run) {
         rd_set = set;
@@ -79,15 +80,7 @@ int main(int argc, char **args) {
             MINUS1(err = readn(fd_skt, &msg_hdr, sizeof(msg_header_t)), perror("readn"); exit(EXIT_FAILURE))
             if (err == 0) { //EOF quindi il processo direttore è terminato!
                 run = 0;
-                err = pthread_kill(sig_handler_thread, SIGINT);
-                if (err == -1 && errno != ESRCH) {   //Allora il thread handler non ha già gestito il segnale dal processo direttore
-                    //Si tratta di terminazione imprevista quindi mando il segnale al thread signal handler
-                    PTH(err, pthread_kill(sig_handler_thread, SIGINT), perror("pthread_kill"); exit(EXIT_FAILURE))
-                    break;
-                } else if (err == -1) {
-                    perror("pthread kill");
-                    exit(EXIT_FAILURE);
-                }
+                closing_state = closed_fast_state;  //terminazione imprevista quindi chiusura rapida
             }
             switch (msg_hdr) {
                 case head_open:
@@ -131,52 +124,72 @@ int main(int argc, char **args) {
     for (i = 0; i < cassieri_pool->size; ++i) {
         MINUS1(cassiere_wake_up(cassieri_pool->args[i]), perror("cassiere quit"); exit(EXIT_FAILURE))
     }
-    //join sul thread signal handler
-    PTH(err, pthread_join(sig_handler_thread, NULL), perror("join thread handler"); exit(EXIT_FAILURE))
+    //join thread cassieri e thread clienti
     MINUS1(thread_pool_join(cassieri_pool), perror("join cassieri threads"); exit(EXIT_FAILURE))
     MINUS1(thread_pool_join(clients_pool), perror("join clients threads"); exit(EXIT_FAILURE))
+    PTH(err, pthread_mutex_lock(&mtx_skt), perror("lock"); exit(EXIT_FAILURE))
     close(fd_skt);
+    PTH(err, pthread_mutex_unlock(&mtx_skt), perror("unlock"); exit(EXIT_FAILURE))
     close(sigh_pipe[0]);
     close(sigh_pipe[1]);
     //cleanup
-    store_destroy(store);
-    free_config(config);
+    for (i = 0; i < clients_pool->size; ++i) {
+        MINUS1(client_destroy(clients_pool->args[i]), perror("client destroy"); exit(EXIT_FAILURE))
+        MINUS1(queue_destroy(clients_pool->retvalues[i]), perror("queue destroy"); exit(EXIT_FAILURE))
+    }
+    MINUS1(thread_pool_free(clients_pool), perror("thread pool free"); exit(EXIT_FAILURE))
     for (i = 0; i < cassieri_pool->size; ++i) {
         MINUS1(cassiere_destroy(cassieri_pool->args[i]), perror("cassiere destroy"); exit(EXIT_FAILURE))
     }
     MINUS1(thread_pool_free(cassieri_pool), perror("thread pool free"); exit(EXIT_FAILURE))
-    for (i = 0; i < clients_pool->size; ++i) {
-        MINUS1(client_destroy(clients_pool->args[i]), perror("client destroy"); exit(EXIT_FAILURE))
-    }
-    MINUS1(thread_pool_free(clients_pool), perror("thread pool free"); exit(EXIT_FAILURE))
-    PTH(err, pthread_mutex_destroy(&(fd_mtx)), return -1)
+    store_destroy(store);
+    free_config(config);
+    PTH(err, pthread_mutex_destroy(&mtx_skt), return -1)
 #ifdef DEBUGSUPERM
     printf("Supermercato: Termino!\n");
 #endif
     return 0;
 }
 
-static thread_pool_t *run_clients(store_t *store, config_t *config, int fd, pthread_mutex_t *fd_mtx) {
+static thread_pool_t *run_clients(store_t *store, config_t *config, cassiere_t **casse) {
     int i;
     client_t *arg;
     thread_pool_t *pool = thread_pool_create(config->c);
     EQNULL(pool, return NULL)
     for (i = 0; i < config->c; ++i) {
-        EQNULL(arg = alloc_client(i, store, config->t, config->p, config->s, config->k, fd, fd_mtx), return NULL)
+        EQNULL(arg = alloc_client(i, store, casse, config->t, config->p, config->s, config->k), return NULL)
         MINUS1(thread_create(pool, client_thread_fun, arg), return NULL)
     }
     return pool;
 }
 
-static thread_pool_t *run_cassieri(store_t *store, config_t *config, int fd, pthread_mutex_t *fd_mtx) {
+static thread_pool_t *run_cassieri(store_t *store, config_t *config) {
     int i, is_open;
     cassiere_t *arg;
     thread_pool_t *pool = thread_pool_create(config->k);
     EQNULL(pool, return NULL)
     for (i = 0; i < config->k; ++i) {
         is_open = i < config->ka;   //all'inizio le prime ka casse sono aperte
-        EQNULL(arg = alloc_cassiere(i, store, is_open, fd, fd_mtx, config->kt, config->d), return NULL)
+        EQNULL(arg = alloc_cassiere(i, store, is_open, config->kt, config->d), return NULL)
         MINUS1(thread_create(pool, cassiere_thread_fun, arg), return NULL)
     }
     return pool;
+}
+
+int ask_exit_permission(int client_id) {
+    int err;
+    msg_header_t msg_hdr = head_ask_exit;
+    PTH(err, pthread_mutex_lock(&mtx_skt), return -1)
+    MINUS1(send_via_socket(fd_skt, &msg_hdr, 1, &client_id), return -1)
+    PTH(err, pthread_mutex_unlock(&mtx_skt), return -1)
+    return 0;
+}
+
+int notify(int cassa_id, int queue_len) {
+    int err;
+    msg_header_t msg_hdr = head_notify;
+    PTH(err, pthread_mutex_lock(&mtx_skt), return -1)
+    MINUS1(send_via_socket(fd_skt, &msg_hdr, 2, &cassa_id, &queue_len), return -1)
+    PTH(err, pthread_mutex_unlock(&mtx_skt), return -1)
+    return 0;
 }

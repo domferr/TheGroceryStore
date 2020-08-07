@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include "../include/notifier.h"
 #include "../include/utils.h"
-#include "../include/af_unix_conn.h"
+#include "../include/store.h"
 
 //#define DEBUGNOTIFIER
 
@@ -10,6 +10,7 @@ void *notifier_thread_fun(void *args) {
     int err, queue_len;
     notifier_t *no = (notifier_t*) args;
     cassiere_t *ca = no->cassiere;
+
     //Attendo l'intervallo
     msleep(ca->interval);
 
@@ -29,9 +30,7 @@ void *notifier_thread_fun(void *args) {
             PTH(err, pthread_mutex_unlock(&(ca->mutex)), perror("unlock"); return NULL)
 
             //Invio al direttore il numero di clienti in coda
-            PTH(err, pthread_mutex_lock(ca->fd_mtx), perror("lock"); return NULL)
-            notify(ca->fd, ca->id, queue_len);
-            PTH(err, pthread_mutex_unlock(ca->fd_mtx), perror("unlock"); return NULL)
+            MINUS1(notify(ca->id, queue_len), perror("notify"))
 
 #ifdef DEBUGNOTIFIER
             printf("Notificatore %ld: ho inviato una notifica\n", ca->id);

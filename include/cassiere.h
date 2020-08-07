@@ -3,6 +3,8 @@
 
 #include "storetypes.h"
 
+extern int global;
+
 /**
  * Funzione svolta dal thread cassiere. Ogni volta che la cassa viene aperta o chiusa il thread non termina, bensì rimane
  * in attesa che la cassa venga riaperta o che il supermercato chiuda. Si occupa della gestione dei clienti in coda in
@@ -25,7 +27,7 @@ void *cassiere_thread_fun(void *args);
  * @param interval ogni quanto tempo, espresso in millisecondi, il thread notificatore del cassiere si occupa di notificare il direttore
  * @return struttura dati di un cassiere oppure NULL in caso di errore e imposta errno
  */
-cassiere_t *alloc_cassiere(size_t id, store_t *store, int isopen, int fd, pthread_mutex_t *fd_mtx, int product_service_time, int interval);
+cassiere_t *alloc_cassiere(size_t id, store_t *store, int isopen, int product_service_time, int interval);
 
 /**
  * Distrugge la struttura dati di un cassiere, liberandone la memoria. Dopo la chiamata di questa funzione, il puntatore
@@ -53,5 +55,8 @@ int set_cassa_state(cassiere_t *cassiere, int open);
  * @return 0 in caso di successo, -1 altrimenti ed impsota errno
  */
 int cassiere_wake_up(cassiere_t *cassiere);
+
+//TODO fare questa documentazione
+int enter_cassa_queue(cassiere_t *cassiere, client_in_queue *client);
 
 #endif //CASSIERE_H

@@ -5,6 +5,7 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <unistd.h>
+#include <stdarg.h>
 
 int accept_socket_conn(void) {
     int fd_skt, fd_store;
@@ -17,6 +18,7 @@ int accept_socket_conn(void) {
     MINUS1(fd_store = accept(fd_skt, NULL, 0), return -1)
     close(fd_skt);
     unlink(SOCKNAME);
+
     return fd_store;
 }
 
@@ -37,17 +39,17 @@ int connect_via_socket(void) {
     return fd_skt;
 }
 
-int ask_exit_permission(int fd, int client_id) {
-    msg_header_t msg_hdr = head_ask_exit;
-    MINUS1(writen(fd, &msg_hdr, sizeof(msg_header_t)), return -1)
-    MINUS1(writen(fd, &client_id, sizeof(int)), return -1)
-    return 0;
-}
-
-int notify(int fd, int cassa_id, int queue_len) {
-    msg_header_t msg_hdr = head_notify;
-    MINUS1(writen(fd, &msg_hdr, sizeof(msg_header_t)), return -1)
-    MINUS1(writen(fd, &cassa_id, sizeof(int)), return -1)
-    MINUS1(writen(fd, &queue_len, sizeof(int)), return -1)
+int send_via_socket(int fd, msg_header_t *msg_hdr, int params, ...) {
+    int *param;
+    va_list list;
+    va_start(list, params);
+    //Invio l'header
+    MINUS1(writen(fd, msg_hdr, sizeof(msg_header_t)), return -1)
+    //Invio i parametri
+    while(params-- > 0) {
+        param = va_arg(list, int*);
+        MINUS1(writen(fd, param, sizeof(int)), return -1)
+    }
+    va_end(list);
     return 0;
 }

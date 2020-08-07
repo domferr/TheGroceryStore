@@ -204,6 +204,33 @@ src/client.c.s:
 	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/client.c.s
 .PHONY : src/client.c.s
 
+src/client_in_queue.o: src/client_in_queue.c.o
+
+.PHONY : src/client_in_queue.o
+
+# target to build an object file
+src/client_in_queue.c.o:
+	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/client_in_queue.c.o
+.PHONY : src/client_in_queue.c.o
+
+src/client_in_queue.i: src/client_in_queue.c.i
+
+.PHONY : src/client_in_queue.i
+
+# target to preprocess a source file
+src/client_in_queue.c.i:
+	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/client_in_queue.c.i
+.PHONY : src/client_in_queue.c.i
+
+src/client_in_queue.s: src/client_in_queue.c.s
+
+.PHONY : src/client_in_queue.s
+
+# target to generate assembly for a file
+src/client_in_queue.c.s:
+	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/client_in_queue.c.s
+.PHONY : src/client_in_queue.c.s
+
 src/config.o: src/config.c.o
 
 .PHONY : src/config.o
@@ -366,6 +393,33 @@ src/sig_handling.c.s:
 	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/sig_handling.c.s
 .PHONY : src/sig_handling.c.s
 
+src/stats.o: src/stats.c.o
+
+.PHONY : src/stats.o
+
+# target to build an object file
+src/stats.c.o:
+	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/stats.c.o
+.PHONY : src/stats.c.o
+
+src/stats.i: src/stats.c.i
+
+.PHONY : src/stats.i
+
+# target to preprocess a source file
+src/stats.c.i:
+	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/stats.c.i
+.PHONY : src/stats.c.i
+
+src/stats.s: src/stats.c.s
+
+.PHONY : src/stats.s
+
+# target to generate assembly for a file
+src/stats.c.s:
+	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/stats.c.s
+.PHONY : src/stats.c.s
+
 src/store.o: src/store.c.o
 
 .PHONY : src/store.o
@@ -492,6 +546,9 @@ help:
 	@echo "... src/client.o"
 	@echo "... src/client.i"
 	@echo "... src/client.s"
+	@echo "... src/client_in_queue.o"
+	@echo "... src/client_in_queue.i"
+	@echo "... src/client_in_queue.s"
 	@echo "... src/config.o"
 	@echo "... src/config.i"
 	@echo "... src/config.s"
@@ -510,6 +567,9 @@ help:
 	@echo "... src/sig_handling.o"
 	@echo "... src/sig_handling.i"
 	@echo "... src/sig_handling.s"
+	@echo "... src/stats.o"
+	@echo "... src/stats.i"
+	@echo "... src/stats.s"
 	@echo "... src/store.o"
 	@echo "... src/store.i"
 	@echo "... src/store.s"

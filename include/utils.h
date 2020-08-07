@@ -39,7 +39,7 @@
 /**
  * Quanti nanosecondi ci sono nei millisecondi specificati
  */
-#define MS_TO_NANOSEC(ms) (((milliseconds)%1000)*1000000)
+#define MS_TO_NANOSEC(ms) (((ms)%1000)*1000000)
 
 /**
  * Genera numero random tra min (incluso) e max (non incluso)
@@ -55,12 +55,11 @@
 int msleep(int milliseconds);
 
 /**
- * Ritorna il tempo passato in millisecondi tra i due istanti definiti da start ed end
+ * Ritorna il tempo passato in millisecondi dall'istante indicato dal parametro start.
  *
  * @param start istante di inizio
- * @param end istante di fine
- * @return ritorna la durata in millisecondi tra l'istante di inizio e l'istante di fine
+ * @return ritorna la durata in millisecondi dall'istante passato per argomento, -1 in caso di errore ed imposta errno
  */
-long get_elapsed_milliseconds(struct timespec *start, struct timespec *end);
+long elapsed_time(struct timespec *start);
 
 #endif //UTILS_H

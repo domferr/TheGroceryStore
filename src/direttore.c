@@ -64,7 +64,6 @@ static int handle_ask_exit(int fd_store, int client_id);
 int main(int argc, char **args) {
     int err, i, param2, fd_store, sig_arrived, sigh_pipe[2], *casse, casse_attive;
     pid_t pid_store;                //pid del processo supermercato
-    pthread_t sig_handler_thread;   //thread che si occupa di gestire i segnali
     config_t *config;               //Struttura con i parametri di configurazione
     fd_set set, rd_set;
     msg_header_t msg_hdr;
@@ -86,10 +85,12 @@ int main(int argc, char **args) {
     }
     //Lancio il processo supermercato
     MINUS1(fork_store(config_file_path, &pid_store), perror("fork_store"); exit(EXIT_FAILURE))
+#ifdef DEBUGDIRETT
     printf("DIRETTORE: Connesso con il supermercato via socket AF_UNIX\n");
+#endif
     //Gestione dei segnali mediante thread apposito
     MINUS1(pipe(sigh_pipe), perror("pipe"); exit(EXIT_FAILURE))
-    MINUS1(handle_signals(&sig_handler_thread, &thread_sig_handler_fun, (void*)sigh_pipe), perror("handle_signals"); exit(EXIT_FAILURE))
+    MINUS1(handle_signals(&thread_sig_handler_fun, (void*)sigh_pipe), perror("handle_signals"); exit(EXIT_FAILURE))
     //Creo una connessione con il supermercato via socket AF_UNIX
     MINUS1(fd_store = accept_socket_conn(), perror("accept_socket_conn"); exit(EXIT_FAILURE))
 
@@ -108,8 +109,8 @@ int main(int argc, char **args) {
             break;
         } else {
             MINUS1(err = readn(fd_store, &msg_hdr, sizeof(msg_header_t)), perror("readn"); exit(EXIT_FAILURE))
-            if (err == 0) { //EOF quindi il processo supermercato è terminato in maniera imprevista! Segnalo il sighandler e termino
-                PTH(err, pthread_kill(sig_handler_thread, SIGINT), perror("pthread_kill"); exit(EXIT_FAILURE))
+            if (err == 0) { //EOF quindi il processo supermercato è terminato in maniera imprevista!
+                //PTH(err, pthread_kill(sig_handler_thread, SIGINT), perror("pthread_kill"); exit(EXIT_FAILURE))
                 break;
             } else {    //altrimenti gestisco il messaggio ricevuto
                 switch (msg_hdr) {
@@ -117,7 +118,9 @@ int main(int argc, char **args) {
                         //leggo idcassa e numero di clienti in coda
                         MINUS1(readn(fd_store, &i, sizeof(int)), return -1)
                         MINUS1(readn(fd_store, &param2, sizeof(int)), return -1)
+#ifdef DEBUGDIRETT
                         printf("Ho ricevuto che nella cassa %d ci sono %d clienti in coda\n", i, param2);
+#endif
                         casse[i] = param2;
                         MINUS1(handle_notification(fd_store, config, casse, &casse_attive), perror("handle_notification"); exit(EXIT_FAILURE))
                         break;
@@ -134,18 +137,18 @@ int main(int argc, char **args) {
         }
     }
 
-    //join sul thread signal handler
-    PTH(err, pthread_join(sig_handler_thread, NULL), perror("join thread handler"); exit(EXIT_FAILURE))
     //chiudo i file descriptors
-    close(fd_store);
     close(sigh_pipe[0]);
     close(sigh_pipe[1]);
     //attendo il processo supermercato
     MINUS1(waitpid(pid_store, &err, 0), perror("waitpid"); exit(EXIT_FAILURE))
+    close(fd_store);
     //memory cleanup
     free_config(config);
     free(casse);
+#ifdef DEBUGDIRETT
     printf("\rDIRETTORE: Goodbye!\n");
+#endif
     return 0;
 }
 

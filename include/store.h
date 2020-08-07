@@ -3,7 +3,7 @@
 
 #include "storetypes.h"
 #define ISOPEN(st) (st) == open_state
-
+#define STORE_INITIALIZER(c, e) {}
 /**
  * Crea la struttura dati dello store. Richiede il numero massimo di clienti che possono esserci contemporaneamente
  * all'interno del supermercato.
@@ -29,12 +29,33 @@ int store_destroy(store_t *store);
  * @param state puntatore alla variabile da aggiornare con lo stato del supermercato
  * @return 0 in caso di successo, -1 altrimenti
  */
-int get_store_state(store_t *store, store_state *state);
+int get_store_state(store_state *st_state);
 
+//TODO fare queste documentazioni
 int close_store(store_t *store, store_state closing_state);
 
 int enter_store(store_t *store);
 
-int exit_store(store_t *store);
+int leave_store(store_t *store);
+
+/**
+ * Invia una richiesta di permesso di uscita. Utilizzato dal thread cliente per richiedere al direttore il permesso per
+ * uscire dal supermercato.
+ *
+ * @param fd descrittore del file utilizzato per la comunicazione con il direttore
+ * @param client_id identificatore univoco del thread cliente
+ * @return 0 in caso di successo, -1 altrimenti ed imposta errno
+ */
+int ask_exit_permission(int client_id);
+
+/**
+ * Notifica al direttore che nella cassa identificata dal parametro cassa_id ci sono queue_len clienti in coda.
+ *
+ * @param fd file descriptor per la comunicazione via socket AX_UNIX
+ * @param cassa_id identificatore della cassa
+ * @param queue_len quanti clienti sono in coda in cassa
+ * @return 0 in caso di successo, -1 altrimenti e imposta errno
+ */
+int notify(int cassa_id, int queue_len);
 
 #endif //STORE_H
