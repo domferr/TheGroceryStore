@@ -21,8 +21,6 @@ void *cassiere_thread_fun(void *args);
  * @param id identificatore univoco di un cassiere. Utilizzato anche come seed per la generazione di numeri random
  * @param store puntatore alla struttura dati del supermercato
  * @param isopen flag che vale 0 se la cassa è inizialmente chiusa, 1 se è inizialmente aperta
- * @param fd descrittore del file utilizzato per notificare il direttore
- * @param fd_mtx mutex usata per notificare concorrentemente con il direttore
  * @param product_service_time quanto tempo impiega il cassiere a gestire un singolo prodotto
  * @param interval ogni quanto tempo, espresso in millisecondi, il thread notificatore del cassiere si occupa di notificare il direttore
  * @return struttura dati di un cassiere oppure NULL in caso di errore e imposta errno
@@ -55,8 +53,5 @@ int set_cassa_state(cassiere_t *cassiere, int open);
  * @return 0 in caso di successo, -1 altrimenti ed impsota errno
  */
 int cassiere_wake_up(cassiere_t *cassiere);
-
-//TODO fare questa documentazione
-int enter_cassa_queue(cassiere_t *cassiere, client_in_queue *client);
 
 #endif //CASSIERE_H

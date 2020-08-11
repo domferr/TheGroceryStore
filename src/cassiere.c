@@ -135,23 +135,6 @@ static int serve_client(cassiere_t *ca, client_in_queue *client) {
     return wakeup_client(client, 1);
 }
 
-int enter_cassa_queue(cassiere_t *cassiere, client_in_queue *client) {
-    int ret, err;
-
-    PTH(err, pthread_mutex_lock(&(cassiere->mutex)), return -1)
-    if (cassiere->state == cassa_open_state) {
-        MINUS1(push(cassiere->queue, client), return -1)
-        PTH(err, pthread_cond_signal(&(cassiere->noclients)), return -1)
-        ret = 0;
-    } else {
-        errno = EINVAL;
-        ret = -1;
-    }
-    PTH(err, pthread_mutex_unlock(&(cassiere->mutex)), return -1)
-
-    return ret;
-}
-
 int set_cassa_state(cassiere_t *cassiere, int open) {
     int err;
 

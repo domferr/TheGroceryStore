@@ -41,13 +41,13 @@ int client_destroy(client_t *client) {
 
 void *client_thread_fun(void *args) {
     client_t *cl = (client_t *) args;
-    int random_time, client_id, products, served, entered_queue;
+    int random_time, client_id, products, served;
     struct timespec store_entrance, queue_entrance;
     unsigned int seed = cl->id;
     store_state st_state;
     queue_t *stats;
     client_in_queue *clq;
-    client_stats *this_client_stats;
+    client_stats *this_client_stats = NULL;
 
     EQNULL(stats = queue_create(), perror("queue_create()"); return NULL)
     EQNULL(clq = alloc_client_in_queue(cl->id, &(cl->mutex)), perror("alloc_client_in_queue()"); return NULL)
@@ -94,6 +94,7 @@ void *client_thread_fun(void *args) {
             MINUS1(leave_store(cl->store), perror("exit store"); exit(EXIT_FAILURE))
             MINUS1(this_client_stats->time_in_store = elapsed_time(&store_entrance), perror("elapsed ms from"); return NULL)
             MINUS1(push(stats, this_client_stats), perror("push in queue"); return NULL)
+            this_client_stats = NULL;
 #ifdef DEBUGCLIENT
             printf("Thread cliente %ld: sono uscito dal supermercato\n", cl->id);
 #endif
@@ -104,7 +105,8 @@ void *client_thread_fun(void *args) {
     printf("Thread cliente %ld: termino\n", cl->id);
 #endif
     MINUS1(destroy_client_in_queue(clq), perror("destroy client in queue"); exit(EXIT_FAILURE))
-
+    if (this_client_stats != NULL)
+        free(this_client_stats);
     return stats;
 }
 

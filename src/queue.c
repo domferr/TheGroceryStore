@@ -24,7 +24,7 @@ int queue_destroy(queue_t *queue) {
 }
 
 int push(queue_t *queue, void *elem) {
-    node_t *node = (node_t*) malloc(sizeof(node_t));
+    node_t *node = (node_t *) malloc(sizeof(node_t));
     EQNULL(node, return -1)
     node->elem = elem;
     node->prev = NULL;
@@ -40,24 +40,30 @@ int push(queue_t *queue, void *elem) {
     return 0;
 }
 
-void *pop(queue_t *queue) {
-    void *tailElem = NULL;
-    node_t *tailNode;
-    node_t *tailPrevNode;
-    if (queue->size > 0) {
-        tailNode = (queue->tail);
-        tailPrevNode = (queue->tail)->prev;
-        tailElem = (queue->tail)->elem;
-        queue->tail = tailPrevNode;
-        if (queue->size == 1) {
-            queue->head = NULL;
-        } else {
-            tailPrevNode->next = NULL;
-        }
-        (queue->size)--;
-        free(tailNode);
+static void *remove_n(queue_t *queue, node_t *node) {
+    void *elem = NULL;
+    node_t *prev_node;
+    node_t *next_node;
+    if (node != NULL) {
+        elem = node->elem;
+        prev_node = node->prev;
+        next_node = node->next;
+        if (queue->head == node)
+            queue->head = next_node;
+        if (queue->tail == node)
+            queue->tail = prev_node;
+        if (prev_node != NULL)
+            prev_node->next = next_node;
+        if (next_node != NULL)
+            next_node->prev = prev_node;
+        queue->size--;
+        free(node);
     }
-    return tailElem;
+    return elem;
+}
+
+void *pop(queue_t *queue) {
+    return remove_n(queue, queue->tail);
 }
 
 void clear(queue_t *queue) {
