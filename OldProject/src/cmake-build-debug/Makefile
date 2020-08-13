@@ -176,32 +176,32 @@ client.c.s:
 	$(MAKE) -f CMakeFiles\src.dir\build.make CMakeFiles/src.dir/client.c.s
 .PHONY : client.c.s
 
-client_in_queue.obj: client_in_queue.c.obj
+client_in_queue_t.obj: client_in_queue_t.c.obj
 
-.PHONY : client_in_queue.obj
+.PHONY : client_in_queue_t.obj
 
 # target to build an object file
-client_in_queue.c.obj:
-	$(MAKE) -f CMakeFiles\src.dir\build.make CMakeFiles/src.dir/client_in_queue.c.obj
-.PHONY : client_in_queue.c.obj
+client_in_queue_t.c.obj:
+	$(MAKE) -f CMakeFiles\src.dir\build.make CMakeFiles/src.dir/client_in_queue_t.c.obj
+.PHONY : client_in_queue_t.c.obj
 
-client_in_queue.i: client_in_queue.c.i
+client_in_queue_t.i: client_in_queue_t.c.i
 
-.PHONY : client_in_queue.i
+.PHONY : client_in_queue_t.i
 
 # target to preprocess a source file
-client_in_queue.c.i:
-	$(MAKE) -f CMakeFiles\src.dir\build.make CMakeFiles/src.dir/client_in_queue.c.i
-.PHONY : client_in_queue.c.i
+client_in_queue_t.c.i:
+	$(MAKE) -f CMakeFiles\src.dir\build.make CMakeFiles/src.dir/client_in_queue_t.c.i
+.PHONY : client_in_queue_t.c.i
 
-client_in_queue.s: client_in_queue.c.s
+client_in_queue_t.s: client_in_queue_t.c.s
 
-.PHONY : client_in_queue.s
+.PHONY : client_in_queue_t.s
 
 # target to generate assembly for a file
-client_in_queue.c.s:
-	$(MAKE) -f CMakeFiles\src.dir\build.make CMakeFiles/src.dir/client_in_queue.c.s
-.PHONY : client_in_queue.c.s
+client_in_queue_t.c.s:
+	$(MAKE) -f CMakeFiles\src.dir\build.make CMakeFiles/src.dir/client_in_queue_t.c.s
+.PHONY : client_in_queue_t.c.s
 
 config.obj: config.c.obj
 
@@ -488,9 +488,9 @@ help:
 	@echo ... client.obj
 	@echo ... client.i
 	@echo ... client.s
-	@echo ... client_in_queue.obj
-	@echo ... client_in_queue.i
-	@echo ... client_in_queue.s
+	@echo ... client_in_queue_t.obj
+	@echo ... client_in_queue_t.i
+	@echo ... client_in_queue_t.s
 	@echo ... config.obj
 	@echo ... config.i
 	@echo ... config.s

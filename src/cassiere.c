@@ -11,7 +11,7 @@
 #define MAX_SERVICE_TIME 80 //ms
 
 //TODO fare questa documentazione
-static int serve_client(cassiere_t *ca, client_in_queue *client);
+static int serve_client(cassiere_t *ca, client_in_queue_t *client);
 
 cassiere_t *alloc_cassiere(size_t id, store_t *store, int isopen, int product_service_time, int interval) {
     int err;
@@ -47,7 +47,7 @@ int cassiere_destroy(cassiere_t *cassiere) {
 void *cassiere_thread_fun(void *args) {
     cassiere_t *ca = (cassiere_t*) args;
     int err;
-    client_in_queue *client;
+    client_in_queue_t *client;
     struct timespec open_start;
     pthread_t th_notifier;
     store_state st_state;
@@ -122,7 +122,7 @@ void *cassiere_thread_fun(void *args) {
     return 0;
 }
 
-static int serve_client(cassiere_t *ca, client_in_queue *client) {
+static int serve_client(cassiere_t *ca, client_in_queue_t *client) {
     int err, ms;
     PTH(err, pthread_mutex_lock(client->mutex), return -1)
     ms = ca->fixed_service_time + (ca->product_service_time*(client->products));

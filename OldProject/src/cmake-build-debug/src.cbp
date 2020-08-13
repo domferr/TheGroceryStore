@@ -88,10 +88,10 @@
 		<Unit filename="C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/client.h">
 			<Option target="src"/>
 		</Unit>
-		<Unit filename="C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/client_in_queue.c">
+		<Unit filename="C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/client_in_queue_t.c">
 			<Option target="src"/>
 		</Unit>
-		<Unit filename="C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/client_in_queue.h">
+		<Unit filename="C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/client_in_queue_t.h">
 			<Option target="src"/>
 		</Unit>
 		<Unit filename="C:/Users/Domenico/Documents/GitHub/TheGroceryStore/OldProject/src/config.c">

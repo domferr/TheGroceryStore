@@ -65,6 +65,18 @@ static void *remove_n(queue_t *queue, node_t *node) {
 void *pop(queue_t *queue) {
     return remove_n(queue, queue->tail);
 }
+/*
+int remove(queue_t *queue, void *elem) {
+    node_t *node = queue->head;
+    int found = 0;
+    while (node != NULL && !found) {
+        found = node->elem == elem;
+        node = node->next;
+    }
+    if (node != NULL)
+        EQNULL(remove_n(queue, node), return -1);
+    return 0;
+}*/
 
 void clear(queue_t *queue) {
     node_t *curr;

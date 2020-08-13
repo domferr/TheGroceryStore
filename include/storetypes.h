@@ -54,11 +54,10 @@ typedef struct {
  * la lock e la condition variable sulla quale il cliente sta attendendo mentre si trova in coda.
  */
 typedef struct {
-    size_t id;
-    int products;   //prodotti acquistati
     pthread_mutex_t *mutex;
     pthread_cond_t waiting; //variabile di condizione sulla quale il cliente aspetta di essere servito
-    int served;   //vale 1 se è stato servito, 0 altrimenti
-} client_in_queue;
+    int products;           //numero di prodotti acquistati
+    int served;             //vale 1 se è stato servito, 0 altrimenti
+} client_in_queue_t;
 
 #endif //STORETYPES_H

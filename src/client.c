@@ -11,6 +11,14 @@
 
 #define DEBUGCLIENT
 
+//https://gcc.gnu.org/onlinedocs/cpp/Variadic-Macros.html
+#ifdef DEBUGCLIENT
+#define DEBUG(...) \
+    do { printf(__VA_ARGS__); } while(0);
+#else
+#define DEBUG(str, ...)
+#endif
+
 client_t *alloc_client(size_t id, store_t *store, cassiere_t **casse, int t, int p, int s, int k) {
     int err;
     client_t *client = (client_t*) malloc(sizeof(client_t));
@@ -46,11 +54,11 @@ void *client_thread_fun(void *args) {
     unsigned int seed = cl->id;
     store_state st_state;
     queue_t *stats;
-    client_in_queue *clq;
+    client_in_queue_t *clq;
     client_stats *this_client_stats = NULL;
 
     EQNULL(stats = queue_create(), perror("queue_create()"); return NULL)
-    EQNULL(clq = alloc_client_in_queue(cl->id, &(cl->mutex)), perror("alloc_client_in_queue()"); return NULL)
+    EQNULL(clq = alloc_client_in_queue(&(cl->mutex)), perror("alloc_client_in_queue()"); return NULL)
 
     NOTZERO(get_store_state(&st_state), perror("get store state"); return NULL)
     while (ISOPEN(st_state)) {
@@ -63,22 +71,16 @@ void *client_thread_fun(void *args) {
             products = RANDOM(seed, 0, cl->p);
             this_client_stats->products = products;
             NOTZERO(get_store_state(&st_state), perror("get store state"); return NULL)
-#ifdef DEBUGCLIENT
-            printf("Cliente %d: voglio acquistare %d prodotti\n", client_id, products);
-#endif
+            DEBUG("[Thread Cliente %ld] Cliente %d: voglio acquistare %d prodotti\n", cl->id, client_id, products)
             if (products == 0) {
-#ifdef DEBUGCLIENT
-                printf("Thread cliente %ld: Chiedo permesso di uscita\n", cl->id);
-#endif
+                DEBUG("[Thread Cliente %ld] Cliente %d: Chiedo permesso di uscita\n", cl->id, client_id);
                 //Se il supermercato è ancora aperto, chiedo il permesso di uscire ad aspetto che mi venga dato
                 if (ISOPEN(st_state)) {
                     MINUS1(ask_exit_permission(cl->id), perror("ask exit permission"); return NULL)
                     MINUS1(wait_permission(cl), perror("wait permission"); return NULL)
                 }
             } else {
-#ifdef DEBUGCLIENT
-                printf("Thread cliente %ld: mi metto in coda in una delle casse\n", cl->id);
-#endif
+                DEBUG("[Thread Cliente %ld] Cliente %d: mi metto in coda in una delle casse\n", cl->id, client_id);
                 clq->products = products;
                 clq->served = 0;
                 served = 0;
@@ -95,15 +97,11 @@ void *client_thread_fun(void *args) {
             MINUS1(this_client_stats->time_in_store = elapsed_time(&store_entrance), perror("elapsed ms from"); return NULL)
             MINUS1(push(stats, this_client_stats), perror("push in queue"); return NULL)
             this_client_stats = NULL;
-#ifdef DEBUGCLIENT
-            printf("Thread cliente %ld: sono uscito dal supermercato\n", cl->id);
-#endif
+            DEBUG("[Thread Cliente %ld] Cliente %d: sono uscito dal supermercato\n", cl->id, client_id);
         }
         NOTZERO(get_store_state(&st_state), perror("get store state"); return NULL)
     }
-#ifdef DEBUGCLIENT
-    printf("Thread cliente %ld: termino\n", cl->id);
-#endif
+    DEBUG("[Thread Cliente %ld] termino\n", cl->id);
     MINUS1(destroy_client_in_queue(clq), perror("destroy client in queue"); exit(EXIT_FAILURE))
     if (this_client_stats != NULL)
         free(this_client_stats);
@@ -130,7 +128,7 @@ int wait_permission(client_t *cl) {
     return 0;
 }
 
-int enter_best_queue(client_t *cl, client_in_queue *clq, struct timespec *queue_entrance) {
+int enter_best_queue(client_t *cl, client_in_queue_t *clq, struct timespec *queue_entrance) {
     int err, i = 0, entered = 0;
     cassiere_t *ca;
     MINUS1(clock_gettime(CLOCK_MONOTONIC, queue_entrance), return -1)
@@ -147,7 +145,7 @@ int enter_best_queue(client_t *cl, client_in_queue *clq, struct timespec *queue_
     return 0;
 }
 
-int wait_to_be_served(int s, client_in_queue *clq, store_state *st_state) {
+int wait_to_be_served(int s, client_in_queue_t *clq, store_state *st_state) {
     int err, timeout = 0, served;
     struct timespec max_wait = {MS_TO_SEC(s), MS_TO_NANOSEC(s)};
 

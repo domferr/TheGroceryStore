@@ -84,19 +84,19 @@ CMakeFiles/src.dir/client.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/src.dir/client.c.s"
 	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\Users\Domenico\Documents\GitHub\TheGroceryStore\OldProject\src\client.c -o CMakeFiles\src.dir\client.c.s
 
-CMakeFiles/src.dir/client_in_queue.c.obj: CMakeFiles/src.dir/flags.make
-CMakeFiles/src.dir/client_in_queue.c.obj: CMakeFiles/src.dir/includes_C.rsp
-CMakeFiles/src.dir/client_in_queue.c.obj: ../client_in_queue.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\Users\Domenico\Documents\GitHub\TheGroceryStore\OldProject\src\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object CMakeFiles/src.dir/client_in_queue.c.obj"
-	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles\src.dir\client_in_queue.c.obj   -c C:\Users\Domenico\Documents\GitHub\TheGroceryStore\OldProject\src\client_in_queue.c
+CMakeFiles/src.dir/client_in_queue_t.c.obj: CMakeFiles/src.dir/flags.make
+CMakeFiles/src.dir/client_in_queue_t.c.obj: CMakeFiles/src.dir/includes_C.rsp
+CMakeFiles/src.dir/client_in_queue_t.c.obj: ../client_in_queue_t.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\Users\Domenico\Documents\GitHub\TheGroceryStore\OldProject\src\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object CMakeFiles/src.dir/client_in_queue_t.c.obj"
+	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles\src.dir\client_in_queue_t.c.obj   -c C:\Users\Domenico\Documents\GitHub\TheGroceryStore\OldProject\src\client_in_queue_t.c
 
-CMakeFiles/src.dir/client_in_queue.c.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/src.dir/client_in_queue.c.i"
-	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E C:\Users\Domenico\Documents\GitHub\TheGroceryStore\OldProject\src\client_in_queue.c > CMakeFiles\src.dir\client_in_queue.c.i
+CMakeFiles/src.dir/client_in_queue_t.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/src.dir/client_in_queue_t.c.i"
+	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E C:\Users\Domenico\Documents\GitHub\TheGroceryStore\OldProject\src\client_in_queue_t.c > CMakeFiles\src.dir\client_in_queue_t.c.i
 
-CMakeFiles/src.dir/client_in_queue.c.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/src.dir/client_in_queue.c.s"
-	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\Users\Domenico\Documents\GitHub\TheGroceryStore\OldProject\src\client_in_queue.c -o CMakeFiles\src.dir\client_in_queue.c.s
+CMakeFiles/src.dir/client_in_queue_t.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/src.dir/client_in_queue_t.c.s"
+	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\Users\Domenico\Documents\GitHub\TheGroceryStore\OldProject\src\client_in_queue_t.c -o CMakeFiles\src.dir\client_in_queue_t.c.s
 
 CMakeFiles/src.dir/config.c.obj: CMakeFiles/src.dir/flags.make
 CMakeFiles/src.dir/config.c.obj: CMakeFiles/src.dir/includes_C.rsp
@@ -242,7 +242,7 @@ CMakeFiles/src.dir/utils.c.s: cmake_force
 src_OBJECTS = \
 "CMakeFiles/src.dir/cashier.c.obj" \
 "CMakeFiles/src.dir/client.c.obj" \
-"CMakeFiles/src.dir/client_in_queue.c.obj" \
+"CMakeFiles/src.dir/client_in_queue_t.c.obj" \
 "CMakeFiles/src.dir/config.c.obj" \
 "CMakeFiles/src.dir/grocerystore.c.obj" \
 "CMakeFiles/src.dir/logger.c.obj" \
@@ -259,7 +259,7 @@ src_EXTERNAL_OBJECTS =
 
 src.exe: CMakeFiles/src.dir/cashier.c.obj
 src.exe: CMakeFiles/src.dir/client.c.obj
-src.exe: CMakeFiles/src.dir/client_in_queue.c.obj
+src.exe: CMakeFiles/src.dir/client_in_queue_t.c.obj
 src.exe: CMakeFiles/src.dir/config.c.obj
 src.exe: CMakeFiles/src.dir/grocerystore.c.obj
 src.exe: CMakeFiles/src.dir/logger.c.obj

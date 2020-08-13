@@ -20,7 +20,7 @@ OBJS		= 	$(OBJDIR)/scfiles.o			\
 				$(OBJDIR)/cashier.o			\
 				$(OBJDIR)/client.o			\
 				$(OBJDIR)/utils.o			\
-				$(OBJDIR)/client_in_queue.o	\
+				$(OBJDIR)/client_in_queue_t.o	\
 				$(OBJDIR)/signal_handler.o	\
 				$(OBJDIR)/logger.o			\
 				$(OBJDIR)/main.o			\

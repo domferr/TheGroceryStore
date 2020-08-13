@@ -55,8 +55,8 @@ int set_exit_permission(client_t *client, int can_exit);
  */
 int wait_permission(client_t *cl);
 
-int enter_best_queue(client_t *cl, client_in_queue *clq, struct timespec *queue_entrance);
+int enter_best_queue(client_t *cl, client_in_queue_t *clq, struct timespec *queue_entrance);
 
-int wait_to_be_served(int s, client_in_queue *clq, store_state *st_state);
+int wait_to_be_served(int s, client_in_queue_t *clq, store_state *st_state);
 
 #endif //CLIENT_H

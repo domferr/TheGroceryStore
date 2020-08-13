@@ -12,10 +12,10 @@
 /**
  * Struttura che rappresenta un nodo della coda
  */
-typedef struct node_t {
+typedef struct node {
     void *elem;             //elemento generico contenuto nel nodo
-    struct node_t *next;    //puntatore al nodo successivo
-    struct node_t *prev;    //puntatore al nodo precedente
+    struct node *next;      //puntatore al nodo successivo
+    struct node *prev;      //puntatore al nodo precedente
 } node_t;
 
 /**

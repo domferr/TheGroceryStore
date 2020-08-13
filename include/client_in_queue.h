@@ -4,10 +4,10 @@
 #include "storetypes.h"
 
 //TODO fare questa documentazione
-client_in_queue *alloc_client_in_queue(size_t id, pthread_mutex_t *mutex);
+client_in_queue_t *alloc_client_in_queue(pthread_mutex_t *mutex);
 
-int destroy_client_in_queue(client_in_queue *cl_in_q);
+int destroy_client_in_queue(client_in_queue_t *clq);
 
-int wakeup_client(client_in_queue *clq, int served);
+int wakeup_client(client_in_queue_t *clq, int served);
 
 #endif //CLIENT_IN_QUEUE_H
