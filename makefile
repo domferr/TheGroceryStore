@@ -24,6 +24,7 @@ OBJS_SUPERM	= 	$(OBJDIR)/supermercato.o	\
 				$(OBJDIR)/config.o			\
 				$(OBJDIR)/scfiles.o			\
 				$(OBJDIR)/queue.o			\
+				$(OBJDIR)/cassa_queue.o		\
 				$(OBJDIR)/threadpool.o		\
 				$(OBJDIR)/stats.o			\
 				$(OBJDIR)/af_unix_conn.o	\

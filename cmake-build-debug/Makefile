@@ -150,6 +150,33 @@ src/af_unix_conn.c.s:
 	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/af_unix_conn.c.s
 .PHONY : src/af_unix_conn.c.s
 
+src/cassa_queue.o: src/cassa_queue.c.o
+
+.PHONY : src/cassa_queue.o
+
+# target to build an object file
+src/cassa_queue.c.o:
+	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/cassa_queue.c.o
+.PHONY : src/cassa_queue.c.o
+
+src/cassa_queue.i: src/cassa_queue.c.i
+
+.PHONY : src/cassa_queue.i
+
+# target to preprocess a source file
+src/cassa_queue.c.i:
+	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/cassa_queue.c.i
+.PHONY : src/cassa_queue.c.i
+
+src/cassa_queue.s: src/cassa_queue.c.s
+
+.PHONY : src/cassa_queue.s
+
+# target to generate assembly for a file
+src/cassa_queue.c.s:
+	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/cassa_queue.c.s
+.PHONY : src/cassa_queue.c.s
+
 src/cassiere.o: src/cassiere.c.o
 
 .PHONY : src/cassiere.o
@@ -540,6 +567,9 @@ help:
 	@echo "... src/af_unix_conn.o"
 	@echo "... src/af_unix_conn.i"
 	@echo "... src/af_unix_conn.s"
+	@echo "... src/cassa_queue.o"
+	@echo "... src/cassa_queue.i"
+	@echo "... src/cassa_queue.s"
 	@echo "... src/cassiere.o"
 	@echo "... src/cassiere.i"
 	@echo "... src/cassiere.s"

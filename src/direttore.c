@@ -1,3 +1,4 @@
+#define DEBUGGING 0
 #include "../include/sig_handling.h"
 #include "../include/utils.h"
 #include "../include/config.h"
@@ -49,7 +50,7 @@ static int fork_store(char *config_file, pid_t *pid);
  * @param casse_attive contatore di quante casse sono attive
  * @return 0 in caso di successo, -1 altrimenti ed imposta errno
  */
-static int handle_notification(int fd_store, config_t *config, int *casse, int *casse_attive);
+static int handle_notification(int fd_store, config_t *config, const int *casse, int *casse_attive);
 
 /**
  * Gestisce la richiesta di uscita di un cliente. Il permesso viene sempre concesso. Ritorna 0 in caso di successo,
@@ -85,9 +86,7 @@ int main(int argc, char **args) {
     }
     //Lancio il processo supermercato
     MINUS1(fork_store(config_file_path, &pid_store), perror("fork_store"); exit(EXIT_FAILURE))
-#ifdef DEBUGDIRETT
-    printf("DIRETTORE: Connesso con il supermercato via socket AF_UNIX\n");
-#endif
+    DEBUG("DIRETTORE: %s\n", "Connesso con il supermercato via socket AF_UNIX");
     //Gestione dei segnali mediante thread apposito
     MINUS1(pipe(sigh_pipe), perror("pipe"); exit(EXIT_FAILURE))
     MINUS1(handle_signals(&thread_sig_handler_fun, (void*)sigh_pipe), perror("handle_signals"); exit(EXIT_FAILURE))
@@ -118,9 +117,7 @@ int main(int argc, char **args) {
                         //leggo idcassa e numero di clienti in coda
                         MINUS1(readn(fd_store, &i, sizeof(int)), return -1)
                         MINUS1(readn(fd_store, &param2, sizeof(int)), return -1)
-#ifdef DEBUGDIRETT
-                        printf("Ho ricevuto che nella cassa %d ci sono %d clienti in coda\n", i, param2);
-#endif
+                        DEBUG("Ho ricevuto che nella cassa %d ci sono %d clienti in coda\n", i, param2);
                         casse[i] = param2;
                         MINUS1(handle_notification(fd_store, config, casse, &casse_attive), perror("handle_notification"); exit(EXIT_FAILURE))
                         break;
@@ -146,13 +143,11 @@ int main(int argc, char **args) {
     //memory cleanup
     free_config(config);
     free(casse);
-#ifdef DEBUGDIRETT
-    printf("\rDIRETTORE: Goodbye!\n");
-#endif
+    DEBUG("\r%s\n", "DIRETTORE: Goodbye!");
     return 0;
 }
 
-static int handle_notification(int fd_store, config_t *config, int *casse, int *casse_attive) {
+static int handle_notification(int fd_store, config_t *config, const int *casse, int *casse_attive) {
     int i, count_attive = 0, count_nonattive = 0,
         count_s1 = 0, count_s2 = 0,
         cassa_s1 = -1, cassa_s2 = -1;

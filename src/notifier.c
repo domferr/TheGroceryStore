@@ -1,10 +1,9 @@
+#define DEBUGGING 0
 #include <stdlib.h>
 #include <stdio.h>
 #include "../include/notifier.h"
 #include "../include/utils.h"
 #include "../include/store.h"
-
-//#define DEBUGNOTIFIER
 
 void *notifier_thread_fun(void *args) {
     int err, queue_len;
@@ -32,9 +31,7 @@ void *notifier_thread_fun(void *args) {
             //Invio al direttore il numero di clienti in coda
             MINUS1(notify(ca->id, queue_len), perror("notify"))
 
-#ifdef DEBUGNOTIFIER
-            printf("Notificatore %ld: ho inviato una notifica\n", ca->id);
-#endif
+            DEBUG("Notificatore %ld: ho inviato una notifica\n", ca->id);
             //Attendo l'intervallo
             msleep(ca->interval);
 
@@ -42,9 +39,7 @@ void *notifier_thread_fun(void *args) {
         }
     }
     PTH(err, pthread_mutex_unlock(&(no->mutex)), perror("unlock"); return NULL)
-#ifdef DEBUGNOTIFIER
-    printf("Notificatore %ld: termino\n", ca->id);
-#endif
+    DEBUG("Notificatore %ld: termino\n", ca->id);
     return 0;
 }
 

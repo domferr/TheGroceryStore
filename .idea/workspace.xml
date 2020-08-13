@@ -79,7 +79,7 @@
     </option>
   </component>
   <component name="OCResolveContextSettings">
-    <option name="configuration" value="$PROJECT_DIR$/src/queue.c" />
+    <option name="configuration" value="0-Debug-TheGroceryStore" />
   </component>
   <component name="ProjectId" id="1f2XU9yi7LtpT6DsZ1fXNQLcxbc" />
   <component name="ProjectViewState">
@@ -107,6 +107,11 @@
     </key>
   </component>
   <component name="RunManager">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="Run" type="CLionNativeAppRunConfigurationType" PROGRAM_PARAMS="-c ../config.txt" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="TheGroceryStore" TARGET_NAME="all" CONFIG_NAME="all" version="1" RUN_PATH="$PROJECT_DIR$/bin/direttore">
       <method v="2">
         <option name="CLION.COMPOUND.BUILD" enabled="true" />
@@ -143,7 +148,7 @@
       <workItem from="1596271103055" duration="35458000" />
       <workItem from="1596365365272" duration="15393000" />
       <workItem from="1596447868350" duration="31624000" />
-      <workItem from="1597308335996" duration="3034000" />
+      <workItem from="1597308335996" duration="16213000" />
     </task>
     <servers />
   </component>
@@ -225,9 +230,9 @@
       <screen x="0" y="0" width="1536" height="864" />
     </state>
     <state x="426" y="197" key="run.anything.popup/0.0.1536.864@0.0.1536.864" timestamp="1596820384142" />
-    <state x="431" y="182" width="672" height="678" key="search.everywhere.popup" timestamp="1597188012867">
+    <state x="431" y="182" width="672" height="678" key="search.everywhere.popup" timestamp="1597326380308">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state x="431" y="182" width="672" height="678" key="search.everywhere.popup/0.0.1536.864@0.0.1536.864" timestamp="1597188012867" />
+    <state x="431" y="182" width="672" height="678" key="search.everywhere.popup/0.0.1536.864@0.0.1536.864" timestamp="1597326380308" />
   </component>
 </project>

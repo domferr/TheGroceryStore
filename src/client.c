@@ -1,5 +1,6 @@
 #define _POSIX_C_SOURCE 200809L
 
+#define DEBUGGING 1
 #include "../include/client.h"
 #include "../include/store.h"
 #include "../include/config.h"
@@ -8,16 +9,6 @@
 #include "../include/client_in_queue.h"
 #include <stdlib.h>
 #include <stdio.h>
-
-#define DEBUGCLIENT
-
-//https://gcc.gnu.org/onlinedocs/cpp/Variadic-Macros.html
-#ifdef DEBUGCLIENT
-#define DEBUG(...) \
-    do { printf(__VA_ARGS__); } while(0);
-#else
-#define DEBUG(str, ...)
-#endif
 
 client_t *alloc_client(size_t id, store_t *store, cassiere_t **casse, int t, int p, int s, int k) {
     int err;
@@ -49,13 +40,13 @@ int client_destroy(client_t *client) {
 
 void *client_thread_fun(void *args) {
     client_t *cl = (client_t *) args;
-    int random_time, client_id, products, served;
+    int random_time, client_id, served;
     struct timespec store_entrance, queue_entrance;
     unsigned int seed = cl->id;
     store_state st_state;
     queue_t *stats;
     client_in_queue_t *clq;
-    client_stats *this_client_stats = NULL;
+    client_stats *clstats = NULL;
 
     EQNULL(stats = queue_create(), perror("queue_create()"); return NULL)
     EQNULL(clq = alloc_client_in_queue(&(cl->mutex)), perror("alloc_client_in_queue()"); return NULL)
@@ -65,14 +56,14 @@ void *client_thread_fun(void *args) {
         client_id = enter_store(cl->store);
         if (client_id) {
             MINUS1(clock_gettime(CLOCK_MONOTONIC, &store_entrance), perror("clock_gettime"); return NULL)
-            EQNULL(this_client_stats = new_client_stats(client_id), perror("new client stats"); return NULL)
+            EQNULL(clstats = new_client_stats(client_id), perror("new client stats"); return NULL)
             random_time = RANDOM(seed, MIN_T, cl->t);
             NOTZERO(msleep(random_time), perror("msleep"); return NULL)
-            products = RANDOM(seed, 0, cl->p);
-            this_client_stats->products = products;
+            clq->products = RANDOM(seed, 0, cl->p);
+            clstats->products = clq->products;
             NOTZERO(get_store_state(&st_state), perror("get store state"); return NULL)
-            DEBUG("[Thread Cliente %ld] Cliente %d: voglio acquistare %d prodotti\n", cl->id, client_id, products)
-            if (products == 0) {
+            DEBUG("[Thread Cliente %ld] Cliente %d: voglio acquistare %d prodotti\n", cl->id, client_id, clq->products)
+            if (clq == 0) {
                 DEBUG("[Thread Cliente %ld] Cliente %d: Chiedo permesso di uscita\n", cl->id, client_id);
                 //Se il supermercato è ancora aperto, chiedo il permesso di uscire ad aspetto che mi venga dato
                 if (ISOPEN(st_state)) {
@@ -81,30 +72,31 @@ void *client_thread_fun(void *args) {
                 }
             } else {
                 DEBUG("[Thread Cliente %ld] Cliente %d: mi metto in coda in una delle casse\n", cl->id, client_id);
-                clq->products = products;
                 clq->served = 0;
                 served = 0;
                 while(st_state != closed_fast_state && !served) {
-                    if (st_state == open_state)
+                    if (st_state == open_state) {
                         MINUS1(enter_best_queue(cl, clq, &queue_entrance), perror("enter best queue"); return NULL)
+                        clstats->queue_counter++;
+                    }
                     MINUS1(served = wait_to_be_served(cl->s, clq, &st_state), perror("waiting to be served"); return NULL)
                 }
                 if (served) {
-                    MINUS1(this_client_stats->time_in_queue = elapsed_time(&queue_entrance), perror("elapsed ms from"); return NULL)
+                    MINUS1(clstats->time_in_queue = elapsed_time(&queue_entrance), perror("elapsed ms from"); return NULL)
                 }
             }
             MINUS1(leave_store(cl->store), perror("exit store"); exit(EXIT_FAILURE))
-            MINUS1(this_client_stats->time_in_store = elapsed_time(&store_entrance), perror("elapsed ms from"); return NULL)
-            MINUS1(push(stats, this_client_stats), perror("push in queue"); return NULL)
-            this_client_stats = NULL;
+            MINUS1(clstats->time_in_store = elapsed_time(&store_entrance), perror("elapsed ms from"); return NULL)
+            MINUS1(push(stats, clstats), perror("push in queue"); return NULL)
+            clstats = NULL;
             DEBUG("[Thread Cliente %ld] Cliente %d: sono uscito dal supermercato\n", cl->id, client_id);
         }
         NOTZERO(get_store_state(&st_state), perror("get store state"); return NULL)
     }
     DEBUG("[Thread Cliente %ld] termino\n", cl->id);
     MINUS1(destroy_client_in_queue(clq), perror("destroy client in queue"); exit(EXIT_FAILURE))
-    if (this_client_stats != NULL)
-        free(this_client_stats);
+    if (clstats)
+        free(clstats);
     return stats;
 }
 
@@ -135,7 +127,7 @@ int enter_best_queue(client_t *cl, client_in_queue_t *clq, struct timespec *queu
     while (!entered) {
         ca = cl->casse[i];
         PTH(err, pthread_mutex_lock(&(ca->mutex)), return -1)
-        if (ca->state == cassa_open_state) {
+        if (ca->isopen) {
             MINUS1(push(ca->queue, clq), return -1)
             entered = 1;
         }

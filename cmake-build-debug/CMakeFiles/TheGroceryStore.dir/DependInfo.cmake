@@ -5,6 +5,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_C
   "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/af_unix_conn.c" "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/cmake-build-debug/CMakeFiles/TheGroceryStore.dir/src/af_unix_conn.c.o"
+  "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/cassa_queue.c" "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/cmake-build-debug/CMakeFiles/TheGroceryStore.dir/src/cassa_queue.c.o"
   "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/cassiere.c" "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/cmake-build-debug/CMakeFiles/TheGroceryStore.dir/src/cassiere.c.o"
   "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/client.c" "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/cmake-build-debug/CMakeFiles/TheGroceryStore.dir/src/client.c.o"
   "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/client_in_queue.c" "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/cmake-build-debug/CMakeFiles/TheGroceryStore.dir/src/client_in_queue.c.o"

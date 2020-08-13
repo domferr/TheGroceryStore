@@ -13,26 +13,21 @@ typedef enum {
 typedef struct {
     pthread_cond_t entrance;    //I thread clienti rimangono in attesa su questa condition variable. Vengono svegliati quando ci sono C-E clienti dentro al supermercato
     int clients_outside;        //numero di clienti usciti dal supermercato
-    int group_size;     //parametro e
+    int group_size;         //parametro e
     int can_enter;          //vale tanto quanto il numero di clienti che possono entrare
 } store_t;
 
-typedef enum {
-    cassa_open_state,   //la cassa è aperta
-    cassa_closed_state  //la cassa è chiusa
-} cassiere_state;
-
 typedef struct {
-    store_t *store;
     size_t id;                  //identificatore univoco del cassiere
-    cassiere_state state;       //stato del cassiere
+    store_t *store;
     queue_t *queue;             //clienti in coda
     pthread_mutex_t mutex;
     pthread_cond_t noclients;   //il cassiere aspetta su questa variabile di condizione quando non ci sono clienti
     pthread_cond_t waiting;     //il cassiere attende su questa variabile di condizione quando la cassa viene chiusa
+    int isopen;
     int product_service_time;   //quanto impiega a gestire un singolo prodotto
     int fixed_service_time;     //tempo fisso per la gestione di un cliente
-    int interval;   //intervallo tra una notifica ed un'altra. espresso in millisecondi
+    int interval;               //intervallo tra una notifica ed un'altra. espresso in millisecondi
 } cassiere_t;
 
 typedef struct {
@@ -53,11 +48,12 @@ typedef struct {
  * non può accedere direttamente al cassiere ed il cassiere può accedere solo a ciò che è per lui fondamentale, ovvero
  * la lock e la condition variable sulla quale il cliente sta attendendo mentre si trova in coda.
  */
-typedef struct {
+typedef struct client_in_queue {
     pthread_mutex_t *mutex;
     pthread_cond_t waiting; //variabile di condizione sulla quale il cliente aspetta di essere servito
     int products;           //numero di prodotti acquistati
     int served;             //vale 1 se è stato servito, 0 altrimenti
+    struct client_in_queue *next;
 } client_in_queue_t;
 
 #endif //STORETYPES_H

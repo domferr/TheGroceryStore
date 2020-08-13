@@ -1,3 +1,4 @@
+#define DEBUGGING 0
 #include "../include/sig_handling.h"
 #include "../include/config.h"
 #include "../include/utils.h"
@@ -44,9 +45,7 @@ int main(int argc, char **args) {
     MINUS1(handle_signals(&thread_sig_handler_fun, (void*)sigh_pipe), perror("handle_signals"); exit(EXIT_FAILURE))
     //Stabilisco connessione via socket AF_UNIX con il direttore
     MINUS1(fd_skt = connect_via_socket(), perror("connect_via_socket"); exit(EXIT_FAILURE))
-#ifdef DEBUGSUPERM
-    printf("Connesso con il direttore via socket AF_UNIX\n");
-#endif
+    DEBUG("%s\n", "Connesso con il direttore via socket AF_UNIX");
     //Leggo file di configurazione
     EQNULL(config = load_config(args[1]), perror("load_config"); exit(EXIT_FAILURE))
     if (!validate(config)) exit(EXIT_FAILURE);
@@ -85,28 +84,23 @@ int main(int argc, char **args) {
             switch (msg_hdr) {
                 case head_open:
                     MINUS1(readn(fd_skt, &param1, sizeof(int)), perror("readn"); exit(EXIT_FAILURE))
-#ifdef DEBUGSUPERM
-                    printf("Il direttore dice di aprire la cassa %d\n", param1);
-#endif
+                    DEBUG("Il direttore dice di aprire la cassa %d\n", param1);
                     MINUS1(set_cassa_state(cassieri_pool->args[param1], 1), perror("set cassa state"); exit(EXIT_FAILURE))
                     break;
                 case head_close:
                     MINUS1(readn(fd_skt, &param1, sizeof(int)), perror("readn"); exit(EXIT_FAILURE))
-#ifdef DEBUGSUPERM
-                    printf("Il direttore dice di chiudere la cassa %d\n", param1);
-#endif
+                    DEBUG("Il direttore dice di chiudere la cassa %d\n", param1);
                     MINUS1(set_cassa_state(cassieri_pool->args[param1], 0), perror("set cassa state"); exit(EXIT_FAILURE))
                     break;
                 case head_can_exit:
                     MINUS1(readn(fd_skt, &param1, sizeof(int)), perror("readn"); exit(EXIT_FAILURE))
                     MINUS1(readn(fd_skt, &param2, sizeof(int)), perror("readn"); exit(EXIT_FAILURE))
                     MINUS1(set_exit_permission((clients_pool->args)[param1], param2), perror("set exit permission"); exit(EXIT_FAILURE))
-#ifdef DEBUGSUPERM
-                    printf("Il direttore dice che il cliente %d ", param1);
-                    if (!param2)
-                        printf("non ");
-                    printf("può uscire!\n");
-#endif
+                    if (param2) {
+                        DEBUG("Il direttore dice che il cliente %d può uscire\n", param1)
+                    } else {
+                        DEBUG("Il direttore dice che il cliente %d non può uscire\n", param1)
+                    }
                     break;
                 default:
                     break;
@@ -145,9 +139,7 @@ int main(int argc, char **args) {
     store_destroy(store);
     free_config(config);
     PTH(err, pthread_mutex_destroy(&mtx_skt), return -1)
-#ifdef DEBUGSUPERM
-    printf("Supermercato: Termino!\n");
-#endif
+    DEBUG("%s\n", "Supermercato: Termino!")
     return 0;
 }
 

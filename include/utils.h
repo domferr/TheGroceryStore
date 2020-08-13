@@ -46,6 +46,18 @@
  */
 #define RANDOM(seed_ptr, min, max) ((rand_r(&(seed_ptr))%((max)-(min))) + (min))
 
+//https://gcc.gnu.org/onlinedocs/cpp/Variadic-Macros.html
+#ifdef DEBUGGING
+#if DEBUGGING
+#define DEBUG(...) \
+    do { printf(__VA_ARGS__); } while(0);
+#else
+#define DEBUG(str, ...)
+#endif
+#else
+#define DEBUG(str, ...)
+#endif
+
 /**
  * Mette il thread in attesa per un tempo pari ai millisecondi specificati.
  *
