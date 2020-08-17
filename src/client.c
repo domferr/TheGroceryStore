@@ -1,6 +1,6 @@
 #define _POSIX_C_SOURCE 200809L
 
-#define DEBUGGING 0
+#define DEBUGGING 1
 #include "../include/client.h"
 #include "../include/store.h"
 #include "../include/config.h"
@@ -75,7 +75,7 @@ void *client_thread_fun(void *args) {
                 do {
                     EQNULL(cassiere = get_best_queue(cl->casse, cl->k, NULL, -1),perror("get best queue"); return NULL)
                     MINUS1(err = join_queue(cassiere, clq, &queue_entrance), perror("join queue"); return NULL)
-                    NOTZERO(get_store_state(&st_state), return NULL)
+                    NOTZERO(get_store_state(&st_state), perror("get store state"); return NULL)
                 } while (st_state != closed_fast_state && !err);
                 DEBUG("[Thread Cliente %ld] Cliente %d: entro nella cassa %ld\n", cl->id, client_id, cassiere->id)
                 PTH(err, pthread_mutex_lock(&(cassiere)->mutex), perror("lock"); return NULL)
@@ -95,7 +95,8 @@ void *client_thread_fun(void *args) {
                         do {
                             EQNULL(cassiere = get_best_queue(cl->casse, cl->k, NULL, -1),perror("get best queue"); return NULL)
                             MINUS1(err = join_queue(cassiere, clq, &queue_entrance), perror("join queue"); return NULL)
-                            NOTZERO(get_store_state(&st_state), return NULL)
+                            if (err) clstats->queue_counter++;
+                            NOTZERO(get_store_state(&st_state), perror("get store state"); return NULL)
                         } while (st_state != closed_fast_state && !err);
                     } else {
                         PTH(err, pthread_mutex_unlock(&(cassiere)->mutex), perror("unlock"); return NULL)
@@ -105,8 +106,7 @@ void *client_thread_fun(void *args) {
                 }
                 if (clq->served) {
                     clstats->products = clq->products;
-                    MINUS1(clstats->time_in_queue = elapsed_time(&queue_entrance),
-                           perror("elapsed ms from"); return NULL)
+                    MINUS1(clstats->time_in_queue = elapsed_time(&queue_entrance),perror("elapsed ms from"); return NULL)
                     DEBUG("[Thread Cliente %ld] Cliente %d: Sono stato servito\n", cl->id, client_id)
                 }
                 PTH(err, pthread_mutex_unlock(&(cassiere)->mutex), perror("unlock"); return NULL)

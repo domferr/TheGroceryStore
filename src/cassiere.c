@@ -122,10 +122,10 @@ void *cassiere_thread_fun(void *args) {
 }
 
 static int serve_client(cassiere_t *ca, client_in_queue_t *client) {
-    int ms;
-    ms = ca->fixed_service_time + (ca->product_service_time*(client->products));
+    int ms = ca->fixed_service_time + (ca->product_service_time*(client->products));
     DEBUG("Cassiere %ld: Servo un cliente. Impiegherò %dms\n", ca->id, ms)
-    return msleep(ms);
+    MINUS1(msleep(ms), return -1)
+    return 0;
 }
 
 int set_cassa_state(cassiere_t *cassiere, int open) {
