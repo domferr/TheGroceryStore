@@ -13,6 +13,13 @@ INCLUDES 	= -I $(INCDIR)
 LDFLAGS 	= -L.
 LIBS    	= -lpthread
 
+#dipendenze in comune
+OBJS_SHARED = 	$(OBJDIR)/utils.o			\
+              	$(OBJDIR)/config.o			\
+             	$(OBJDIR)/scfiles.o			\
+             	$(OBJDIR)/threadpool.o		\
+             	$(OBJDIR)/af_unix_conn.o	\
+              	$(OBJDIR)/sig_handling.o
 #dipendenze per l'eseguibile del supermercato
 OBJS_SUPERM	= 	$(OBJDIR)/supermercato.o	\
 				$(OBJDIR)/store.o			\
@@ -20,24 +27,13 @@ OBJS_SUPERM	= 	$(OBJDIR)/supermercato.o	\
 				$(OBJDIR)/cassiere.o		\
 				$(OBJDIR)/client_in_queue.o	\
 				$(OBJDIR)/notifier.o		\
-				$(OBJDIR)/utils.o			\
-				$(OBJDIR)/config.o			\
-				$(OBJDIR)/scfiles.o			\
 				$(OBJDIR)/queue.o			\
 				$(OBJDIR)/cassa_queue.o		\
-				$(OBJDIR)/threadpool.o		\
 				$(OBJDIR)/stats.o			\
-				$(OBJDIR)/af_unix_conn.o	\
-				$(OBJDIR)/sig_handling.o
+				$(OBJS_SHARED)
 # dipendenze per l'eseguibile del direttore
 OBJS_DIRETT	=	$(OBJDIR)/direttore.o		\
-             	$(OBJDIR)/utils.o			\
-				$(OBJDIR)/config.o			\
-				$(OBJDIR)/scfiles.o			\
-				$(OBJDIR)/threadpool.o		\
-				$(OBJDIR)/stats.o			\
-				$(OBJDIR)/af_unix_conn.o	\
-				$(OBJDIR)/sig_handling.o
+             	$(OBJS_SHARED)
 
 TARGETS	= $(BINDIR)/direttore $(BINDIR)/supermercato
 

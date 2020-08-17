@@ -11,7 +11,7 @@ void *notifier_thread_fun(void *args) {
     cassiere_t *ca = no->cassiere;
 
     //Attendo l'intervallo
-    msleep(ca->interval);
+    MINUS1(msleep(ca->interval), perror("msleep"); return NULL)
 
     PTH(err, pthread_mutex_lock(&(no->mutex)), perror("lock"); return NULL)
     while(no->state != notifier_quit) {
@@ -33,7 +33,7 @@ void *notifier_thread_fun(void *args) {
 
             DEBUG("Notificatore %ld: ho inviato una notifica\n", ca->id);
             //Attendo l'intervallo
-            msleep(ca->interval);
+            MINUS1(msleep(ca->interval), perror("msleep"); return NULL)
 
             PTH(err, pthread_mutex_lock(&(no->mutex)), perror("lock"); return NULL)
         }

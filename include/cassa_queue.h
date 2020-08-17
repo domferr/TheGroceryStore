@@ -2,17 +2,12 @@
 #define CASSA_QUEUE_H
 #include "storetypes.h"
 
-typedef struct {
-    pthread_cond_t noclients;   //il cassiere aspetta su questa variabile di condizione quando non ci sono clienti
-    client_in_queue_t *first;
-    client_in_queue_t *last;
-    int size;
-    int totprod;
-} cassa_queue_t;
-
 cassa_queue_t *cassa_queue_create(void);
 int cassa_queue_destroy(cassa_queue_t *q);
-int join_queue(cassa_queue_t *q, client_in_queue_t *clq);
-int leave_queue(cassa_queue_t *q, client_in_queue_t *clq);
+int get_queue_cost(cassiere_t *cassiere, client_in_queue_t *clq);
+client_in_queue_t *get_next_client(cassiere_t *cassiere);
+
+cassiere_t *get_best_queue(cassiere_t **cassieri, int k, cassiere_t *from, int from_cost);
+int join_queue(cassiere_t *cassiere, client_in_queue_t *clq, struct timespec *queue_entrance);
 
 #endif //CASSA_QUEUE_H

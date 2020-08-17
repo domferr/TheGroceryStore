@@ -1,6 +1,9 @@
 #ifndef STATS_H
 #define STATS_H
 
+#include <stdio.h>
+#include "queue.h"
+
 /** Statistiche di un cliente entrato nel supermercato */
 typedef struct {
     int id;             //identificatore univoco del cliente
@@ -17,5 +20,8 @@ typedef struct {
  * @return la struttura dati creata oppure NULL in caso di errore ed imposta errno
  */
 client_stats *new_client_stats(int id);
+
+//TODO fare questa documentazione
+int write_log(FILE *out_file, queue_t *clients_stats);
 
 #endif //STATS_H

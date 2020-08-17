@@ -46,9 +46,10 @@ int send_via_socket(int fd, msg_header_t *msg_hdr, int params, ...) {
     //Invio l'header
     MINUS1(writen(fd, msg_hdr, sizeof(msg_header_t)), return -1)
     //Invio i parametri
-    while(params-- > 0) {
+    while(params > 0) {
         param = va_arg(list, int*);
         MINUS1(writen(fd, param, sizeof(int)), return -1)
+        params--;
     }
     va_end(list);
     return 0;

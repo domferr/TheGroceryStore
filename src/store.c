@@ -1,9 +1,9 @@
+#define DEBUGGING 0
 #include "../include/store.h"
 #include "../include/utils.h"
 #include <stdlib.h>
 #include <stdio.h>
 
-//#define DEBUGSTORE
 //TODO valutare se tenerlo globale o se togliere proprio la struct dello store
 pthread_mutex_t store_mtx = PTHREAD_MUTEX_INITIALIZER;  //mutex per operazioni sullo store in mutua esclusione
 //pthread_cond_t entrance = PTHREAD_COND_INITIALIZER;
@@ -62,8 +62,8 @@ int close_store(store_t *store, store_state closing_state) {
     if (state == open_state) {
         state = closing_state;
         store->can_enter = 0;
+        PTH(err, pthread_cond_broadcast(&(store->entrance)), return -1)
     }
-    PTH(err, pthread_cond_broadcast(&(store->entrance)), return -1)
     PTH(err, pthread_mutex_unlock(&store_mtx), return -1)
     return 0;
 }
@@ -77,12 +77,10 @@ int enter_store(store_t *store) {
     }
     //Entro se è aperto altrimenti sono stato risvegliato perchè devo terminare
     if (ISOPEN(state)) {
-        (store->can_enter)--;
-        (store->clients_outside)--;
+        store->can_enter--;
+        store->clients_outside--;
         client_id++;// = store->total_clients;
-#ifdef DEBUGSTORE
-        printf("Entro, ne possono entrare altri %d\n", store->can_enter);
-#endif
+        DEBUG("Entro, ne possono entrare altri %d\n", store->can_enter);
     } else {
         client_id = 0;
     }
@@ -93,13 +91,11 @@ int enter_store(store_t *store) {
 int leave_store(store_t *store) {
     int err;
     PTH(err, pthread_mutex_lock(&store_mtx), return -1);
-    (store->clients_outside)++;
+    store->clients_outside++;
     if (store->can_enter == 0 && store->clients_outside == store->group_size) {
         store->can_enter = store->group_size;
         PTH(err, pthread_cond_broadcast(&(store->entrance)), return -1)
-#ifdef DEBUGSTORE
-        printf("Ci sono %d clienti nel supermercato. Faccio entrare altri %d clienti\n", store->clients_inside, store->group_size);
-#endif
+        DEBUG("Sono usciti %d clienti dal supermercato. Faccio entrare altri %d clienti\n", store->clients_outside, store->group_size);
     }
     PTH(err, pthread_mutex_unlock(&store_mtx), return -1)
     return 0;

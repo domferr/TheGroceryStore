@@ -17,10 +17,33 @@ typedef struct {
     int can_enter;          //vale tanto quanto il numero di clienti che possono entrare
 } store_t;
 
+/**
+ * Struttura dati utilizzata per interfacciare cassieri e clienti. Utile per information hiding in quanto il cliente
+ * non può accedere direttamente al cassiere ed il cassiere può accedere solo a ciò che è per lui fondamentale, ovvero
+ * la lock e la condition variable sulla quale il cliente sta attendendo mentre si trova in coda.
+ */
+typedef struct client_in_queue {
+    pthread_mutex_t *mutex;
+    pthread_cond_t waiting; //variabile di condizione sulla quale il cliente aspetta di essere servito
+    int products;           //numero di prodotti acquistati
+    int served;             //vale 1 se è stato servito, 0 altrimenti
+    int processing;         //vale 1 se il cassiere sta servendo il cliente ma non ha ancora finito, 0 altrimenti
+    struct client_in_queue *next;
+    struct client_in_queue *prev;
+} client_in_queue_t;
+
+typedef struct {
+    pthread_cond_t noclients;   //il cassiere aspetta su questa variabile di condizione quando non ci sono clienti
+    client_in_queue_t *head;
+    client_in_queue_t *tail;
+    int size;   //quanti clienti ci sono in coda
+    int cost;   //quanto è il costo della coda se ci si dovessere accodare
+} cassa_queue_t;
+
 typedef struct {
     size_t id;                  //identificatore univoco del cassiere
     store_t *store;
-    queue_t *queue;             //clienti in coda
+    cassa_queue_t *queue;             //clienti in coda
     pthread_mutex_t mutex;
     pthread_cond_t noclients;   //il cassiere aspetta su questa variabile di condizione quando non ci sono clienti
     pthread_cond_t waiting;     //il cassiere attende su questa variabile di condizione quando la cassa viene chiusa
@@ -42,18 +65,5 @@ typedef struct {
     int p;  //numero massimo di prodotti che acquista
     int s;  //ogni quanto tempo il cliente decide se cambiare cassa
 } client_t;
-
-/**
- * Struttura dati utilizzata per interfacciare cassieri e clienti. Utile per information hiding in quanto il cliente
- * non può accedere direttamente al cassiere ed il cassiere può accedere solo a ciò che è per lui fondamentale, ovvero
- * la lock e la condition variable sulla quale il cliente sta attendendo mentre si trova in coda.
- */
-typedef struct client_in_queue {
-    pthread_mutex_t *mutex;
-    pthread_cond_t waiting; //variabile di condizione sulla quale il cliente aspetta di essere servito
-    int products;           //numero di prodotti acquistati
-    int served;             //vale 1 se è stato servito, 0 altrimenti
-    struct client_in_queue *next;
-} client_in_queue_t;
 
 #endif //STORETYPES_H

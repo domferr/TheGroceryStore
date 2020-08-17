@@ -124,6 +124,7 @@ int main(int argc, char **args) {
                     case head_ask_exit: //Ricevuta richiesta per uscire dal supermercato. Dò sempre il permesso
                         //leggo l'id del cliente che vuole uscire
                         MINUS1(readn(fd_store, &i, sizeof(int)), return -1)
+                        DEBUG("Ho ricevuto una richiesta di uscita da parte di un cliente %d\n", i);
                         //rispondo facendo uscire il cliente
                         MINUS1(handle_ask_exit(fd_store, i), perror("handle_ask_exit"); exit(EXIT_FAILURE))
                         break;
@@ -207,7 +208,7 @@ static int fork_store(char *config_file, pid_t *pid) {
     switch (*pid) {
         case 0:
             //corrisponde ad esempio a ./bin/supermercato -c config.txt
-            execl(STORE_EXECUTABLE_PATH, STORE_EXECUTABLE_NAME, config_file);
+            execl(STORE_EXECUTABLE_PATH, STORE_EXECUTABLE_NAME, config_file, (char*) 0);
             //Se exec ritorna allora c'è stato sicuramente errore ed errno è stato impostato
             return -1;
         case -1:

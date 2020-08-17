@@ -79,4 +79,7 @@ int foreach(queue_t *queue, int (*fun)(void*, void*), void *args);
  */
 void clear(queue_t *queue);
 
+//TODO fare questa documentazione
+int merge(queue_t *q1, queue_t *q2);
+
 #endif //QUEUE_H

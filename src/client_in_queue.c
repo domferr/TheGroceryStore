@@ -8,7 +8,8 @@ client_in_queue_t *alloc_client_in_queue(pthread_mutex_t *mutex) {
     EQNULL(clq, return NULL)
     clq->mutex = mutex;
     clq->served = 0;
-    clq->next = NULL;
+    clq->processing = 0;
+    clq->products = 0;
     PTH(err, pthread_cond_init(&(clq->waiting), NULL), return NULL)
 
     return clq;
@@ -23,9 +24,8 @@ int destroy_client_in_queue(client_in_queue_t *clq) {
 
 int wakeup_client(client_in_queue_t *clq, int served) {
     int err;
-    PTH(err, pthread_mutex_lock(clq->mutex), return -1)
     clq->served = served;
+    clq->processing = 1;
     PTH(err, pthread_cond_signal(&(clq->waiting)), return -1)
-    PTH(err, pthread_mutex_unlock(clq->mutex), return -1)
     return 0;
 }

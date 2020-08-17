@@ -36,7 +36,7 @@ int push(queue_t *queue, void *elem) {
     }
 
     queue->head = node;
-    (queue->size)++;
+    queue->size++;
     return 0;
 }
 
@@ -65,25 +65,10 @@ static void *remove_n(queue_t *queue, node_t *node) {
 void *pop(queue_t *queue) {
     return remove_n(queue, queue->tail);
 }
-/*
-int remove(queue_t *queue, void *elem) {
-    node_t *node = queue->head;
-    int found = 0;
-    while (node != NULL && !found) {
-        found = node->elem == elem;
-        node = node->next;
-    }
-    if (node != NULL)
-        EQNULL(remove_n(queue, node), return -1);
-    return 0;
-}*/
 
 void clear(queue_t *queue) {
-    node_t *curr;
-
     while(queue->size > 0) {
-        curr = pop(queue);
-        free(curr);
+        pop(queue);
     }
 }
 
@@ -95,6 +80,20 @@ static int internal_foreach(node_t *node, int (*fun)(void*, void*), void *args) 
     if (node != NULL) {
         MINUS1(fun(node->elem, args), return -1)
         return internal_foreach(node->prev, fun, args);
+    }
+    return 0;
+}
+
+int merge(queue_t *q1, queue_t *q2) {
+    if (q1 && q2) {
+        q1->size += q2->size;
+        if (q1->tail)
+            q1->tail->next = q2->head;
+        if (q2->head)
+            q2->head->prev = q1->tail;
+
+        q1->tail = q2->tail;
+        free(q2);
     }
     return 0;
 }

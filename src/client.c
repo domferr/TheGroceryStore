@@ -7,6 +7,7 @@
 #include "../include/utils.h"
 #include "../include/stats.h"
 #include "../include/client_in_queue.h"
+#include "../include/cassa_queue.h"
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -22,8 +23,7 @@ client_t *alloc_client(size_t id, store_t *store, cassiere_t **casse, int t, int
     client->t = t;
     client->p = p;
     client->s = s;
-
-    client->can_exit = -1;
+    client->can_exit = 0;
     PTH(err, pthread_mutex_init(&(client->mutex), NULL), return NULL)
     PTH(err, pthread_cond_init(&(client->exit_permission), NULL), return NULL)
 
@@ -38,66 +38,150 @@ int client_destroy(client_t *client) {
     return 0;
 }
 
+/**
+ * Prende un certo numero di prodotti in un certo periodo il tempo. I prodotti sono maggiori o uguali a zero e minori
+ * del parametro p. Il tempo necessario è maggiore o uguale a MIN_T e minore del parametro t.
+ *
+ * @param cl struttura dati del cliente
+ * @return numero di prodotti in caso di successo, -1 altrimenti ed imposta errno
+ */
+static int get_products(client_t *cl);
+
 void *client_thread_fun(void *args) {
     client_t *cl = (client_t *) args;
-    int random_time, client_id, served;
-    struct timespec store_entrance, queue_entrance;
-    unsigned int seed = cl->id;
+    int client_id, err, cost;
+    struct timespec store_entrance, queue_entrance, waitingtime = {MS_TO_SEC(cl->s), MS_TO_NANOSEC(cl->s)};
     store_state st_state;
     queue_t *stats;
     client_in_queue_t *clq;
     client_stats *clstats = NULL;
+    cassiere_t *cassiere = NULL, *best_cassiere;
 
-    EQNULL(stats = queue_create(), perror("queue_create()"); return NULL)
-    EQNULL(clq = alloc_client_in_queue(&(cl->mutex)), perror("alloc_client_in_queue()"); return NULL)
+    EQNULL(stats = queue_create(), perror("queue_create"); return NULL)
+    EQNULL(clq = alloc_client_in_queue(&(cl->mutex)), perror("alloc_client_in_queue"); return NULL)
 
     NOTZERO(get_store_state(&st_state), perror("get store state"); return NULL)
     while (ISOPEN(st_state)) {
         client_id = enter_store(cl->store);
         if (client_id) {
             MINUS1(clock_gettime(CLOCK_MONOTONIC, &store_entrance), perror("clock_gettime"); return NULL)
+            DEBUG("[Thread Cliente %ld] Cliente %d: sono entrato nel supermercato\n", cl->id, client_id)
             EQNULL(clstats = new_client_stats(client_id), perror("new client stats"); return NULL)
-            random_time = RANDOM(seed, MIN_T, cl->t);
-            NOTZERO(msleep(random_time), perror("msleep"); return NULL)
-            clq->products = RANDOM(seed, 0, cl->p);
-            clstats->products = clq->products;
-            NOTZERO(get_store_state(&st_state), perror("get store state"); return NULL)
+            MINUS1(clq->products = get_products(cl), perror("get products"); return NULL)
             DEBUG("[Thread Cliente %ld] Cliente %d: voglio acquistare %d prodotti\n", cl->id, client_id, clq->products)
-            if (clq == 0) {
-                DEBUG("[Thread Cliente %ld] Cliente %d: Chiedo permesso di uscita\n", cl->id, client_id);
-                //Se il supermercato è ancora aperto, chiedo il permesso di uscire ad aspetto che mi venga dato
-                if (ISOPEN(st_state)) {
-                    MINUS1(ask_exit_permission(cl->id), perror("ask exit permission"); return NULL)
-                    MINUS1(wait_permission(cl), perror("wait permission"); return NULL)
-                }
-            } else {
-                DEBUG("[Thread Cliente %ld] Cliente %d: mi metto in coda in una delle casse\n", cl->id, client_id);
-                clq->served = 0;
-                served = 0;
-                while(st_state != closed_fast_state && !served) {
-                    if (st_state == open_state) {
-                        MINUS1(enter_best_queue(cl, clq, &queue_entrance), perror("enter best queue"); return NULL)
-                        clstats->queue_counter++;
+            NOTZERO(get_store_state(&st_state), perror("get store state"); return NULL)
+            if (clq->products > 0 && st_state != closed_fast_state) {
+                //do {
+                    //Entro nella migliore coda
+                    do {
+                        EQNULL(cassiere = get_best_queue(cl->casse, cl->k, cassiere, -1),perror("get best queue"); return NULL)
+                        MINUS1(err = join_queue(cassiere, clq, &queue_entrance), perror("join queue"); return NULL)
+                        NOTZERO(get_store_state(&st_state), return NULL)
+                    } while (st_state != closed_fast_state && !err);
+                    DEBUG("[Thread Cliente %ld] Cliente %d: entro nella cassa %ld\n", cl->id, client_id, cassiere->id)
+                    PTH(err, pthread_mutex_lock(&(cassiere)->mutex), perror("lock"); return NULL)
+                    //Aspetto di essere servito oppure valuto se cambiare cassa
+                    while(st_state != closed_fast_state && cassiere->isopen && !clq->served) {
+                        err = pthread_cond_wait(&(clq->waiting), &(cassiere->mutex));//, &waitingtime);
+                        if (err == -1 && errno != ETIMEDOUT) {
+                            perror("timed wait");
+                            return NULL;
+                        }
+                        PTH(err, pthread_mutex_unlock(&(cassiere)->mutex), perror("unlock"); return NULL)
+                        NOTZERO(get_store_state(&st_state), perror("get store state"); return NULL)
+                        PTH(err, pthread_mutex_lock(&(cassiere)->mutex), perror("lock"); return NULL)
                     }
-                    MINUS1(served = wait_to_be_served(cl->s, clq, &st_state), perror("waiting to be served"); return NULL)
-                }
-                if (served) {
+
+                    /*
+                    //Se sono ancora in coda ma non sono ancora stato servito
+                    if (!clq->processing && !clq->served) {
+                        MINUS1(cost = get_queue_cost(cassiere, clq), perror("get queue cost"); return NULL)
+                        PTH(err, pthread_mutex_unlock(&(cassiere)->mutex), perror("unlock"); return NULL)
+                        //Valuto se le altre code sono migliori
+                        EQNULL(best_cassiere = get_best_queue(cl->casse, cl->k, cassiere, cost, clq), perror("get best queue"); return NULL)
+                        PTH(err, pthread_mutex_lock(&(cassiere)->mutex), perror("lock"); return NULL)
+                        if (!clq->processing && !clq->served && best_cassiere != cassiere) {
+                            dequeue(cassiere, clq)
+                            PTH(err, pthread_mutex_unlock(&(cassiere)->mutex), perror("unlock"); return NULL)
+                            err = join_queue(best_cassiere, clq, &queue_entrance);
+                            if (err == -1 && errno != EAGAIN) {
+                                perror("join_queue");
+                                return NULL;
+                            } else if (err == -1 && errno == EAGAIN) {
+                                EQNULL(cassiere = join_best_queue(cl, clq), perror("join best queue"); return NULL)
+                            } else {
+                                cassiere = best_cassiere;
+                            }
+                            PTH(err, pthread_mutex_lock(&(cassiere)->mutex), perror("lock"); return NULL)
+                        }
+                    }*/
+                //} while (!clq->served);
+                if (clq->served) {
+                    clstats->products = clq->products;
                     MINUS1(clstats->time_in_queue = elapsed_time(&queue_entrance), perror("elapsed ms from"); return NULL)
+                    DEBUG("[Thread Cliente %ld] Cliente %d: Sono stato servito\n", cl->id, client_id)
                 }
+                PTH(err, pthread_mutex_unlock(&(cassiere)->mutex), perror("unlock"); return NULL)
+
+
+
+
+
+
+
+
+                /*clstats->queue_counter++;
+                do {
+                    EQNULL(cassiere = get_best_queue(cl->casse, cl->k, cassiere, clq),perror("enter best queue"); return NULL)
+                    errno = 0;
+                    MINUS1(join_queue(cassiere, clq, &queue_entrance), perror("join queue"); return NULL)
+                    NOTZERO(get_store_state(&st_state), perror("get store state"); return NULL)
+                } while (st_state != closed_fast_state && errno == EAGAIN);
+                DEBUG("[Thread Cliente %ld] Cliente %d: entro nella cassa %ld\n", cl->id, client_id, cassiere->id)
+
+                PTH(err, pthread_mutex_lock(clq->mutex), perror("lock"); return NULL)
+                while(st_state != closed_fast_state && !clq->served) {
+                    PTH(err, pthread_cond_wait(&(clq->waiting), clq->mutex), perror("cond wait"); return NULL)
+                    PTH(err, pthread_mutex_unlock(clq->mutex), perror("unlock"); return NULL)
+                    NOTZERO(get_store_state(&st_state), perror("get store state"); return NULL)
+                    PTH(err, pthread_mutex_lock(clq->mutex), perror("lock"); return NULL)
+                }
+                if (clq->served) {
+                    clstats->products = clq->products;
+                    MINUS1(clstats->time_in_queue = elapsed_time(&queue_entrance), perror("elapsed ms from"); return NULL)
+                    DEBUG("[Thread Cliente %ld] Cliente %d: Sono stato servito\n", cl->id, client_id)
+                }
+                PTH(err, pthread_mutex_unlock(clq->mutex), perror("unlock"); return NULL)*/
+            } else if (clq->products == 0 && ISOPEN(st_state)) {    //Chiedo permesso di uscita al direttore
+                DEBUG("[Thread Cliente %ld] Cliente %d: Chiedo permesso di uscita\n", cl->id, client_id)
+                MINUS1(ask_exit_permission(cl->id), perror("ask exit permission"); return NULL)
+                MINUS1(wait_permission(cl), perror("wait permission"); return NULL)
             }
             MINUS1(leave_store(cl->store), perror("exit store"); exit(EXIT_FAILURE))
-            MINUS1(clstats->time_in_store = elapsed_time(&store_entrance), perror("elapsed ms from"); return NULL)
-            MINUS1(push(stats, clstats), perror("push in queue"); return NULL)
+            if (st_state != closed_fast_state) {
+                MINUS1(clstats->time_in_store = elapsed_time(&store_entrance), perror("elapsed ms from"); return NULL)
+                MINUS1(push(stats, clstats), perror("push in queue"); return NULL)
+            } else {
+                free(clstats);
+            }
             clstats = NULL;
-            DEBUG("[Thread Cliente %ld] Cliente %d: sono uscito dal supermercato\n", cl->id, client_id);
+            DEBUG("[Thread Cliente %ld] Cliente %d: sono uscito dal supermercato\n", cl->id, client_id)
         }
         NOTZERO(get_store_state(&st_state), perror("get store state"); return NULL)
     }
-    DEBUG("[Thread Cliente %ld] termino\n", cl->id);
-    MINUS1(destroy_client_in_queue(clq), perror("destroy client in queue"); exit(EXIT_FAILURE))
+    DEBUG("[Thread Cliente %ld] termino\n", cl->id)
+    MINUS1(destroy_client_in_queue(clq), perror("destroy client in queue"); return NULL)
     if (clstats)
         free(clstats);
     return stats;
+}
+
+static int get_products(client_t *cl) {
+    unsigned int seed = cl->id;
+    int products = RANDOM(seed, 0, cl->p);
+    int time = RANDOM(seed, MIN_T, cl->t);
+    MINUS1(msleep(time), return -1)
+    return products;
 }
 
 int set_exit_permission(client_t *client, int can_exit) {
@@ -111,52 +195,11 @@ int set_exit_permission(client_t *client, int can_exit) {
 
 int wait_permission(client_t *cl) {
     int err;
-    cl->can_exit = 0;
     PTH(err, pthread_mutex_lock(&(cl->mutex)), return -1)
     while (cl->can_exit == 0) {
         PTH(err, pthread_cond_wait(&(cl->exit_permission), &(cl->mutex)), return -1)
     }
+    cl->can_exit = 0;   //resetto per la prossima volta che chiederò di uscire
     PTH(err, pthread_mutex_unlock(&(cl->mutex)), return -1)
     return 0;
-}
-
-int enter_best_queue(client_t *cl, client_in_queue_t *clq, struct timespec *queue_entrance) {
-    int err, i = 0, entered = 0;
-    cassiere_t *ca;
-    MINUS1(clock_gettime(CLOCK_MONOTONIC, queue_entrance), return -1)
-    while (!entered) {
-        ca = cl->casse[i];
-        PTH(err, pthread_mutex_lock(&(ca->mutex)), return -1)
-        if (ca->isopen) {
-            MINUS1(push(ca->queue, clq), return -1)
-            entered = 1;
-        }
-        PTH(err, pthread_mutex_unlock(&(ca->mutex)), return -1)
-    }
-
-    return 0;
-}
-
-int wait_to_be_served(int s, client_in_queue_t *clq, store_state *st_state) {
-    int err, timeout = 0, served;
-    struct timespec max_wait = {MS_TO_SEC(s), MS_TO_NANOSEC(s)};
-
-    PTH(err, pthread_mutex_lock(clq->mutex), return -1)
-    while (ISOPEN(*st_state) && !timeout && clq->served == 0) {
-        PTH(err, pthread_cond_wait(&(clq->waiting), clq->mutex), return -1)
-        PTH(err, pthread_mutex_unlock(clq->mutex), return -1)
-        NOTZERO(get_store_state(st_state), return -1)
-        PTH(err, pthread_mutex_lock(clq->mutex), return -1)
-        /*
-        if ((err = pthread_cond_timedwait(&(clq->waiting), clq->mutex, &max_wait)) == ETIMEDOUT) {
-            timeout = 1;
-        } else {
-            errno = err;
-            return -1;
-        }*/
-    }
-    served = clq->served;
-    PTH(err, pthread_mutex_unlock(clq->mutex), return -1)
-
-    return served;
 }

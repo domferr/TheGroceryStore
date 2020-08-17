@@ -19,12 +19,11 @@ void *client_thread_fun(void *args);
  *
  * @param id identificatore univoco del thread
  * @param store struttura dati del supermercato
+ * @param casse tutte le casse del supermercato
  * @param t massimo tempo (in millisecondi) per l'acquisto di prodotti
  * @param p massimo numero di prodotti acquistabili da un cliente
  * @param s ogni quanto tempo (in millisecondi) il cliente decide se cambiare cassa o meno
  * @param k quante casse sono presenti nel supermercato
- * @param fd descrittore del file utilizzato per la comunicazione delle richieste di uscita dal supermercato
- * @param fd_mtx puntatore alla mutex da utilizzare per svolgere le operazioni in mutua esclusione sul file descriptor
  * @return struttura dati oppure NULL in caso di errore ed imposta errno
  */
 client_t *alloc_client(size_t id, store_t *store, cassiere_t **casse, int t, int p, int s, int k);
@@ -54,8 +53,6 @@ int set_exit_permission(client_t *client, int can_exit);
  * @return 0 in caso di successo, -1 altrimenti ed imposta errno
  */
 int wait_permission(client_t *cl);
-
-int enter_best_queue(client_t *cl, client_in_queue_t *clq, struct timespec *queue_entrance);
 
 int wait_to_be_served(int s, client_in_queue_t *clq, store_state *st_state);
 
