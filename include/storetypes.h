@@ -23,11 +23,11 @@ typedef struct {
  * la lock e la condition variable sulla quale il cliente sta attendendo mentre si trova in coda.
  */
 typedef struct client_in_queue {
-    pthread_mutex_t *mutex;
     pthread_cond_t waiting; //variabile di condizione sulla quale il cliente aspetta di essere servito
     int products;           //numero di prodotti acquistati
     int served;             //vale 1 se è stato servito, 0 altrimenti
     int processing;         //vale 1 se il cassiere sta servendo il cliente ma non ha ancora finito, 0 altrimenti
+    int is_enqueued;        //vale 1 se il cliente è in coda, 0 altrimenti
     struct client_in_queue *next;
     struct client_in_queue *prev;
 } client_in_queue_t;

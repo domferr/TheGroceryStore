@@ -79,7 +79,7 @@ void *cassiere_thread_fun(void *args) {
             }
         } else {
             DEBUG("Cassiere %ld: cassa chiusa\n", ca->id)
-            //avvisa i clienti in coda che la cassa è chiusa
+            //Avvisa tutti i clienti in coda che la cassa è chiusa
             while(ca->queue->size > 0) {
                 client = get_next_client(ca);
                 MINUS1(wakeup_client(client, 0), perror("wake up client"); return NULL)

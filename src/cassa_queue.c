@@ -4,7 +4,7 @@
 #define SERVICE_COST(ca, clq) ((ca)->fixed_service_time + ((ca)->product_service_time * (clq)->products))
 
 static int enqueue(cassiere_t *cassiere, client_in_queue_t *clq);
-static void dequeue(cassiere_t *cassiere, client_in_queue_t *clq);
+//static void dequeue(cassiere_t *cassiere, client_in_queue_t *clq);
 
 cassa_queue_t *cassa_queue_create(void) {
     int err;
@@ -69,11 +69,11 @@ static int enqueue(cassiere_t *cassiere, client_in_queue_t *clq) {
     queue->head = clq;
     queue->size++;
     queue->cost += SERVICE_COST(cassiere, clq);
-
+    clq->is_enqueued = 1;
     return 0;
 }
 
-static void dequeue(cassiere_t *cassiere, client_in_queue_t *clq) {
+void dequeue(cassiere_t *cassiere, client_in_queue_t *clq) {
     cassa_queue_t *queue = cassiere->queue;
     if (clq != NULL) {
         if (queue->head == clq)
@@ -86,15 +86,8 @@ static void dequeue(cassiere_t *cassiere, client_in_queue_t *clq) {
             clq->next->prev = clq->prev;
         queue->size--;
         queue->cost -= SERVICE_COST(cassiere, clq);
+        clq->is_enqueued = 0;
     }
-}
-
-int leave_queue(cassiere_t *cassiere, client_in_queue_t *clq) {
-    int err;
-    PTH(err, pthread_mutex_lock(&(cassiere->mutex)), return -1)
-    dequeue(cassiere, clq);
-    PTH(err, pthread_mutex_unlock(&(cassiere->mutex)), return -1)
-    return 0;
 }
 
 int join_queue(cassiere_t *cassiere, client_in_queue_t *clq, struct timespec *queue_entrance) {
