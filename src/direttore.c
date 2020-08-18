@@ -50,7 +50,7 @@ static int fork_store(char *config_file, pid_t *pid);
  * @param casse_attive contatore di quante casse sono attive
  * @return 0 in caso di successo, -1 altrimenti ed imposta errno
  */
-static int handle_notification(int fd_store, config_t *config, const int *casse, int *casse_attive);
+static int handle_notification(int fd_store, config_t *config, int *casse, int *casse_attive);
 
 /**
  * Gestisce la richiesta di uscita di un cliente. Il permesso viene sempre concesso. Ritorna 0 in caso di successo,
@@ -148,7 +148,7 @@ int main(int argc, char **args) {
     return 0;
 }
 
-static int handle_notification(int fd_store, config_t *config, const int *casse, int *casse_attive) {
+static int handle_notification(int fd_store, config_t *config, int *casse, int *casse_attive) {
     int i, count_attive = 0, count_nonattive = 0,
         count_s1 = 0, count_s2 = 0,
         cassa_s1 = -1, cassa_s2 = -1;
@@ -174,6 +174,7 @@ static int handle_notification(int fd_store, config_t *config, const int *casse,
         MINUS1(writen(fd_store, &msg_hdr, sizeof(msg_header_t)), return -1)
         MINUS1(writen(fd_store, &cassa_s1, sizeof(int)), return -1)
         *casse_attive = *casse_attive - 1;
+        casse[cassa_s1] = -1;
     }
     //Se sono aperte meno di k casse e sono nella soglia, allora posso aprire un'altra cassa
     if (*casse_attive < config->k && count_s2 > 0) {
@@ -181,6 +182,7 @@ static int handle_notification(int fd_store, config_t *config, const int *casse,
         MINUS1(writen(fd_store, &msg_hdr, sizeof(msg_header_t)), return -1)
         MINUS1(writen(fd_store, &cassa_s2, sizeof(int)), return -1)
         *casse_attive = *casse_attive + 1;
+        casse[cassa_s2] = -1;
     }
     return 0;
 }

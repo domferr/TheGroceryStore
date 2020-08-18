@@ -1,4 +1,4 @@
-#define DEBUGGING 1
+#define DEBUGGING 0
 #include "../include/utils.h"
 #include "../include/cassiere.h"
 #include "../include/store.h"
@@ -70,7 +70,7 @@ void *cassiere_thread_fun(void *args) {
             }
             //C'è un cliente e sia la cassa che il supermercato sono aperti
             if (ISOPEN(st_state) && ca->isopen) {
-                client = get_next_client(ca);
+                client = get_next_client(ca, 1);
                 PTH(err, pthread_mutex_unlock(&(ca->mutex)), perror("unlock"); return NULL)
                 MINUS1(serve_client(ca, client), perror("serve client"); return NULL)
                 PTH(err, pthread_mutex_lock(&(ca->mutex)), perror("lock"); return NULL)
@@ -78,12 +78,13 @@ void *cassiere_thread_fun(void *args) {
                 MINUS1(wakeup_client(client, 1), perror("wake up client"); return NULL)
             }
         } else {
-            DEBUG("Cassiere %ld: cassa chiusa\n", ca->id)
+            DEBUG("Cassiere %ld: cassa chiusa, clienti in coda %d\n", ca->id, ca->queue->size)
             //Avvisa tutti i clienti in coda che la cassa è chiusa
             while(ca->queue->size > 0) {
-                client = get_next_client(ca);
+                client = get_next_client(ca, 0);
                 MINUS1(wakeup_client(client, 0), perror("wake up client"); return NULL)
             }
+            DEBUG("Cassiere %ld: cassa chiusa, clienti in coda %d DOPO\n", ca->id, ca->queue->size)
             //Aspetto fino a quando il supermercato chiude o quando il direttore apre la cassa
             while (ISOPEN(st_state) && !ca->isopen) {
                 PTH(err, pthread_cond_wait(&(ca->waiting), &(ca->mutex)), perror("cond wait"); return NULL)
@@ -105,7 +106,8 @@ void *cassiere_thread_fun(void *args) {
     DEBUG("Cassiere %ld: gestisco clienti rimasti in coda\n", ca->id)
     PTH(err, pthread_mutex_lock(&(ca->mutex)), perror("lock"); return NULL)
     while(ca->queue->size > 0) {
-        client = get_next_client(ca);
+        DEBUG("size: %d - %p\n", ca->queue->size, (void*)ca->queue->head)
+        client = get_next_client(ca, st_state != closed_fast_state);
         if (st_state == closed_fast_state) {    //Chiusura veloce quindi non lo servo e lo sveglio soltanto
             MINUS1(wakeup_client(client, 0), perror("wake up client"); return NULL)
         } else {    //Lo servo e poi lo sveglio

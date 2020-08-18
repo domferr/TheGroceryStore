@@ -17,8 +17,6 @@
 #include <signal.h>
 #include <sys/select.h>
 
-//#define DEBUGSUPERM
-
 static thread_pool_t *run_clients(store_t *store, config_t *config, cassiere_t **casse);
 static thread_pool_t *run_cassieri(store_t *store, config_t *config);
 

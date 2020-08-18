@@ -1,9 +1,10 @@
 #include "../include/utils.h"
 #include "../include/cassa_queue.h"
 #include <stdlib.h>
+
 #define SERVICE_COST(ca, clq) ((ca)->fixed_service_time + ((ca)->product_service_time * (clq)->products))
 
-static int enqueue(cassiere_t *cassiere, client_in_queue_t *clq);
+//static int enqueue(cassiere_t *cassiere, client_in_queue_t *clq);
 //static void dequeue(cassiere_t *cassiere, client_in_queue_t *clq);
 
 cassa_queue_t *cassa_queue_create(void) {
@@ -55,7 +56,7 @@ cassiere_t *get_best_queue(cassiere_t **cassieri, int k, cassiere_t *from, int f
     return best;
 }
 
-static int enqueue(cassiere_t *cassiere, client_in_queue_t *clq) {
+int enqueue(cassiere_t *cassiere, client_in_queue_t *clq) {
     cassa_queue_t *queue = cassiere->queue;
 
     clq->prev = NULL;
@@ -87,6 +88,8 @@ void dequeue(cassiere_t *cassiere, client_in_queue_t *clq) {
         queue->size--;
         queue->cost -= SERVICE_COST(cassiere, clq);
         clq->is_enqueued = 0;
+        clq->prev = NULL;
+        clq->next = NULL;
     }
 }
 
@@ -124,11 +127,11 @@ cassiere_t *join_best_queue(cassiere_t *from, int from_cost, cassiere_t *to, cli
     return best;
 }
 
-client_in_queue_t *get_next_client(cassiere_t *cassiere) {
+client_in_queue_t *get_next_client(cassiere_t *cassiere, int processing) {
     client_in_queue_t *ret;
     cassa_queue_t *queue = cassiere->queue;
     ret = queue->head;
     dequeue(cassiere, queue->head);
-    ret->processing = 1;
+    ret->processing = processing;
     return ret;
 }

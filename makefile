@@ -45,6 +45,9 @@ LOGFILE = testlog.csv
 
 all: $(TARGETS)
 
+test: $(OBJDIR)/test.o $(OBJDIR)/client_in_queue.o $(OBJDIR)/cassa_queue.o
+	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $^ $(LDFLAGS) $(LIBS)
+
 # generazione di un .o da un .c con il relativo .h come dipendenza
 $(OBJDIR)/%.o: $(SRCDIR)/%.c $(INCDIR)/%.h
 	$(CC) $(CFLAGS) $(INCLUDES) -c -o $@ $<

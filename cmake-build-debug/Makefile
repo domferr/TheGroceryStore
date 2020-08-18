@@ -501,6 +501,33 @@ src/supermercato.c.s:
 	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/supermercato.c.s
 .PHONY : src/supermercato.c.s
 
+src/test.o: src/test.c.o
+
+.PHONY : src/test.o
+
+# target to build an object file
+src/test.c.o:
+	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/test.c.o
+.PHONY : src/test.c.o
+
+src/test.i: src/test.c.i
+
+.PHONY : src/test.i
+
+# target to preprocess a source file
+src/test.c.i:
+	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/test.c.i
+.PHONY : src/test.c.i
+
+src/test.s: src/test.c.s
+
+.PHONY : src/test.s
+
+# target to generate assembly for a file
+src/test.c.s:
+	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/test.c.s
+.PHONY : src/test.c.s
+
 src/threadpool.o: src/threadpool.c.o
 
 .PHONY : src/threadpool.o
@@ -606,6 +633,9 @@ help:
 	@echo "... src/supermercato.o"
 	@echo "... src/supermercato.i"
 	@echo "... src/supermercato.s"
+	@echo "... src/test.o"
+	@echo "... src/test.i"
+	@echo "... src/test.s"
 	@echo "... src/threadpool.o"
 	@echo "... src/threadpool.i"
 	@echo "... src/threadpool.s"
