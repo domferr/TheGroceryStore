@@ -39,10 +39,10 @@ queue_t *queue_create(void);
  * riutilizzata ed il suo puntatore avrà perso di significato in quanto la memoria allocata per la coda viene totalmente
  * ripulita. Ritorna 0 se la distruzione è avvenuta con successo, -1 in caso di errore.
  *
- * @param queue coda da distruggere
+ * @param queue coda da distruggere TODO aggiornare con la funzione per liberare memoria
  * @return 0 in caso di successo, -1 altrimenti
  */
-int queue_destroy(queue_t *queue);
+int queue_destroy(queue_t *queue, void (*free_fun)(void *elem));
 
 /**
  * Aggiunge in testa alla coda passata per argomento l'elemento specificato.
@@ -77,7 +77,7 @@ int foreach(queue_t *queue, int (*fun)(void*, void*), void *args);
  *
  * @param queue coda da svuotare
  */
-void clear(queue_t *queue);
+void clear(queue_t *queue, void (*free_fun)(void *elem));
 
 //TODO fare questa documentazione
 int merge(queue_t *q1, queue_t *q2);

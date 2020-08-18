@@ -49,12 +49,12 @@ static int get_products(client_t *cl);
 
 void *client_thread_fun(void *args) {
     client_t *cl = (client_t *) args;
-    int client_id, err, cost, try_another_queue = 0;
+    int client_id, err, cost, try_another_queue = 0, queue_counter = 0;
+    long time_in_store, time_in_queue;
     struct timespec store_entrance, queue_entrance, waitingtime = {MS_TO_SEC(cl->s), MS_TO_NANOSEC(cl->s)};
     store_state st_state;
     queue_t *stats;
     client_in_queue_t *clq;
-    client_stats *clstats = NULL;
     cassiere_t *cassiere = NULL, *best_cassiere;
 
     EQNULL(stats = queue_create(), perror("queue_create"); return NULL)
@@ -62,14 +62,21 @@ void *client_thread_fun(void *args) {
 
     NOTZERO(get_store_state(&st_state), perror("get store state"); return NULL)
     while (ISOPEN(st_state)) {
+        //Resetto i contatori delle statistiche
+        queue_counter = 0;
+        time_in_queue = 0;
+        time_in_store = 0;
+        //Entro nel supermercato. Chiamata bloccante. Il controllo ritorna se entro nel supermercato o se esso viene chiuso
         client_id = enter_store(cl->store);
         if (client_id) {
             MINUS1(clock_gettime(CLOCK_MONOTONIC, &store_entrance), perror("clock_gettime"); return NULL)
             DEBUG("[Thread Cliente %ld] Cliente %d: sono entrato nel supermercato\n", cl->id, client_id)
-            EQNULL(clstats = new_client_stats(client_id), perror("new client stats"); return NULL)
             MINUS1(clq->products = get_products(cl), perror("get products"); return NULL)
             if (clq->is_enqueued)
                 printf("%ld: NON VA BENEEEEEEEEEE---------------------------------------Servito: %d\n", cl->id, clq->served);
+            //Reset del cliente in coda
+            clq->served = 0;
+            clq->processing = 0;
             DEBUG("[Thread Cliente %ld] Cliente %d: voglio acquistare %d prodotti\n", cl->id, client_id, clq->products)
             NOTZERO(get_store_state(&st_state), perror("get store state"); return NULL)
             if (clq->products > 0 && st_state != closed_fast_state) {
@@ -101,8 +108,7 @@ void *client_thread_fun(void *args) {
                         PTH(err, pthread_mutex_lock(&(cassiere)->mutex), perror("lock"); return NULL)
                     }
                     if (clq->served) {
-                        clstats->products = clq->products;
-                        MINUS1(clstats->time_in_queue = elapsed_time(&queue_entrance),perror("elapsed ms from"); return NULL)
+                        MINUS1(time_in_queue = elapsed_time(&queue_entrance),perror("elapsed ms from"); return NULL)
                         DEBUG("[Thread Cliente %ld] Cliente %d: Sono stato servito. Sono in coda: %d\n", cl->id, client_id, clq->is_enqueued)
                     } else if (st_state != closed_fast_state && !cassiere->isopen && !clq->served && !clq->processing) {
                         //Cassa chiusa e non sono stato servito ed il cassiere non mi sta servendo
@@ -112,7 +118,7 @@ void *client_thread_fun(void *args) {
                             dequeue(cassiere, clq);
                         }
                         try_another_queue = 1;
-                        clstats->queue_counter++;
+                        queue_counter++;
                     } else if (st_state == closed_fast_state && clq->is_enqueued) {
                         dequeue(cassiere, clq);
                     }
@@ -171,12 +177,10 @@ void *client_thread_fun(void *args) {
             }
             MINUS1(leave_store(cl->store), perror("exit store"); exit(EXIT_FAILURE))
             if (st_state != closed_fast_state) {
-                MINUS1(clstats->time_in_store = elapsed_time(&store_entrance), perror("elapsed ms from"); return NULL)
-                MINUS1(push(stats, clstats), perror("push in queue"); return NULL)
-            } else {
-                free(clstats);
+                MINUS1(time_in_store = elapsed_time(&store_entrance), perror("elapsed ms from"); return NULL)
+                MINUS1(log_client_stats(stats, client_id, clq->products, time_in_store, time_in_queue, queue_counter), 
+                       perror("log client stats"); return NULL)
             }
-            clstats = NULL;
             DEBUG("[Thread Cliente %ld] Cliente %d: sono uscito dal supermercato\n", cl->id, client_id)
         }
         NOTZERO(get_store_state(&st_state), perror("get store state"); return NULL)
@@ -185,8 +189,6 @@ void *client_thread_fun(void *args) {
     if (clq->is_enqueued)
         printf("%ld: IN CODAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n", cl->id);
     MINUS1(destroy_client_in_queue(clq), perror("destroy client in queue"); return NULL)
-    if (clstats)
-        free(clstats);
     return stats;
 }
 

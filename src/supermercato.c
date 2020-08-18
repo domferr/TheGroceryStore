@@ -135,18 +135,16 @@ int main(int argc, char **args) {
         MINUS1(merge(clients_stats, clients_pool->retvalues[i]), perror("merge queues"); exit(EXIT_FAILURE))
     }
     MINUS1(thread_pool_free(clients_pool), perror("thread pool free"); exit(EXIT_FAILURE))
-    for (i = 0; i < cassieri_pool->size; ++i) {
-        MINUS1(cassiere_destroy(cassieri_pool->args[i]), perror("cassiere destroy"); exit(EXIT_FAILURE))
-    }
-    MINUS1(thread_pool_free(cassieri_pool), perror("thread pool free"); exit(EXIT_FAILURE))
     //Scrivo il file di log
     EQNULL(logfile = fopen(config->logfilename, "w"), perror("fopen"); exit(EXIT_FAILURE))
-    MINUS1(write_log(stdout, clients_stats), perror("write log"); exit(EXIT_FAILURE))
+    MINUS1(write_log(stdout, clients_stats, (cassa_log_t**) cassieri_pool->retvalues, config->k), perror("write log"); exit(EXIT_FAILURE))
     fclose(logfile);
-    while (clients_stats->size > 0) {
-        free(pop(clients_stats));
+    for (i = 0; i < cassieri_pool->size; ++i) {
+        MINUS1(cassiere_destroy(cassieri_pool->args[i]), perror("cassiere destroy"); exit(EXIT_FAILURE))
+        MINUS1(destroy_cassa_log(cassieri_pool->retvalues[i]), perror("cassa log destroy"); exit(EXIT_FAILURE))
     }
-    MINUS1(queue_destroy(clients_stats), perror("queue destroy"); exit(EXIT_FAILURE))
+    MINUS1(thread_pool_free(cassieri_pool), perror("thread pool free"); exit(EXIT_FAILURE))
+    MINUS1(queue_destroy(clients_stats, &free), perror("queue destroy"); exit(EXIT_FAILURE))
     MINUS1(store_destroy(store), perror("store destroy"); exit(EXIT_FAILURE))
     free_config(config);
     PTH(err, pthread_mutex_destroy(&mtx_skt), return -1)

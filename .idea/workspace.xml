@@ -145,7 +145,7 @@
       <workItem from="1596447868350" duration="31624000" />
       <workItem from="1597308335996" duration="16213000" />
       <workItem from="1597397681214" duration="45770000" />
-      <workItem from="1597737757113" duration="5956000" />
+      <workItem from="1597737757113" duration="11774000" />
     </task>
     <servers />
   </component>
@@ -183,6 +183,10 @@
       <screen x="0" y="0" width="1536" height="864" />
     </state>
     <state x="534" y="235" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1536.864@0.0.1536.864" timestamp="1596294135212" />
+    <state x="500" y="223" key="#com.intellij.ide.util.TreeClassChooserDialog" timestamp="1597744187852">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state x="500" y="223" key="#com.intellij.ide.util.TreeClassChooserDialog/0.0.1536.864@0.0.1536.864" timestamp="1597744187852" />
     <state x="500" y="180" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1596322115642">
       <screen x="0" y="0" width="1536" height="864" />
     </state>

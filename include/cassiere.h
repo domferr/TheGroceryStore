@@ -3,7 +3,7 @@
 
 #include "storetypes.h"
 
-extern int global;
+#define SERVICE_TIME(ca, clq) ((ca)->fixed_service_time + ((ca)->product_service_time * (clq)->products))
 
 /**
  * Funzione svolta dal thread cassiere. Ogni volta che la cassa viene aperta o chiusa il thread non termina, bensì rimane

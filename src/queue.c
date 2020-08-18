@@ -17,8 +17,8 @@ queue_t *queue_create(void) {
     return queue;
 }
 
-int queue_destroy(queue_t *queue) {
-    clear(queue);
+int queue_destroy(queue_t *queue, void (*free_fun)(void *elem)) {
+    clear(queue, free_fun);
     free(queue);
     return 0;
 }
@@ -66,9 +66,12 @@ void *pop(queue_t *queue) {
     return remove_n(queue, queue->tail);
 }
 
-void clear(queue_t *queue) {
+void clear(queue_t *queue, void (*free_fun)(void *elem)) {
+    void *elem;
     while(queue->size > 0) {
-        pop(queue);
+        elem = pop(queue);
+        if (free_fun != NULL)
+            free_fun(elem);
     }
 }
 

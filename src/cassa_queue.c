@@ -1,8 +1,7 @@
 #include "../include/utils.h"
 #include "../include/cassa_queue.h"
+#include "../include/cassiere.h"
 #include <stdlib.h>
-
-#define SERVICE_COST(ca, clq) ((ca)->fixed_service_time + ((ca)->product_service_time * (clq)->products))
 
 //static int enqueue(cassiere_t *cassiere, client_in_queue_t *clq);
 //static void dequeue(cassiere_t *cassiere, client_in_queue_t *clq);
@@ -32,7 +31,7 @@ int get_queue_cost(cassiere_t *cassiere, client_in_queue_t *clq) {
     PTH(err, pthread_mutex_lock(&(cassiere->mutex)), return -1)
     curr = cassiere->queue->head;
     while (curr != NULL && curr != clq) {
-        cost += SERVICE_COST(cassiere, curr);
+        cost += SERVICE_TIME(cassiere, curr);
         curr = curr->next;
     }
     PTH(err, pthread_mutex_unlock(&(cassiere->mutex)), return -1)
@@ -69,7 +68,7 @@ int enqueue(cassiere_t *cassiere, client_in_queue_t *clq) {
 
     queue->head = clq;
     queue->size++;
-    queue->cost += SERVICE_COST(cassiere, clq);
+    queue->cost += SERVICE_TIME(cassiere, clq);
     clq->is_enqueued = 1;
     return 0;
 }
@@ -86,7 +85,7 @@ void dequeue(cassiere_t *cassiere, client_in_queue_t *clq) {
         if (clq->next != NULL)
             clq->next->prev = clq->prev;
         queue->size--;
-        queue->cost -= SERVICE_COST(cassiere, clq);
+        queue->cost -= SERVICE_TIME(cassiere, clq);
         clq->is_enqueued = 0;
         clq->prev = NULL;
         clq->next = NULL;
