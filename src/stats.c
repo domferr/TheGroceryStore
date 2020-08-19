@@ -101,11 +101,11 @@ int write_log(char *filename, queue_t *clients_stats, cassa_log_t **cassieri_sta
                 (cassieri_stats[i])->id, served->size, cassieri_stats[i]->products_counter, cassieri_stats[i]->closed_counter);
         if (opened->size > 0) { //Se la cassa è stata aperta almeno una volta
             fprintf(out_file, ", periodi di apertura cassa:");
-            foreach(opened, &print_ms, out_file);
+            MINUS1(foreach(opened, &print_ms, out_file), return -1)
         }
         if (served->size > 0) { //Se è stato servito almeno un cliente
             fprintf(out_file, ", tempi di servizio dei clienti serviti:");
-            foreach(served, &print_ms, out_file);
+            MINUS1(foreach(served, &print_ms, out_file), return -1)
         }
         fprintf(out_file, "\n");
 

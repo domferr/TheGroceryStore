@@ -46,6 +46,17 @@ int destroy_cassa_log(cassa_log_t *log);
 int log_client_served(cassa_log_t *cassa_log, long time, int products);
 int log_cassa_opening_time(cassa_log_t *cassa_log, long time);
 void log_cassa_closed(cassa_log_t *cassa_log);
+
+/**
+ * Scrive il file di log. Ritorna -1 se è avvenuto un errore ed imposta errno. In caso di scrittura avvenuta con successo,
+ * ritorna 0 ed il file viene chiuso.
+ *
+ * @param filename nome del file di log
+ * @param clients_stats statistiche dei thread clienti
+ * @param cassieri_stats statistiche dei cassieri
+ * @param k quanti casse ci sono nel supermercato
+ * @return 0 in caso di successo, -1 altrimenti ed imposta errno
+ */
 int write_log(char *filename, queue_t *clients_stats, cassa_log_t **cassieri_stats, int k);
 
 #endif //STATS_H

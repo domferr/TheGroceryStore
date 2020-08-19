@@ -1,5 +1,4 @@
 #include "../include/scfiles.h"
-#include "../include/utils.h"
 #include <unistd.h>
 
 ssize_t readn(int fd, void *ptr, size_t n) {
@@ -16,32 +15,6 @@ ssize_t readn(int fd, void *ptr, size_t n) {
         ptr = (char*) ptr + nread;
     }
     return(n - nleft); /* return >= 0 */
-}
-
-ssize_t readline(int fd, char *ptr, size_t n, off_t *offset) {
-    ssize_t nread = 0;
-    ssize_t index = 0;
-    char *temp;
-
-    if (lseek(fd, *offset, SEEK_SET) != -1)
-        nread = readn(fd, ptr, n);
-
-    if (nread == -1)
-        return -1;  //errore, ritorna -1
-    if (nread == 0)
-        return 0;   /* EOF */
-
-    temp = ptr;
-    while (index < nread && *temp != '\n') { temp++; index++; }
-    *temp = '\0';   //Aggiungo carattere di fine stringa
-    if (index == nread) {   //Se il carattere '\n' non è presente
-        *offset += nread;
-    } else {
-        *offset += index+1;
-        *temp = 0;
-    }
-
-    return index;
 }
 
 ssize_t writen(int fd, void *ptr, size_t n) {

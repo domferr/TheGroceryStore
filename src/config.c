@@ -1,14 +1,13 @@
+#include "../include/utils.h"
+#include "../include/config.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <fcntl.h>
-#include "../include/config.h"
-#include "../include/utils.h"
 
 #define COMMENT_CHAR '#'    //Carattere utilizzato per iniziare un commento
 #define ASSIGNMENT_CHAR '='    //Carattere utilizzato per indicare il valore da assegnare ad un parametro
 #define MAX_ROW_LENGTH 128  //Massima dimensione del buffer per leggere una riga del file
-#define MISSING -1
+#define MISSING (-1)
 #define LESS_OR_EQUAL(value, upper_limit, val_id)                               \
     if ((value) <= (upper_limit)) {                                                 \
         fprintf(stderr, "File di configurazione non valido: "val_id" mancante oppure minore o uguale a %d\n", upper_limit); \

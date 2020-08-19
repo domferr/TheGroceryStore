@@ -46,14 +46,4 @@ int client_destroy(client_t *client);
  */
 int set_exit_permission(client_t *client, int can_exit);
 
-/**
- * Rimane il attesa che arrivi una risposta alla richiesta di uscita dal supermercato. Chiamata bloccante.
- *
- * @param cl struttura dati del cliente
- * @return 0 in caso di successo, -1 altrimenti ed imposta errno
- */
-int wait_permission(client_t *cl);
-
-int wait_to_be_served(int s, client_in_queue_t *clq, store_state *st_state);
-
 #endif //CLIENT_H
