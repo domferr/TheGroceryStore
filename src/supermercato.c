@@ -1,4 +1,4 @@
-#define DEBUGGING 1
+#define DEBUGGING 0
 #include "../include/sig_handling.h"
 #include "../include/config.h"
 #include "../include/utils.h"
@@ -132,7 +132,7 @@ int main(int argc, char **args) {
     EQNULL(clients_stats = queue_create(), perror("queue create"); exit(EXIT_FAILURE))
     for (i = 0; i < clients_pool->size; ++i) {
         MINUS1(client_destroy(clients_pool->args[i]), perror("client destroy"); exit(EXIT_FAILURE))
-        MINUS1(merge(clients_stats, clients_pool->retvalues[i]), perror("merge queues"); exit(EXIT_FAILURE))
+        merge(clients_stats, clients_pool->retvalues[i]);
     }
     MINUS1(thread_pool_free(clients_pool), perror("thread pool free"); exit(EXIT_FAILURE))
     //Scrivo il file di log

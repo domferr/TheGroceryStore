@@ -67,41 +67,41 @@ $(BINDIR)/direttore: $(OBJS_DIRETT)
 # scrittura del file di configurazione per il test1
 $(CONFIGTEST1FILE):
 	@echo "K = 2"  		>$@
-	@echo "KT = 35"  	>>$@
-	@echo "KA = 1"  	>>$@
 	@echo "C = 20" 		>>$@
 	@echo "E = 5"  		>>$@
 	@echo "T = 500"  	>>$@
 	@echo "P = 80"  	>>$@
-	@echo "D = 1000"  	>>$@
 	@echo "S = 30"  	>>$@
-	@echo "S1 = 2"  	>>$@
-	@echo "S2 = 6"  	>>$@
+	@echo "KT = 2"  	>>$@
+	@echo "KA = 2"  	>>$@
+	@echo "D = 500"  	>>$@
+	@echo "S1 = 1"  	>>$@
+	@echo "S2 = 4"  	>>$@
 	@echo "L = $(LOGFILE)" >>$@
 
 # scrittura del file di configurazione per il test2
 $(CONFIGTEST2FILE):
 	@echo "K = 6"  		>$@
-	@echo "KT = 35"  	>>$@
-	@echo "KA = 5"  	>>$@
 	@echo "C = 50" 		>>$@
 	@echo "E = 3"  		>>$@
 	@echo "T = 200"  	>>$@
 	@echo "P = 100"  	>>$@
 	@echo "S = 20"  	>>$@
+	@echo "KT = 3"  	>>$@
+	@echo "KA = 5"  	>>$@
 	@echo "S1 = 5"  	>>$@
-	@echo "S2 = 15"  	>>$@
-	@echo "D = 1000"  	>>$@
+	@echo "S2 = 3"  	>>$@
+	@echo "D = 500"  	>>$@
 	@echo "L = $(LOGFILE)" >>$@
 
 # lancio del primo test. Necessario che il file di configurazione sia stato creato e che l'eseguibile sia stato generato
 test1: $(CONFIGTEST1FILE) all
-	@echo "Running test1"
-	@valgrind --leak-check=full --trace-children=yes $(BINDIR)/direttore -c $< & sleep 10; kill -s 1 $$!; wait $$!
+	@echo "Running Test 1"
+	@valgrind --leak-check=full --trace-children=yes $(BINDIR)/direttore -c $< & sleep 5; kill -s 1 $$!; wait $$!
 
 # lancio del secondo test. Necessario che il file di configurazione sia stato creato e che l'eseguibile sia stato generato
 test2: $(CONFIGTEST2FILE) all
-	@echo "Running test2"
+	@echo "Running Test 2"
 	@$(BINDIR)/direttore -c $< & sleep 5; kill -s 1 $$!; wait $$!
 	@./analisi.sh
 

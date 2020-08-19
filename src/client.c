@@ -69,7 +69,10 @@ void *client_thread_fun(void *args) {
         if (client_id) {
             MINUS1(clock_gettime(CLOCK_MONOTONIC, &store_entrance), perror("clock_gettime"); return NULL)
             DEBUG("[Thread Cliente %ld] Cliente %d: sono entrato nel supermercato\n", cl->id, client_id)
+            int p = clq->products;
             MINUS1(clq->products = get_products(cl), perror("get products"); return NULL)
+            /*if (clq->products == p)
+                printf("---------------- UGUALIIIIIIIII ----------------\n");*/
             if (clq->is_enqueued)
                 printf("%ld: NON VA BENEEEEEEEEEE---------------------------------------Servito: %d\n", cl->id, clq->served);
             //Reset del cliente in coda
@@ -88,8 +91,9 @@ void *client_thread_fun(void *args) {
                     } while (st_state != closed_fast_state && !err);
                     DEBUG("[Thread Cliente %ld] Cliente %d: entro nella cassa %ld\n", cl->id, client_id, cassiere->id)
                     PTH(err, pthread_mutex_lock(&(cassiere)->mutex), perror("lock"); return NULL)
-                    //Aspetto di essere servito oppure valuto se cambiare cassa
-                    while (st_state != closed_fast_state && cassiere->isopen && !clq->served) {
+                    //Aspetto di essere servito oppure valuto se cambiare cassa. Se il cassiere sta processando i miei
+                    //prodotti non esco mai perchè devo aspettare che il cassiere finisca
+                    while (clq->processing || (st_state != closed_fast_state && cassiere->isopen && !clq->served)) {
                         if (clq->processing)    //Se il cassiere sta processando i miei prodotti allora aspetto che mi svegli
                             err = pthread_cond_wait(&(clq->waiting), &(cassiere->mutex));
                         else    //altrimenti faccio la timedwait ed eventualmente algoritmo di cambio cassa
@@ -192,7 +196,7 @@ void *client_thread_fun(void *args) {
 }
 
 static int get_products(client_t *cl) {
-    unsigned int seed = cl->id;
+    unsigned int seed = cl->id + time(NULL);
     int products = RANDOM(seed, 0, cl->p);
     int time = RANDOM(seed, MIN_T, cl->t);
     MINUS1(msleep(time), return -1)

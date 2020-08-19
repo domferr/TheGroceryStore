@@ -30,10 +30,10 @@ typedef struct {
     int products;       //numero di prodotti acquistati
     long time_in_store; //tempo di permanenza nel supermercato espresso in millisecondi
     long time_in_queue; //tempo di attesa in coda espresso in millisecondi
-    int queue_counter;  //numero di code visitate
+    int queue_counter;  //quante volte il cliente ha cambiato coda
 } client_stats_t;
 
-int log_client_stats(queue_t *client_log, int id, int prod, int time_instore, int time_inqueue, int queuecounter) {
+int log_client_stats(queue_t *client_log, int id, int prod, long time_instore, long time_inqueue, int queuecounter) {
     client_stats_t *stats = (client_stats_t*) malloc(sizeof(client_stats_t));
     EQNULL(stats, return -1)
     stats->id = id;

@@ -27,6 +27,7 @@ int destroy_client_in_queue(client_in_queue_t *clq) {
 int wakeup_client(client_in_queue_t *clq, int served) {
     int err;
     clq->served = served;
+    clq->processing = 0;
     PTH(err, pthread_cond_signal(&(clq->waiting)), return -1)
     return 0;
 }

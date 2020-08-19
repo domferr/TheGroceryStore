@@ -1,4 +1,4 @@
-#define DEBUGGING 1
+#define DEBUGGING 0
 #include "../include/sig_handling.h"
 #include "../include/utils.h"
 #include "../include/config.h"
@@ -124,6 +124,12 @@ int main(int argc, char **args) {
                         if (casse[i] != CASSA_CHIUSA)
                             casse[i] = param2;
                         MINUS1(handle_notification(fd_store, config, casse, &casse_attive), perror("handle_notification"); exit(EXIT_FAILURE))
+                        /*printf("\r%s: [ ", "Clienti in coda");
+                        for (i = 0; i < config->k; i++) {
+                            printf("%d ", casse[i]);
+                        }
+                        printf("]        Casse aperte: %d        Casse chiuse: %d        ", casse_attive, (config->k - casse_attive));
+                        fflush(stdout);*/
                         break;
                     case head_ask_exit: //Ricevuta richiesta per uscire dal supermercato. Dò sempre il permesso
                         //leggo l'id del cliente che vuole uscire
@@ -138,10 +144,21 @@ int main(int argc, char **args) {
             }
         }
     }
-
     //chiudo i file descriptors
     close(sigh_pipe[0]);
     close(sigh_pipe[1]);
+    /*printf("\nChiusura del supermercato in corso...\n");
+    switch (sig_arrived) {
+        case SIGINT:
+        case SIGQUIT:
+            printf("Tutti i clienti devono uscire senza fare acquisti\n");
+            break;
+        case SIGHUP:
+            printf("Tutti i clienti verranno fatti uscire ma possono terminare gli acquisti\n");
+            break;
+        default:
+            break;
+    }*/
     //attendo il processo supermercato
     MINUS1(waitpid(pid_store, &err, 0), perror("waitpid"); exit(EXIT_FAILURE))
     close(fd_store);
@@ -153,34 +170,32 @@ int main(int argc, char **args) {
 }
 
 static int handle_notification(int fd_store, config_t *config, int *casse, int *casse_attive) {
-    int i, count_attive = *casse_attive, count_nonattive = config->k - *casse_attive,
+    int i, count_attive = *casse_attive, count_nonattive = config->k - *casse_attive, attive = *casse_attive,
         count_s1 = 0, count_s2 = 0,
         cassa_s1 = -1, cassa_s2 = -1;
     unsigned int seed = getpid();
     msg_header_t msg_hdr;
     for (i = 0; i < config->k; i++) {
-        if (casse[i] >= 0) {    //Se la cassa è aperta
-            count_attive--;
-            //Se non ho ancora scelto una cassa ne scelgo una casualmente con probabilità del 50%.
-            //Se alla fine non ho scelto la cassa, allora scelgo l'ultima tra quelle aperte
-            if (cassa_s1 == -1 && ((count_attive == 0) || probability(seed, 50)))
-                cassa_s1 = i;
-        } else {    //Se la cassa è chiusa
+        if (casse[i] == CASSA_CHIUSA) {    //Se la cassa è chiusa
             count_nonattive--;
             //Se non ho ancora scelto una cassa ne scelgo una casualmente con probabilità del 50%.
             //Se alla fine non ho scelto la cassa, allora scelgo l'ultima tra quelle chiuse
             if (cassa_s2 == -1 && ((count_nonattive == 0) || probability(seed, 50)))
                 cassa_s2 = i;
+        } else if (casse[i] >= 0) {    //Se la cassa è aperta
+            count_attive--;
+            //Se non ho ancora scelto una cassa ne scelgo una casualmente con probabilità del 50%.
+            //Se alla fine non ho scelto la cassa, allora scelgo l'ultima tra quelle aperte
+            if (cassa_s1 == -1 && ((count_attive == 0) || probability(seed, 50)))
+                cassa_s1 = i;
         }
+
         if (casse[i] == 0 || casse[i] == 1) count_s1++;
         if (casse[i] >= config->s2) count_s2++;
     }
-    if (count_attive != 0)
-        printf("conteggio %d\tattive %d\n", count_attive, *casse_attive);
-    if (count_nonattive != 0)
-        printf("conteggio %d\tnon attive %d\n", count_nonattive, (config->k - *casse_attive));
+
     //Se è aperta più di una cassa e sono nella soglia, allora posso chiudere una cassa
-    if (*casse_attive > 1 && count_s1 >= config->s1) {
+    if (attive > 1 && count_s1 >= config->s1) {
         msg_hdr = head_close;
         MINUS1(writen(fd_store, &msg_hdr, sizeof(msg_header_t)), return -1)
         MINUS1(writen(fd_store, &cassa_s1, sizeof(int)), return -1)
@@ -189,7 +204,7 @@ static int handle_notification(int fd_store, config_t *config, int *casse, int *
         DEBUG("Chiudo la cassa %d\n", cassa_s1)
     }
     //Se sono aperte meno di k casse e sono nella soglia, allora posso aprire un'altra cassa
-    if (*casse_attive < config->k && count_s2 > 0) {
+    if (attive < config->k && count_s2 > 0) {
         msg_hdr = head_open;
         MINUS1(writen(fd_store, &msg_hdr, sizeof(msg_header_t)), return -1)
         MINUS1(writen(fd_store, &cassa_s2, sizeof(int)), return -1)
@@ -234,4 +249,3 @@ static int fork_store(char *config_file, pid_t *pid) {
 
     return 0;
 }
-

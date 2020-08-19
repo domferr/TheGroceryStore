@@ -34,7 +34,17 @@ int accept_socket_conn(void);
  */
 int connect_via_socket(void);
 
-//TODO questa documentazione
+/**
+ * Scrive il messaggio da inviare sul file descriptor passato per argomento. Il messaggio è preceduto dall'header passato
+ * per argomento. I parametri del messaggio, se presenti, vengono scritti dopo l'header del messaggio. L'header identifica
+ * il messaggio e viene utilizzato per la corretta lettura da parte del ricevente.
+ *
+ * @param fd file descriptor sul quale scrivere il messaggio
+ * @param msg_hdr header del messaggio da inviare
+ * @param params quanti sono i parametri da inviare
+ * @param ... parametri da inviare, se presenti
+ * @return 0 in caso di successo, -1 altrimenti ed imposta errno
+ */
 int send_via_socket(int fd, msg_header_t *msg_hdr, int params, ...);
 
 #endif //AF_UNIX_CONN_H

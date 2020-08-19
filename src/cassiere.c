@@ -12,12 +12,21 @@
 #define MIN_SERVICE_TIME 20 //ms
 #define MAX_SERVICE_TIME 80 //ms
 
-//TODO fare questa documentazione
+/**
+ * Serve un cliente. Il tempo impiegato dipende dal tempo fisso del cassiere, dal tempo di elaborazione del singolo
+ * prodotto e dal numero di prodotti che il cliente vuole acquistare. Ritorna 0 in caso di successo, -1 altrimenti e
+ * imposta errno. Il tempo di servizio del cassiere è definito dalla macro SERVICE_TIME.
+ *
+ * @param ca struttura dati del cassiere
+ * @param client cliente che era in coda e che deve essere servito
+ * @param log struttura dati per il logging
+ * @return 0 in caso di successo, -1 altrimenti e imposta errno
+ */
 static int serve_client(cassiere_t *ca, client_in_queue_t *client, cassa_log_t *log);
 
 cassiere_t *alloc_cassiere(size_t id, store_t *store, int isopen, int product_service_time, int interval) {
     int err;
-    unsigned int seed = id;
+    unsigned int seed = id + time(NULL);
 
     cassiere_t *cassiere = (cassiere_t*) malloc(sizeof(cassiere_t));
     EQNULL(cassiere, return NULL)

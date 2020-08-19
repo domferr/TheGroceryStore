@@ -39,7 +39,9 @@ queue_t *queue_create(void);
  * riutilizzata ed il suo puntatore avrà perso di significato in quanto la memoria allocata per la coda viene totalmente
  * ripulita. Ritorna 0 se la distruzione è avvenuta con successo, -1 in caso di errore.
  *
- * @param queue coda da distruggere TODO aggiornare con la funzione per liberare memoria
+ * @param queue coda da distruggere
+ * @param free_fun funzione utilizzata per liberare la memoria occupata da ogni elemento in coda. Vale NULL se non si vuole
+ * distruggere gli elementi in coda ma se si vuole soltanto distruggere la coda e la sua struttura dati
  * @return 0 in caso di successo, -1 altrimenti
  */
 int queue_destroy(queue_t *queue, void (*free_fun)(void *elem));
@@ -66,7 +68,8 @@ void *pop(queue_t *queue);
  * Applica la funzione passata per argomento ad ogni elemento della coda
  *
  * @param queue la coda sulla quale applicare la funzione
- * @param fun la funzione da applicare
+ * @param fun la funzione da applicare ad ogni elemento. Il primo parametro passato è l'elemento in coda, il secondo è
+ * invece un parametro aggiuntivo a discrezione
  * @param args argomenti aggiuntivi da passare alla funzione per ogni chiamata (oltre all'elemento della coda)
  * @return 0 se l'applicazione è avvenuta con successo, -1 altrimenti e imposta errno
  */
@@ -76,10 +79,19 @@ int foreach(queue_t *queue, int (*fun)(void*, void*), void *args);
  * Elimina tutti gli elementi dalla coda e dalla memoria. Dopo la chiamata di questa funzione, la coda ha 0 elementi.
  *
  * @param queue coda da svuotare
+ * @param free_fun funzione utilizzata per liberare la memoria occupata da ogni elemento in coda. Vale NULL se non si vuole
+ * distruggere gli elementi in coda ma se si vuole soltanto distruggere la coda e la sua struttura dati
  */
 void clear(queue_t *queue, void (*free_fun)(void *elem));
 
-//TODO fare questa documentazione
-int merge(queue_t *q1, queue_t *q2);
+/**
+ * Appende la seconda coda nella prima. La seconda coda viene accodata alla prima e ne viene liberata la memoria. Dopo
+ * la chiamata di questa funzione, il puntatore della seconda coda perde di significato e punta ad un'area di memoria
+ * non allocata quindi non deve essere utilizzato.
+ *
+ * @param q1 prima coda alla quale appendere la seconda coda
+ * @param q2 seconda coda
+ */
+void merge(queue_t *q1, queue_t *q2);
 
 #endif //QUEUE_H

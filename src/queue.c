@@ -87,7 +87,7 @@ static int internal_foreach(node_t *node, int (*fun)(void*, void*), void *args) 
     return 0;
 }
 
-int merge(queue_t *q1, queue_t *q2) {
+void merge(queue_t *q1, queue_t *q2) {
     if (q1 && q2) {
         q1->size += q2->size;
         if (q1->tail)
@@ -98,5 +98,4 @@ int merge(queue_t *q1, queue_t *q2) {
         q1->tail = q2->tail;
         free(q2);
     }
-    return 0;
 }
