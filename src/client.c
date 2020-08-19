@@ -1,6 +1,6 @@
 #define _POSIX_C_SOURCE 200809L
 
-#define DEBUGGING 1
+#define DEBUGGING 0
 #include "../include/client.h"
 #include "../include/store.h"
 #include "../include/config.h"
@@ -49,7 +49,7 @@ static int get_products(client_t *cl);
 
 void *client_thread_fun(void *args) {
     client_t *cl = (client_t *) args;
-    int client_id, err, cost, try_another_queue = 0, queue_counter = 0;
+    int client_id, err, cost, change_queue = 0, queue_counter = 0;
     long time_in_store, time_in_queue;
     struct timespec store_entrance, queue_entrance, waitingtime = {MS_TO_SEC(cl->s), MS_TO_NANOSEC(cl->s)};
     store_state st_state;
@@ -64,8 +64,6 @@ void *client_thread_fun(void *args) {
     while (ISOPEN(st_state)) {
         //Resetto i contatori delle statistiche
         queue_counter = 0;
-        time_in_queue = 0;
-        time_in_store = 0;
         //Entro nel supermercato. Chiamata bloccante. Il controllo ritorna se entro nel supermercato o se esso viene chiuso
         client_id = enter_store(cl->store);
         if (client_id) {
@@ -81,7 +79,7 @@ void *client_thread_fun(void *args) {
             NOTZERO(get_store_state(&st_state), perror("get store state"); return NULL)
             if (clq->products > 0 && st_state != closed_fast_state) {
                 do {
-                    try_another_queue = 0;
+                    change_queue = 0;
                     //Entro nella migliore coda
                     do {
                         EQNULL(cassiere = get_best_queue(cl->casse, cl->k, NULL, -1), perror("get best queue"); return NULL)
@@ -92,9 +90,9 @@ void *client_thread_fun(void *args) {
                     PTH(err, pthread_mutex_lock(&(cassiere)->mutex), perror("lock"); return NULL)
                     //Aspetto di essere servito oppure valuto se cambiare cassa
                     while (st_state != closed_fast_state && cassiere->isopen && !clq->served) {
-                        if (clq->processing)
+                        if (clq->processing)    //Se il cassiere sta processando i miei prodotti allora aspetto che mi svegli
                             err = pthread_cond_wait(&(clq->waiting), &(cassiere->mutex));
-                        else
+                        else    //altrimenti faccio la timedwait ed eventualmente algoritmo di cambio cassa
                             err = pthread_cond_timedwait(&(clq->waiting), &(cassiere->mutex), &waitingtime);
                         if (err == -1 && errno != ETIMEDOUT) {
                             perror("timed wait");
@@ -117,13 +115,13 @@ void *client_thread_fun(void *args) {
                         if (clq->is_enqueued) {
                             dequeue(cassiere, clq);
                         }
-                        try_another_queue = 1;
+                        change_queue = 1;
                         queue_counter++;
                     } else if (st_state == closed_fast_state && clq->is_enqueued) {
                         dequeue(cassiere, clq);
                     }
                     PTH(err, pthread_mutex_unlock(&(cassiere)->mutex), perror("unlock"); return NULL)
-                } while(try_another_queue);
+                } while(change_queue);
                 /*
                 //Se sono ancora in coda ma non sono ancora stato servito
                 if (!clq->processing && !clq->served) {
@@ -171,12 +169,13 @@ void *client_thread_fun(void *args) {
                 }
                 PTH(err, pthread_mutex_unlock(clq->mutex), perror("unlock"); return NULL)*/
             } else if (clq->products == 0 && ISOPEN(st_state)) {    //Chiedo permesso di uscita al direttore
+                time_in_queue = 0;
                 DEBUG("[Thread Cliente %ld] Cliente %d: Chiedo permesso di uscita\n", cl->id, client_id)
                 MINUS1(ask_exit_permission(cl->id), perror("ask exit permission"); return NULL)
                 MINUS1(wait_permission(cl), perror("wait permission"); return NULL)
             }
             MINUS1(leave_store(cl->store), perror("exit store"); exit(EXIT_FAILURE))
-            if (st_state != closed_fast_state) {
+            if (st_state != closed_fast_state) {    //Il cliente è stato sicuramente servito
                 MINUS1(time_in_store = elapsed_time(&store_entrance), perror("elapsed ms from"); return NULL)
                 MINUS1(log_client_stats(stats, client_id, clq->products, time_in_store, time_in_queue, queue_counter), 
                        perror("log client stats"); return NULL)

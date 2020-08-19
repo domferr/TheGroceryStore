@@ -126,6 +126,7 @@ void *cassiere_thread_fun(void *args) {
             MINUS1(wakeup_client(client, 1), perror("wake up client"); return NULL)
         }
     }
+    //Se la cassa era aperta ed il supermercato in chiusura, scrivo il log
     if (ca->isopen && st_state == closed_state) {
         MINUS1(opening_time = elapsed_time(&open_start), perror("elapsed ms from"); return NULL)
         MINUS1(log_cassa_opening_time(cassa_log, opening_time), perror("log cassa opening time"); return NULL)

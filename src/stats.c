@@ -3,7 +3,25 @@
 #include "../include/stats.h"
 #include "../include/utils.h"
 
+/**
+ * Scrive le statistiche di un cliente entrato nel supermercato. Ritorna 0 se la scrittura è avvenuta con successo, -1
+ * altrimenti e setta errno. Questa funzione è eseguita per ogni elemento della lista quindi il valore di ritorno è
+ * importante per evitare errori in cascata.
+ *
+ * @param elem elemento della lista, ovvero la statistica di un cliente
+ * @param args argomenti aggiuntivi, ovvero il file sul quale scrivere il log
+ * @return 0 in caso di successo, -1 altrimenti ed imposta errno
+ */
 static int write_client_stats(void *elem, void *args);
+
+/**
+ * Scrive un long sul file descriptor passato. Il valore viene scritto seguito dalla stringa "ms". Questa funzione è
+ * eseguita per ogni elemento della lista quindi il valore di ritorno è importante per evitare errori in cascata.
+ *
+ * @param elem elemento della lista, ovvero un valore di tipo long che rappresenta un tempo espresso in millisecondi
+ * @param args argomenti aggiuntivi, ovvero il file sul quale scrivere il log
+ * @return 0 in caso di successo, -1 altrimenti ed imposta errno
+ */
 static int print_ms(void *elem, void *args);
 
 /** Statistiche di un cliente entrato nel supermercato */
@@ -14,10 +32,6 @@ typedef struct {
     long time_in_queue; //tempo di attesa in coda espresso in millisecondi
     int queue_counter;  //numero di code visitate
 } client_stats_t;
-
-//list -> cliente servito (e quindi size=tot clients serviti)
-//list -> tempo apertura
-//int chiusure
 
 int log_client_stats(queue_t *client_log, int id, int prod, int time_instore, int time_inqueue, int queuecounter) {
     client_stats_t *stats = (client_stats_t*) malloc(sizeof(client_stats_t));
@@ -71,13 +85,14 @@ void log_cassa_closed(cassa_log_t *cassa_log) {
     cassa_log->closed_counter++;
 }
 
-int write_log(FILE *out_file, queue_t *clients_stats, cassa_log_t **cassieri_stats, int k) {
-    int i, tot_clients = 0, total_products = 0;  //il numero di clienti serviti, il numero di prodotti acquistati
+int write_log(char *filename, queue_t *clients_stats, cassa_log_t **cassieri_stats, int k) {
+    FILE *out_file = fopen(filename, "w");
+    EQNULL(out_file, return -1);
+    int i, served_clients = 0, total_products = 0, noproducts;  //il numero di clienti serviti, il numero di prodotti acquistati
     queue_t *served, *opened;
     //Scrivo log accumulato dai clienti
     MINUS1(foreach(clients_stats, &write_client_stats, out_file), return -1)
-
-    //TODO Scrivo log accumulato dai cassieri
+    //Scrivo log accumulato dai cassieri
     for (i = 0; i < k; i++) {
         served = cassieri_stats[i]->served;
         opened = cassieri_stats[i]->opened;
@@ -95,14 +110,18 @@ int write_log(FILE *out_file, queue_t *clients_stats, cassa_log_t **cassieri_sta
         fprintf(out_file, "\n");
 
         total_products += cassieri_stats[i]->products_counter;
-        tot_clients += served->size;
+        served_clients += served->size;
     }
+    //Clienti usciti senza fare acquisti = clienti entrati - clienti serviti
+    noproducts = clients_stats->size - served_clients;
 
     //Scrivo le statistiche generali
-    fprintf(out_file, "Numero di clienti serviti: %d\n", clients_stats->size);
+    fprintf(out_file, "Numero di clienti entrati nel supermercato: %d\n", clients_stats->size);
+    fprintf(out_file, "Numero di clienti usciti senza acquisti: %d\n", noproducts);
+    fprintf(out_file, "Numero di clienti serviti: %d\n", served_clients);
     fprintf(out_file, "Numero di prodotti acquistati: %d\n", total_products);
-    if (tot_clients != clients_stats->size)
-        printf("------------------- NON COMBACIANOOOOOOOOOOOOOOOOOOO. Casse: %d\t Clienti: %d\n", tot_clients, clients_stats->size);
+
+    fclose(out_file);
     return 0;
 }
 

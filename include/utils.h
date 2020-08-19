@@ -74,4 +74,14 @@ int msleep(int milliseconds);
  */
 long elapsed_time(struct timespec *start);
 
+/**
+ * Ritorna 0 oppure 1 in base alla probabilità passata per argomento. Ad esempio, se si passa 50 come valore dell'intero
+ * percent, allora la funzione ritorna 1 con il 50% di probabilità.
+ *
+ * @param seed utilizzato per la generazione di valori pseudo casuali
+ * @param percent probabilità voluta
+ * @return 1 oppure 0 in base alla generazione del numero random ed in base al valore di percent passato
+ */
+int probability(unsigned int seed, int percent);
+
 #endif //UTILS_H

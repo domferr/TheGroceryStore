@@ -29,3 +29,7 @@ long elapsed_time(struct timespec *start) {
 
     return diff.tv_sec * 1000L + diff.tv_nsec / 1000000L;
 }
+
+int probability(unsigned int seed, int percent) {
+    return RANDOM(seed, 0, 100) < percent;
+}

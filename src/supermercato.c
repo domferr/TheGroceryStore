@@ -34,7 +34,7 @@ int main(int argc, char **args) {
     thread_pool_t *clients_pool;
     thread_pool_t *cassieri_pool;
     queue_t *clients_stats;
-    FILE *logfile;
+
     if (argc != 2) {
         printf("Usage: Il processo supermercato deve essere lanciato dal direttore\n");
         exit(EXIT_FAILURE);
@@ -136,9 +136,7 @@ int main(int argc, char **args) {
     }
     MINUS1(thread_pool_free(clients_pool), perror("thread pool free"); exit(EXIT_FAILURE))
     //Scrivo il file di log
-    EQNULL(logfile = fopen(config->logfilename, "w"), perror("fopen"); exit(EXIT_FAILURE))
-    MINUS1(write_log(stdout, clients_stats, (cassa_log_t**) cassieri_pool->retvalues, config->k), perror("write log"); exit(EXIT_FAILURE))
-    fclose(logfile);
+    MINUS1(write_log(config->logfilename, clients_stats, (cassa_log_t**) cassieri_pool->retvalues, config->k), perror("write log"); exit(EXIT_FAILURE))
     for (i = 0; i < cassieri_pool->size; ++i) {
         MINUS1(cassiere_destroy(cassieri_pool->args[i]), perror("cassiere destroy"); exit(EXIT_FAILURE))
         MINUS1(destroy_cassa_log(cassieri_pool->retvalues[i]), perror("cassa log destroy"); exit(EXIT_FAILURE))

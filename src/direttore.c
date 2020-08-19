@@ -1,4 +1,4 @@
-#define DEBUGGING 0
+#define DEBUGGING 1
 #include "../include/sig_handling.h"
 #include "../include/utils.h"
 #include "../include/config.h"
@@ -20,6 +20,8 @@
 #define ERROR_READ_CONFIG_FILE "Impossibile leggere il file di configurazione"
 #define MESSAGE_VALID_CONFIG_FILE "File di configurazione: "
 
+#define CASSA_APERTA 0
+#define CASSA_CHIUSA (-1)
 /**
  * Esegue il parsing degli argomenti passati al programma via linea di comando. Ritorna il path del file
  * di configurazione indicato dall'utente oppure il path di default se l'utente non ha specificato nulla.
@@ -81,8 +83,8 @@ int main(int argc, char **args) {
     print_config(config);
     EQNULL(casse = malloc(sizeof(int) * config->k), perror("calloc"); exit(EXIT_FAILURE))
     casse_attive = config->ka;
-    for (i = 0; i < config->k; ++i) {
-        casse[i] = i < config->ka ? 0:-1;   //le prime ka casse sono aperte
+    for (i = 0; i < config->k; i++) {
+        casse[i] = i < config->ka ? CASSA_APERTA:CASSA_CHIUSA;   //le prime ka casse sono aperte
     }
     //Lancio il processo supermercato
     MINUS1(fork_store(config_file_path, &pid_store), perror("fork_store"); exit(EXIT_FAILURE))
@@ -118,13 +120,15 @@ int main(int argc, char **args) {
                         MINUS1(readn(fd_store, &i, sizeof(int)), return -1)
                         MINUS1(readn(fd_store, &param2, sizeof(int)), return -1)
                         DEBUG("Ho ricevuto che nella cassa %d ci sono %d clienti in coda\n", i, param2);
-                        casse[i] = param2;
+                        //Potrei aver chiuso la cassa mentre ricevevo questa notifica quindi aggiorno solo se la cassa è aperta
+                        if (casse[i] != CASSA_CHIUSA)
+                            casse[i] = param2;
                         MINUS1(handle_notification(fd_store, config, casse, &casse_attive), perror("handle_notification"); exit(EXIT_FAILURE))
                         break;
                     case head_ask_exit: //Ricevuta richiesta per uscire dal supermercato. Dò sempre il permesso
                         //leggo l'id del cliente che vuole uscire
                         MINUS1(readn(fd_store, &i, sizeof(int)), return -1)
-                        DEBUG("Ho ricevuto una richiesta di uscita da parte di un cliente %d\n", i);
+                        DEBUG("%s\n","Ho ricevuto una richiesta di uscita da parte di un cliente");
                         //rispondo facendo uscire il cliente
                         MINUS1(handle_ask_exit(fd_store, i), perror("handle_ask_exit"); exit(EXIT_FAILURE))
                         break;
@@ -149,32 +153,40 @@ int main(int argc, char **args) {
 }
 
 static int handle_notification(int fd_store, config_t *config, int *casse, int *casse_attive) {
-    int i, count_attive = 0, count_nonattive = 0,
+    int i, count_attive = *casse_attive, count_nonattive = config->k - *casse_attive,
         count_s1 = 0, count_s2 = 0,
         cassa_s1 = -1, cassa_s2 = -1;
     unsigned int seed = getpid();
     msg_header_t msg_hdr;
-    for (i = 0; i < config->k; ++i) {
-        if (casse[i] >= 0) {
-            count_attive++;
-            if (cassa_s1 == -1 && (count_attive == *casse_attive || RANDOM(seed, 0, 2)))
+    for (i = 0; i < config->k; i++) {
+        if (casse[i] >= 0) {    //Se la cassa è aperta
+            count_attive--;
+            //Se non ho ancora scelto una cassa ne scelgo una casualmente con probabilità del 50%.
+            //Se alla fine non ho scelto la cassa, allora scelgo l'ultima tra quelle aperte
+            if (cassa_s1 == -1 && ((count_attive == 0) || probability(seed, 50)))
                 cassa_s1 = i;
-        } else {
-            count_nonattive++;
-            if (cassa_s2 == -1 && (count_nonattive == config->k - *casse_attive || RANDOM(seed, 0, 2)))
+        } else {    //Se la cassa è chiusa
+            count_nonattive--;
+            //Se non ho ancora scelto una cassa ne scelgo una casualmente con probabilità del 50%.
+            //Se alla fine non ho scelto la cassa, allora scelgo l'ultima tra quelle chiuse
+            if (cassa_s2 == -1 && ((count_nonattive == 0) || probability(seed, 50)))
                 cassa_s2 = i;
         }
         if (casse[i] == 0 || casse[i] == 1) count_s1++;
         if (casse[i] >= config->s2) count_s2++;
     }
-
+    if (count_attive != 0)
+        printf("conteggio %d\tattive %d\n", count_attive, *casse_attive);
+    if (count_nonattive != 0)
+        printf("conteggio %d\tnon attive %d\n", count_nonattive, (config->k - *casse_attive));
     //Se è aperta più di una cassa e sono nella soglia, allora posso chiudere una cassa
     if (*casse_attive > 1 && count_s1 >= config->s1) {
         msg_hdr = head_close;
         MINUS1(writen(fd_store, &msg_hdr, sizeof(msg_header_t)), return -1)
         MINUS1(writen(fd_store, &cassa_s1, sizeof(int)), return -1)
         *casse_attive = *casse_attive - 1;
-        casse[cassa_s1] = -1;
+        casse[cassa_s1] = CASSA_CHIUSA;
+        DEBUG("Chiudo la cassa %d\n", cassa_s1)
     }
     //Se sono aperte meno di k casse e sono nella soglia, allora posso aprire un'altra cassa
     if (*casse_attive < config->k && count_s2 > 0) {
@@ -182,7 +194,8 @@ static int handle_notification(int fd_store, config_t *config, int *casse, int *
         MINUS1(writen(fd_store, &msg_hdr, sizeof(msg_header_t)), return -1)
         MINUS1(writen(fd_store, &cassa_s2, sizeof(int)), return -1)
         *casse_attive = *casse_attive + 1;
-        casse[cassa_s2] = -1;
+        casse[cassa_s2] = CASSA_APERTA;
+        DEBUG("Apro la cassa %d\n", cassa_s2)
     }
     return 0;
 }

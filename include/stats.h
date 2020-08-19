@@ -20,6 +20,6 @@ int destroy_cassa_log(cassa_log_t *log);
 int log_client_served(cassa_log_t *cassa_log, long time, int products);
 int log_cassa_opening_time(cassa_log_t *cassa_log, long time);
 void log_cassa_closed(cassa_log_t *cassa_log);
-int write_log(FILE *out_file, queue_t *clients_stats, cassa_log_t **cassieri_stats, int k);
+int write_log(char *filename, queue_t *clients_stats, cassa_log_t **cassieri_stats, int k);
 
 #endif //STATS_H
