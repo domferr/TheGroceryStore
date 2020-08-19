@@ -96,6 +96,9 @@
 		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/include/config.h">
 			<Option target="TheGroceryStore"/>
 		</Unit>
+		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/include/log.h">
+			<Option target="TheGroceryStore"/>
+		</Unit>
 		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/include/notifier.h">
 			<Option target="TheGroceryStore"/>
 		</Unit>
@@ -106,9 +109,6 @@
 			<Option target="TheGroceryStore"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/include/sig_handling.h">
-			<Option target="TheGroceryStore"/>
-		</Unit>
-		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/include/stats.h">
 			<Option target="TheGroceryStore"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/include/store.h">
@@ -144,6 +144,9 @@
 		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/direttore.c">
 			<Option target="TheGroceryStore"/>
 		</Unit>
+		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/log.c">
+			<Option target="TheGroceryStore"/>
+		</Unit>
 		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/notifier.c">
 			<Option target="TheGroceryStore"/>
 		</Unit>
@@ -156,16 +159,10 @@
 		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/sig_handling.c">
 			<Option target="TheGroceryStore"/>
 		</Unit>
-		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/stats.c">
-			<Option target="TheGroceryStore"/>
-		</Unit>
 		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/store.c">
 			<Option target="TheGroceryStore"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/supermercato.c">
-			<Option target="TheGroceryStore"/>
-		</Unit>
-		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/test.c">
 			<Option target="TheGroceryStore"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/threadpool.c">

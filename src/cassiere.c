@@ -5,7 +5,7 @@
 #include "../include/notifier.h"
 #include "../include/client_in_queue.h"
 #include "../include/cassa_queue.h"
-#include "../include/stats.h"
+#include "../include/log.h"
 #include <stdlib.h>
 #include <stdio.h>
 

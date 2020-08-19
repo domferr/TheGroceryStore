@@ -1,8 +1,8 @@
-#ifndef STATS_H
-#define STATS_H
+#ifndef LOG_H
+#define LOG_H
 
-#include <stdio.h>
 #include "queue.h"
+#include <stdio.h>
 
 /** Statistiche di una cassa del supermercato */
 typedef struct {
@@ -59,4 +59,4 @@ void log_cassa_closed(cassa_log_t *cassa_log);
  */
 int write_log(char *filename, queue_t *clients_stats, cassa_log_t **cassieri_stats, int k);
 
-#endif //STATS_H
+#endif //LOG_H

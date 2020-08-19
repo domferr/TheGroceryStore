@@ -312,6 +312,33 @@ src/direttore.c.s:
 	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/direttore.c.s
 .PHONY : src/direttore.c.s
 
+src/log.o: src/log.c.o
+
+.PHONY : src/log.o
+
+# target to build an object file
+src/log.c.o:
+	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/log.c.o
+.PHONY : src/log.c.o
+
+src/log.i: src/log.c.i
+
+.PHONY : src/log.i
+
+# target to preprocess a source file
+src/log.c.i:
+	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/log.c.i
+.PHONY : src/log.c.i
+
+src/log.s: src/log.c.s
+
+.PHONY : src/log.s
+
+# target to generate assembly for a file
+src/log.c.s:
+	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/log.c.s
+.PHONY : src/log.c.s
+
 src/notifier.o: src/notifier.c.o
 
 .PHONY : src/notifier.o
@@ -420,33 +447,6 @@ src/sig_handling.c.s:
 	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/sig_handling.c.s
 .PHONY : src/sig_handling.c.s
 
-src/stats.o: src/stats.c.o
-
-.PHONY : src/stats.o
-
-# target to build an object file
-src/stats.c.o:
-	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/stats.c.o
-.PHONY : src/stats.c.o
-
-src/stats.i: src/stats.c.i
-
-.PHONY : src/stats.i
-
-# target to preprocess a source file
-src/stats.c.i:
-	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/stats.c.i
-.PHONY : src/stats.c.i
-
-src/stats.s: src/stats.c.s
-
-.PHONY : src/stats.s
-
-# target to generate assembly for a file
-src/stats.c.s:
-	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/stats.c.s
-.PHONY : src/stats.c.s
-
 src/store.o: src/store.c.o
 
 .PHONY : src/store.o
@@ -500,33 +500,6 @@ src/supermercato.s: src/supermercato.c.s
 src/supermercato.c.s:
 	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/supermercato.c.s
 .PHONY : src/supermercato.c.s
-
-src/test.o: src/test.c.o
-
-.PHONY : src/test.o
-
-# target to build an object file
-src/test.c.o:
-	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/test.c.o
-.PHONY : src/test.c.o
-
-src/test.i: src/test.c.i
-
-.PHONY : src/test.i
-
-# target to preprocess a source file
-src/test.c.i:
-	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/test.c.i
-.PHONY : src/test.c.i
-
-src/test.s: src/test.c.s
-
-.PHONY : src/test.s
-
-# target to generate assembly for a file
-src/test.c.s:
-	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/test.c.s
-.PHONY : src/test.c.s
 
 src/threadpool.o: src/threadpool.c.o
 
@@ -612,6 +585,9 @@ help:
 	@echo "... src/direttore.o"
 	@echo "... src/direttore.i"
 	@echo "... src/direttore.s"
+	@echo "... src/log.o"
+	@echo "... src/log.i"
+	@echo "... src/log.s"
 	@echo "... src/notifier.o"
 	@echo "... src/notifier.i"
 	@echo "... src/notifier.s"
@@ -624,18 +600,12 @@ help:
 	@echo "... src/sig_handling.o"
 	@echo "... src/sig_handling.i"
 	@echo "... src/sig_handling.s"
-	@echo "... src/stats.o"
-	@echo "... src/stats.i"
-	@echo "... src/stats.s"
 	@echo "... src/store.o"
 	@echo "... src/store.i"
 	@echo "... src/store.s"
 	@echo "... src/supermercato.o"
 	@echo "... src/supermercato.i"
 	@echo "... src/supermercato.s"
-	@echo "... src/test.o"
-	@echo "... src/test.i"
-	@echo "... src/test.s"
 	@echo "... src/threadpool.o"
 	@echo "... src/threadpool.i"
 	@echo "... src/threadpool.s"

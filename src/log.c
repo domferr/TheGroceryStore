@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "../include/stats.h"
+#include "../include/log.h"
 #include "../include/utils.h"
 
 /**

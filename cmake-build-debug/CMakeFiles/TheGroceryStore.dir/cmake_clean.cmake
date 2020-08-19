@@ -12,10 +12,9 @@ file(REMOVE_RECURSE
   "CMakeFiles/TheGroceryStore.dir/src/client.c.o"
   "CMakeFiles/TheGroceryStore.dir/src/cassiere.c.o"
   "CMakeFiles/TheGroceryStore.dir/src/notifier.c.o"
-  "CMakeFiles/TheGroceryStore.dir/src/stats.c.o"
+  "CMakeFiles/TheGroceryStore.dir/src/log.c.o"
   "CMakeFiles/TheGroceryStore.dir/src/client_in_queue.c.o"
   "CMakeFiles/TheGroceryStore.dir/src/cassa_queue.c.o"
-  "CMakeFiles/TheGroceryStore.dir/src/test.c.o"
   "TheGroceryStore.pdb"
   "TheGroceryStore"
 )

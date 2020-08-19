@@ -3,7 +3,7 @@
 #include "../include/store.h"
 #include "../include/client.h"
 #include "../include/config.h"
-#include "../include/stats.h"
+#include "../include/log.h"
 #include "../include/client_in_queue.h"
 #include "../include/cassa_queue.h"
 #include <stdlib.h>

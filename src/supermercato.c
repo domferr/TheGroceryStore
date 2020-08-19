@@ -8,7 +8,7 @@
 #include "../include/threadpool.h"
 #include "../include/client.h"
 #include "../include/cassiere.h"
-#include "../include/stats.h"
+#include "../include/log.h"
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
