@@ -94,10 +94,14 @@ void *client_thread_fun(void *args) {
                     //Aspetto di essere servito oppure valuto se cambiare cassa. Se il cassiere sta processando i miei
                     //prodotti non esco mai perchè devo aspettare che il cassiere finisca
                     while (clq->processing || (st_state != closed_fast_state && cassiere->isopen && !clq->served)) {
-                        if (clq->processing)    //Se il cassiere sta processando i miei prodotti allora aspetto che mi svegli
+                        if (clq->processing) {    //Se il cassiere sta processando i miei prodotti allora aspetto che mi svegli
                             err = pthread_cond_wait(&(clq->waiting), &(cassiere->mutex));
-                        else    //altrimenti faccio la timedwait ed eventualmente algoritmo di cambio cassa
-                            err = pthread_cond_timedwait(&(clq->waiting), &(cassiere->mutex), &waitingtime);
+                        } else {    //altrimenti faccio la timedwait ed eventualmente algoritmo di cambio cassa
+                            //err = pthread_cond_timedwait(&(clq->waiting), &(cassiere->mutex), &waitingtime);
+                            PTH(err, pthread_mutex_unlock(&(cassiere)->mutex), perror("unlock"); return NULL)
+                            MINUS1(msleep(cl->s), perror("msleep"); return NULL)
+                            PTH(err, pthread_mutex_lock(&(cassiere)->mutex), perror("lock"); return NULL)
+                        }
                         if (err == -1 && errno != ETIMEDOUT) {
                             perror("timed wait");
                             return NULL;

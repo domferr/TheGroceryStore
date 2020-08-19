@@ -34,12 +34,12 @@
 /**
  * Conversione da millisecondi a secondi
  */
-#define MS_TO_SEC(ms) ((ms)/1000)
+#define MS_TO_SEC(ms) ((ms)/1000L)
 
 /**
  * Quanti nanosecondi ci sono nei millisecondi specificati
  */
-#define MS_TO_NANOSEC(ms) (((ms)%1000)*1000000)
+#define MS_TO_NANOSEC(ms) (((ms)%1000L)*1000000L)
 
 /**
  * Genera numero random tra min (incluso) e max (non incluso)
