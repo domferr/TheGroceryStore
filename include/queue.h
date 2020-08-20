@@ -44,7 +44,7 @@ queue_t *queue_create(void);
  * distruggere gli elementi in coda ma se si vuole soltanto distruggere la coda e la sua struttura dati
  * @return 0 in caso di successo, -1 altrimenti
  */
-int queue_destroy(queue_t *queue, void (*free_fun)(void *elem));
+int queue_destroy(queue_t *queue, void (*free_fun)(void*));
 
 /**
  * Aggiunge in testa alla coda passata per argomento l'elemento specificato.
@@ -82,7 +82,7 @@ int foreach(queue_t *queue, int (*fun)(void*, void*), void *args);
  * @param free_fun funzione utilizzata per liberare la memoria occupata da ogni elemento in coda. Vale NULL se non si vuole
  * distruggere gli elementi in coda ma se si vuole soltanto distruggere la coda e la sua struttura dati
  */
-void clear(queue_t *queue, void (*free_fun)(void *elem));
+void clear(queue_t *queue, void (*free_fun)(void*));
 
 /**
  * Appende la seconda coda nella prima. La seconda coda viene accodata alla prima e ne viene liberata la memoria. Dopo

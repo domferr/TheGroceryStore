@@ -1,4 +1,4 @@
-#define DEBUGGING 0
+#define DEBUGGING 1
 #include "../include/sig_handling.h"
 #include "../include/config.h"
 #include "../include/utils.h"
@@ -110,6 +110,7 @@ int main(int argc, char **args) {
 
     //chiudo il supermercato e blocco gli ingressi
     MINUS1ERR(close_store(store, closing_state), exit(EXIT_FAILURE))
+    DEBUG("%s\n","Supermercato chiuso")
     //sveglio i clienti in attesa di uscita permettendogli di uscire
     for (i = 0; i < clients_pool->size; ++i) {
         MINUS1ERR(set_exit_permission((clients_pool->args)[i], 1), exit(EXIT_FAILURE))
@@ -137,6 +138,7 @@ int main(int argc, char **args) {
     MINUS1ERR(thread_pool_free(clients_pool), exit(EXIT_FAILURE))
     //Scrivo il file di log
     MINUS1ERR(write_log(config->logfilename, clients_stats, (cassa_log_t**) cassieri_pool->retvalues, config->k), exit(EXIT_FAILURE))
+    DEBUG("%s\n", "Ho scritto il file di log!")
     for (i = 0; i < cassieri_pool->size; ++i) {
         MINUS1ERR(cassiere_destroy(cassieri_pool->args[i]), exit(EXIT_FAILURE))
         MINUS1ERR(destroy_cassa_log(cassieri_pool->retvalues[i]), exit(EXIT_FAILURE))

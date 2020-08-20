@@ -120,7 +120,7 @@ int write_log(char *filename, queue_t *clients_stats, cassa_log_t **cassieri_sta
     fprintf(out_file, "Numero di clienti usciti senza acquisti: %d\n", noproducts);
     fprintf(out_file, "Numero di clienti serviti: %d\n", served_clients);
     fprintf(out_file, "Numero di prodotti acquistati: %d\n", total_products);
-
+    fflush(out_file);
     fclose(out_file);
     return 0;
 }

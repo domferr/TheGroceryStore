@@ -100,7 +100,7 @@ $(CONFIGTEST2FILE):
 # lancio del primo test. Necessario che il file di configurazione sia stato creato e che l'eseguibile sia stato generato
 test1: $(CONFIGTEST1FILE) all
 	@echo "Running Test 1"
-	@valgrind --leak-check=full --trace-children=yes $(BINDIR)/direttore -c $< & sleep 5; kill -s 1 $$!; wait $$!
+	@valgrind --leak-check=full --trace-children=yes $(BINDIR)/direttore -c $< & sleep 5; kill -s 3 $$!; wait $$!
 
 # lancio del secondo test. Necessario che il file di configurazione sia stato creato e che l'eseguibile sia stato generato
 test2: $(CONFIGTEST2FILE) all

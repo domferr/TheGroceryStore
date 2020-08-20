@@ -17,7 +17,7 @@ queue_t *queue_create(void) {
     return queue;
 }
 
-int queue_destroy(queue_t *queue, void (*free_fun)(void *elem)) {
+int queue_destroy(queue_t *queue, void (*free_fun)(void *)) {
     clear(queue, free_fun);
     free(queue);
     return 0;
@@ -66,7 +66,7 @@ void *pop(queue_t *queue) {
     return remove_n(queue, queue->tail);
 }
 
-void clear(queue_t *queue, void (*free_fun)(void *elem)) {
+void clear(queue_t *queue, void (*free_fun)(void*)) {
     void *elem;
     while(queue->size > 0) {
         elem = pop(queue);
@@ -89,13 +89,16 @@ static int internal_foreach(node_t *node, int (*fun)(void*, void*), void *args) 
 
 void merge(queue_t *q1, queue_t *q2) {
     if (q1 && q2) {
-        q1->size += q2->size;
-        if (q1->tail)
-            q1->tail->next = q2->head;
-        if (q2->head)
+        if (q2->head) { //se q2 ha almeno un elemento
             q2->head->prev = q1->tail;
-
-        q1->tail = q2->tail;
+            if (q1->tail) { //se q1 ha almeno un elemento
+                q1->tail->next = q2->head;
+            } else {    //Se q1 è vuoto
+                q1->head = q2->head;
+            }
+            q1->tail = q2->tail;
+        }
+        q1->size += q2->size;
         free(q2);
     }
 }
