@@ -33,7 +33,7 @@ int main(int argc, char **args) {
     store_state closing_state;
     thread_pool_t *clients_pool;
     thread_pool_t *cassieri_pool;
-    queue_t *clients_stats;
+    list_t *clients_stats;
 
     if (argc != 2) {
         printf("Usage: Il processo supermercato deve essere lanciato dal direttore\n");

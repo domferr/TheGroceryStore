@@ -1,15 +1,15 @@
 /**
- * Implementazione di una unbounded queue FIFO.
+ * Implementazione di una double linked list FIFO.
  */
 
-#include "../include/queue.h"
+#include "../include/list.h"
 #include "../include/utils.h"
 #include <stdlib.h>
 
 static int internal_foreach(node_t *node, int (*fun)(void*, void*), void *args);
 
-queue_t *queue_create(void) {
-    queue_t *queue = (queue_t*) malloc(sizeof(queue_t));
+list_t *queue_create(void) {
+    list_t *queue = (list_t*) malloc(sizeof(list_t));
     EQNULL(queue, return NULL)
     queue->size = 0;
     queue->head = NULL;
@@ -17,13 +17,13 @@ queue_t *queue_create(void) {
     return queue;
 }
 
-int queue_destroy(queue_t *queue, void (*free_fun)(void *)) {
+int queue_destroy(list_t *queue, void (*free_fun)(void *)) {
     clear(queue, free_fun);
     free(queue);
     return 0;
 }
 
-int push(queue_t *queue, void *elem) {
+int push(list_t *queue, void *elem) {
     node_t *node = (node_t *) malloc(sizeof(node_t));
     EQNULL(node, return -1)
     node->elem = elem;
@@ -40,7 +40,7 @@ int push(queue_t *queue, void *elem) {
     return 0;
 }
 
-static void *remove_n(queue_t *queue, node_t *node) {
+static void *remove_n(list_t *queue, node_t *node) {
     void *elem = NULL;
     node_t *prev_node;
     node_t *next_node;
@@ -62,11 +62,11 @@ static void *remove_n(queue_t *queue, node_t *node) {
     return elem;
 }
 
-void *pop(queue_t *queue) {
+void *pop(list_t *queue) {
     return remove_n(queue, queue->tail);
 }
 
-void clear(queue_t *queue, void (*free_fun)(void*)) {
+void clear(list_t *queue, void (*free_fun)(void*)) {
     void *elem;
     while(queue->size > 0) {
         elem = pop(queue);
@@ -75,7 +75,7 @@ void clear(queue_t *queue, void (*free_fun)(void*)) {
     }
 }
 
-int foreach(queue_t *queue, int (*fun)(void*, void*), void *args) {
+int foreach(list_t *queue, int (*fun)(void*, void*), void *args) {
     return internal_foreach(queue->tail, fun, args);
 }
 
@@ -87,7 +87,7 @@ static int internal_foreach(node_t *node, int (*fun)(void*, void*), void *args) 
     return 0;
 }
 
-void merge(queue_t *q1, queue_t *q2) {
+void merge(list_t *q1, list_t *q2) {
     if (q1 && q2) {
         if (q2->head) { //se q2 ha almeno un elemento
             q2->head->prev = q1->tail;

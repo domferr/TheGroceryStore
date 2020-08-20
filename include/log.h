@@ -1,16 +1,16 @@
 #ifndef LOG_H
 #define LOG_H
 
-#include "queue.h"
+#include "list.h"
 #include <stdio.h>
 
 /** Statistiche di una cassa del supermercato */
 typedef struct {
-    size_t id;
-    queue_t *served;
-    queue_t *opened;
-    int closed_counter;
-    int products_counter;
+    size_t id;              //Identificatore univoco della cassa
+    list_t *served;         //Tempi di servizio per ogni cliente servito
+    list_t *opened;         //Tempi di apertura della cassa per ogni apertura
+    int closed_counter;     //Quante volte è stata chiusa la cassa
+    int products_counter;   //Quanti prodotti sono stati acquistati tramite questa cassa
 } cassa_log_t;
 
 /**
@@ -24,7 +24,7 @@ typedef struct {
  * @param queuecounter quante volte il cliente ha cambiato coda
  * @return 0 in caso di successo, -1 altrimenti ed imposta errno.
  */
-int log_client_stats(queue_t *client_log, int id, int prod, long time_instore, long time_inqueue, int queuecounter);
+int log_client_stats(list_t *client_log, int id, int prod, long time_instore, long time_inqueue, int queuecounter);
 
 /**
  * Alloca la struttura dati del log di una cassa.
@@ -42,9 +42,32 @@ cassa_log_t *alloc_cassa_log(size_t id);
  */
 int destroy_cassa_log(cassa_log_t *log);
 
-//TODO finire questa documentazione
+/**
+ * Aggiorna il log del cassiere con il nuovo cliente servito. Ritorna 0 in caso di successo, -1 altrimenti ed imposta
+ * errno.
+ *
+ * @param cassa_log puntatore alla struttura del log del cassiere
+ * @param time quanto tempo è stato necessario per servire il cliente. Espresso in millisecondi
+ * @param products quanti prodotti ha acquistato il cliente
+ * @return 0 in caso di successo, -1 altrimenti ed imposta errno
+ */
 int log_client_served(cassa_log_t *cassa_log, long time, int products);
+
+/**
+ * Aggiorna il log del cassiere con il tempo di apertura della cassa. Ritorna 0 in caso di successo, -1 altrimenti ed
+ * imposta errno.
+ *
+ * @param cassa_log puntatore alla struttura del log del cassiere
+ * @param time quanto tempo è stata aperta la cassa. Espresso in millisecondi
+ * @return 0 in caso di successo, -1 altrimenti ed imposta errno
+ */
 int log_cassa_opening_time(cassa_log_t *cassa_log, long time);
+
+/**
+ * Aggiorna il log del cassiere incrementando il contatore delle chiusure della cassa.
+ *
+ * @param cassa_log puntatore alla struttura del log del cassiere
+ */
 void log_cassa_closed(cassa_log_t *cassa_log);
 
 /**
@@ -57,6 +80,6 @@ void log_cassa_closed(cassa_log_t *cassa_log);
  * @param k quanti casse ci sono nel supermercato
  * @return 0 in caso di successo, -1 altrimenti ed imposta errno
  */
-int write_log(char *filename, queue_t *clients_stats, cassa_log_t **cassieri_stats, int k);
+int write_log(char *filename, list_t *clients_stats, cassa_log_t **cassieri_stats, int k);
 
 #endif //LOG_H

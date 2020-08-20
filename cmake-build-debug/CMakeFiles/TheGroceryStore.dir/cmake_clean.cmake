@@ -6,7 +6,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/TheGroceryStore.dir/src/sig_handling.c.o"
   "CMakeFiles/TheGroceryStore.dir/src/af_unix_conn.c.o"
   "CMakeFiles/TheGroceryStore.dir/src/scfiles.c.o"
-  "CMakeFiles/TheGroceryStore.dir/src/queue.c.o"
+  "CMakeFiles/TheGroceryStore.dir/src/list.c.o"
   "CMakeFiles/TheGroceryStore.dir/src/store.c.o"
   "CMakeFiles/TheGroceryStore.dir/src/threadpool.c.o"
   "CMakeFiles/TheGroceryStore.dir/src/client.c.o"

@@ -33,7 +33,7 @@ typedef struct {
     int queue_counter;  //quante volte il cliente ha cambiato coda
 } client_stats_t;
 
-int log_client_stats(queue_t *client_log, int id, int prod, long time_instore, long time_inqueue, int queuecounter) {
+int log_client_stats(list_t *client_log, int id, int prod, long time_instore, long time_inqueue, int queuecounter) {
     client_stats_t *stats = (client_stats_t*) malloc(sizeof(client_stats_t));
     EQNULL(stats, return -1)
     stats->id = id;
@@ -85,11 +85,12 @@ void log_cassa_closed(cassa_log_t *cassa_log) {
     cassa_log->closed_counter++;
 }
 
-int write_log(char *filename, queue_t *clients_stats, cassa_log_t **cassieri_stats, int k) {
-    FILE *out_file = fopen(filename, "w");
-    EQNULL(out_file, return -1);
+int write_log(char *filename, list_t *clients_stats, cassa_log_t **cassieri_stats, int k) {
     int i, served_clients = 0, total_products = 0, noproducts;  //il numero di clienti serviti, il numero di prodotti acquistati
-    queue_t *served, *opened;
+    FILE *out_file;
+    list_t *served, *opened;
+    //Apro il file di log
+    EQNULL(out_file = fopen(filename, "w"), return -1);
     //Scrivo log accumulato dai clienti
     MINUS1(foreach(clients_stats, &write_client_stats, out_file), return -1)
     //Scrivo log accumulato dai cassieri
@@ -120,7 +121,7 @@ int write_log(char *filename, queue_t *clients_stats, cassa_log_t **cassieri_sta
     fprintf(out_file, "Numero di clienti usciti senza acquisti: %d\n", noproducts);
     fprintf(out_file, "Numero di clienti serviti: %d\n", served_clients);
     fprintf(out_file, "Numero di prodotti acquistati: %d\n", total_products);
-    fflush(out_file);
+
     fclose(out_file);
     return 0;
 }

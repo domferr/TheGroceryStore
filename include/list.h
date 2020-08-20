@@ -25,14 +25,14 @@ typedef struct {
     node_t *head;           //puntatore alla testa della coda
     node_t *tail;           //puntatore alla coda della coda
     int size;               //numero di elementi presenti nella coda
-} queue_t;
+} list_t;
 
 /**
  * Crea una coda. Ritorna un puntatore alla coda se la creazione è avvenuta con successo, NULL altrimenti.
  *
  * @return puntatore ad una coda oppure NULL in caso di errore
  */
-queue_t *queue_create(void);
+list_t *queue_create(void);
 
 /**
  * Distrugge una coda liberandone la memoria in uso. Dopo la chiamata di questa funzione, la coda non può essere
@@ -44,7 +44,7 @@ queue_t *queue_create(void);
  * distruggere gli elementi in coda ma se si vuole soltanto distruggere la coda e la sua struttura dati
  * @return 0 in caso di successo, -1 altrimenti
  */
-int queue_destroy(queue_t *queue, void (*free_fun)(void*));
+int queue_destroy(list_t *queue, void (*free_fun)(void*));
 
 /**
  * Aggiunge in testa alla coda passata per argomento l'elemento specificato.
@@ -54,7 +54,7 @@ int queue_destroy(queue_t *queue, void (*free_fun)(void*));
  * @param elem elemento da aggiungere in testa
  * @return 0 se l'aggiunta è avvenuta con successo, -1 altrimenti.
  */
-int push(queue_t *queue, void *elem);
+int push(list_t *queue, void *elem);
 
 /**
  * Rimuove dalla coda l'elemento in coda e lo ritorna al chiamante. Ritorna NULL se la coda è vuota.
@@ -62,7 +62,7 @@ int push(queue_t *queue, void *elem);
  * @param queue coda dalla quale rimuovere la coda
  * @return elemento che si trovava in coda, NULL in caso di coda vuota
  */
-void *pop(queue_t *queue);
+void *pop(list_t *queue);
 
 /**
  * Applica la funzione passata per argomento ad ogni elemento della coda
@@ -73,7 +73,7 @@ void *pop(queue_t *queue);
  * @param args argomenti aggiuntivi da passare alla funzione per ogni chiamata (oltre all'elemento della coda)
  * @return 0 se l'applicazione è avvenuta con successo, -1 altrimenti e imposta errno
  */
-int foreach(queue_t *queue, int (*fun)(void*, void*), void *args);
+int foreach(list_t *queue, int (*fun)(void*, void*), void *args);
 
 /**
  * Elimina tutti gli elementi dalla coda e dalla memoria. Dopo la chiamata di questa funzione, la coda ha 0 elementi.
@@ -82,7 +82,7 @@ int foreach(queue_t *queue, int (*fun)(void*, void*), void *args);
  * @param free_fun funzione utilizzata per liberare la memoria occupata da ogni elemento in coda. Vale NULL se non si vuole
  * distruggere gli elementi in coda ma se si vuole soltanto distruggere la coda e la sua struttura dati
  */
-void clear(queue_t *queue, void (*free_fun)(void*));
+void clear(list_t *queue, void (*free_fun)(void*));
 
 /**
  * Appende la seconda coda nella prima. La seconda coda viene accodata alla prima e ne viene liberata la memoria. Dopo
@@ -92,6 +92,6 @@ void clear(queue_t *queue, void (*free_fun)(void*));
  * @param q1 prima coda alla quale appendere la seconda coda
  * @param q2 seconda coda
  */
-void merge(queue_t *q1, queue_t *q2);
+void merge(list_t *q1, list_t *q2);
 
 #endif //QUEUE_H

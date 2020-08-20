@@ -96,13 +96,13 @@
 		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/include/config.h">
 			<Option target="TheGroceryStore"/>
 		</Unit>
+		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/include/list.h">
+			<Option target="TheGroceryStore"/>
+		</Unit>
 		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/include/log.h">
 			<Option target="TheGroceryStore"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/include/notifier.h">
-			<Option target="TheGroceryStore"/>
-		</Unit>
-		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/include/queue.h">
 			<Option target="TheGroceryStore"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/include/scfiles.h">
@@ -144,13 +144,13 @@
 		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/direttore.c">
 			<Option target="TheGroceryStore"/>
 		</Unit>
+		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/list.c">
+			<Option target="TheGroceryStore"/>
+		</Unit>
 		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/log.c">
 			<Option target="TheGroceryStore"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/notifier.c">
-			<Option target="TheGroceryStore"/>
-		</Unit>
-		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/queue.c">
 			<Option target="TheGroceryStore"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/scfiles.c">

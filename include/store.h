@@ -29,7 +29,7 @@ int store_destroy(store_t *store);
  * @param state puntatore alla variabile da aggiornare con lo stato del supermercato
  * @return 0 in caso di successo, -1 altrimenti
  */
-int get_store_state(store_state *st_state);
+int get_store_state(store_t *store, store_state *st_state);
 
 /**
  * Chiude il supermercato. Ritorna 0 in caso di successo, altrimenti ritorna -1 ed imposta errno.

@@ -59,14 +59,14 @@ void *client_thread_fun(void *args) {
     long time_in_store, time_in_queue;
     struct timespec store_entrance, queue_entrance, waitingtime = {MS_TO_SEC(cl->s), MS_TO_NANOSEC(cl->s)};
     store_state st_state;
-    queue_t *stats;
+    list_t *stats;
     client_in_queue_t *clq;
     cassiere_t *cassiere = NULL, *best_cassiere;
 
     EQNULLERR(stats = queue_create(), return NULL)
     EQNULLERR(clq = alloc_client_in_queue(), return NULL)
 
-    MINUS1ERR(get_store_state(&st_state), return NULL)
+    MINUS1ERR(get_store_state(cl->store, &st_state), return NULL)
     while (ISOPEN(st_state)) {
         //Resetto i contatori delle statistiche
         queue_counter = 0;
@@ -82,12 +82,12 @@ void *client_thread_fun(void *args) {
             clq->served = 0;
             clq->processing = 0;
             DEBUG("[Thread Cliente %ld] Cliente %d: voglio acquistare %d prodotti\n", cl->id, client_id, clq->products)
-            MINUS1ERR(get_store_state(&st_state), return NULL)
+            MINUS1ERR(get_store_state(cl->store, &st_state), return NULL)
             if (clq->products > 0 && st_state != closed_fast_state) {
                 do {
                     change_queue = 0;
                     EQNULLERR(cassiere = get_best_queue(cl->casse, cl->k, NULL, -1), return NULL)
-                    MINUS1ERR(get_store_state(&st_state), return NULL)
+                    MINUS1ERR(get_store_state(cl->store, &st_state), return NULL)
                     if (st_state == closed_fast_state) break;
                     PTHERR(err, pthread_mutex_lock(&(cassiere)->mutex), return NULL)
                     MINUS1ERR(enqueued = join_queue(cassiere, clq, &queue_entrance), return NULL)
@@ -99,13 +99,13 @@ void *client_thread_fun(void *args) {
                             if (clq->processing) {
                                 PTHERR(err, pthread_cond_wait(&(clq->waiting), &(cassiere->mutex)), return NULL)
                                 PTHERR(err, pthread_mutex_unlock(&(cassiere)->mutex), return NULL)
-                                MINUS1ERR(get_store_state(&st_state), return NULL)
+                                MINUS1ERR(get_store_state(cl->store, &st_state), return NULL)
                                 PTHERR(err, pthread_mutex_lock(&(cassiere)->mutex), return NULL)
                                 //err = pthread_cond_timedwait(&(clq->waiting), &(cassiere->mutex), &waitingtime);
                             } else {    //altrimenti attendo per un tot di secondi e faccio l'algoritmo di cambio cassa
                                 PTHERR(err, pthread_mutex_unlock(&(cassiere)->mutex), return NULL)
                                 MINUS1ERR(msleep(cl->s), return NULL)
-                                MINUS1ERR(get_store_state(&st_state), return NULL)
+                                MINUS1ERR(get_store_state(cl->store, &st_state), return NULL)
                                 PTHERR(err, pthread_mutex_lock(&(cassiere)->mutex), return NULL)
                                 /*if (st_state == closed_fast_state) break;
                                 //Valuto se le altre code sono migliori
@@ -148,13 +148,13 @@ void *client_thread_fun(void *args) {
                 MINUS1ERR(wait_permission(cl), return NULL)
             }
             MINUS1ERR(leave_store(cl->store), return NULL)
-            if (st_state != closed_fast_state) {    //Il cliente è stato sicuramente servito
+            if (clq->products == 0 || clq->served) {
                 MINUS1ERR(time_in_store = elapsed_time(&store_entrance), return NULL)
                 MINUS1ERR(log_client_stats(stats, client_id, clq->products, time_in_store, time_in_queue, queue_counter), return NULL)
             }
             DEBUG("[Thread Cliente %ld] Cliente %d: sono uscito dal supermercato\n", cl->id, client_id)
         }
-        MINUS1ERR(get_store_state(&st_state), return NULL)
+        MINUS1ERR(get_store_state(cl->store, &st_state), return NULL)
     }
     DEBUG("[Thread Cliente %ld] termino\n", cl->id)
     if (clq->is_enqueued)

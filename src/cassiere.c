@@ -69,7 +69,7 @@ void *cassiere_thread_fun(void *args) {
     PTHERR(err, pthread_create(&th_notifier, NULL, &notifier_thread_fun, notifier), return NULL)
     EQNULLERR(cassa_log = alloc_cassa_log(ca->id), return NULL)
 
-    MINUS1ERR(get_store_state(&st_state), return NULL)
+    MINUS1ERR(get_store_state(ca->store, &st_state), return NULL)
     while(ISOPEN(st_state)) {
         PTHERR(err, pthread_mutex_lock(&(ca->mutex)), return NULL)
         if (ca->isopen) {
@@ -80,7 +80,7 @@ void *cassiere_thread_fun(void *args) {
             while (ISOPEN(st_state) && ca->isopen && ca->queue->size == 0) {
                 PTHERR(err, pthread_cond_wait(&(ca->noclients), &(ca->mutex)), return NULL)
                 PTHERR(err, pthread_mutex_unlock(&(ca->mutex)), return NULL)
-                MINUS1ERR(get_store_state(&st_state), return NULL)
+                MINUS1ERR(get_store_state(ca->store, &st_state), return NULL)
                 PTHERR(err, pthread_mutex_lock(&(ca->mutex)), return NULL)
             }
             //C'è un cliente e sia la cassa che il supermercato sono aperti
@@ -108,12 +108,12 @@ void *cassiere_thread_fun(void *args) {
             while (ISOPEN(st_state) && !ca->isopen) {
                 PTHERR(err, pthread_cond_wait(&(ca->waiting), &(ca->mutex)), return NULL)
                 PTHERR(err, pthread_mutex_unlock(&(ca->mutex)), return NULL)
-                MINUS1ERR(get_store_state(&st_state), return NULL)
+                MINUS1ERR(get_store_state(ca->store, &st_state), return NULL)
                 PTHERR(err, pthread_mutex_lock(&(ca->mutex)), return NULL)
             }
         }
         PTHERR(err, pthread_mutex_unlock(&(ca->mutex)), return NULL)
-        MINUS1ERR(get_store_state(&st_state), return NULL)
+        MINUS1ERR(get_store_state(ca->store, &st_state), return NULL)
     }
 
     DEBUG("Cassiere %ld: faccio terminare il notifier\n", ca->id)

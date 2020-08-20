@@ -27,7 +27,7 @@ OBJS_SUPERM	= 	$(OBJDIR)/supermercato.o	\
 				$(OBJDIR)/cassiere.o		\
 				$(OBJDIR)/client_in_queue.o	\
 				$(OBJDIR)/notifier.o		\
-				$(OBJDIR)/queue.o			\
+				$(OBJDIR)/list.o			\
 				$(OBJDIR)/cassa_queue.o		\
 				$(OBJDIR)/log.o				\
 				$(OBJS_SHARED)
@@ -100,13 +100,13 @@ $(CONFIGTEST2FILE):
 # lancio del primo test. Necessario che il file di configurazione sia stato creato e che l'eseguibile sia stato generato
 test1: $(CONFIGTEST1FILE) all
 	@echo "Running Test 1"
-	@valgrind --leak-check=full --trace-children=yes $(BINDIR)/direttore -c $< & sleep 5; kill -s 3 $$!; wait $$!
+	@valgrind --leak-check=full --trace-children=yes $(BINDIR)/direttore -c $< & sleep 15; kill -s 3 $$!; wait $$!
 
 # lancio del secondo test. Necessario che il file di configurazione sia stato creato e che l'eseguibile sia stato generato
 test2: $(CONFIGTEST2FILE) all
 	@-chmod +x ./analisi.sh;
 	@echo "Running Test 2"
-	@$(BINDIR)/direttore -c $< & sleep 5; kill -s 1 $$!; wait $$!
+	@$(BINDIR)/direttore -c $< & sleep 25; kill -s 1 $$!; wait $$!
 	@./analisi.sh $(LOGFILE)
 
 clean:

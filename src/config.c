@@ -53,7 +53,7 @@ config_t *load_config(char *path) {
     off_t id_off, val_off;
     config_t *config = alloc_config();
     EQNULL(config, return NULL)
-    EQNULL((file = fopen(path, "r")), return NULL)
+    EQNULL((file = fopen(path, "r")), free(config); return NULL)
 
     while(fgets(row, MAX_ROW_LENGTH, file) != NULL) {
         if (parse_row(row, &id_off, &val_off) == 0) continue;

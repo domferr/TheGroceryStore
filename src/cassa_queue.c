@@ -25,34 +25,6 @@ int cassa_queue_destroy(cassa_queue_t *q) {
     return 0;
 }
 
-int get_queue_cost(cassiere_t *cassiere, client_in_queue_t *clq) {
-    int cost = 0;
-    client_in_queue_t *curr;
-    curr = cassiere->queue->head;
-    while (curr != NULL && curr != clq) {
-        cost += SERVICE_TIME(cassiere, curr);
-        curr = curr->next;
-    }
-    return cost;
-}
-
-cassiere_t *get_best_queue(cassiere_t **cassieri, int k, cassiere_t *from, int from_cost) {
-    cassiere_t *best = from;
-    int err, i, best_cost = from_cost;
-    //Paragono con il costo di tutte le casse (esclusa quella in cui si trova il cliente) e scelgo la migliore
-    for (i=0; i<k; i++) {
-        PTH(err, pthread_mutex_lock(&(cassieri[i]->mutex)), return NULL)
-        if (cassieri[i]->isopen && cassieri[i] != from) {
-            if (cassieri[i]->queue->cost < best_cost || best_cost == -1) {
-                best_cost = cassieri[i]->queue->cost;
-                best = cassieri[i];
-            }
-        }
-        PTH(err, pthread_mutex_unlock(&(cassieri[i]->mutex)), return NULL)
-    }
-    return best;
-}
-
 static void enqueue(cassiere_t *cassiere, client_in_queue_t *clq) {
     cassa_queue_t *queue = cassiere->queue;
 
@@ -89,6 +61,33 @@ static void dequeue(cassiere_t *cassiere, client_in_queue_t *clq) {
     }
 }
 
+int get_queue_cost(cassiere_t *cassiere, client_in_queue_t *clq) {
+    int cost = 0;
+    client_in_queue_t *curr;
+    curr = cassiere->queue->head;
+    while (curr != NULL && curr != clq) {
+        cost += SERVICE_TIME(cassiere, curr);
+        curr = curr->next;
+    }
+    return cost;
+}
+
+cassiere_t *get_best_queue(cassiere_t **cassieri, int k, cassiere_t *from, int from_cost) {
+    cassiere_t *best = from;
+    int err, i, best_cost = from_cost;
+    //Paragono con il costo di tutte le casse (esclusa quella in cui si trova il cliente) e scelgo la migliore
+    for (i=0; i<k; i++) {
+        PTH(err, pthread_mutex_lock(&(cassieri[i]->mutex)), return NULL)
+        if (cassieri[i]->isopen && cassieri[i] != from) {
+            if (cassieri[i]->queue->cost < best_cost || best_cost == -1) {
+                best_cost = cassieri[i]->queue->cost;
+                best = cassieri[i];
+            }
+        }
+        PTH(err, pthread_mutex_unlock(&(cassieri[i]->mutex)), return NULL)
+    }
+    return best;
+}
 
 int join_queue(cassiere_t *cassiere, client_in_queue_t *clq, struct timespec *queue_entrance) {
     int err, enqueued = 0;

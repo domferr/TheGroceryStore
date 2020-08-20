@@ -312,6 +312,33 @@ src/direttore.c.s:
 	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/direttore.c.s
 .PHONY : src/direttore.c.s
 
+src/list.o: src/list.c.o
+
+.PHONY : src/list.o
+
+# target to build an object file
+src/list.c.o:
+	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/list.c.o
+.PHONY : src/list.c.o
+
+src/list.i: src/list.c.i
+
+.PHONY : src/list.i
+
+# target to preprocess a source file
+src/list.c.i:
+	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/list.c.i
+.PHONY : src/list.c.i
+
+src/list.s: src/list.c.s
+
+.PHONY : src/list.s
+
+# target to generate assembly for a file
+src/list.c.s:
+	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/list.c.s
+.PHONY : src/list.c.s
+
 src/log.o: src/log.c.o
 
 .PHONY : src/log.o
@@ -365,33 +392,6 @@ src/notifier.s: src/notifier.c.s
 src/notifier.c.s:
 	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/notifier.c.s
 .PHONY : src/notifier.c.s
-
-src/queue.o: src/queue.c.o
-
-.PHONY : src/queue.o
-
-# target to build an object file
-src/queue.c.o:
-	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/queue.c.o
-.PHONY : src/queue.c.o
-
-src/queue.i: src/queue.c.i
-
-.PHONY : src/queue.i
-
-# target to preprocess a source file
-src/queue.c.i:
-	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/queue.c.i
-.PHONY : src/queue.c.i
-
-src/queue.s: src/queue.c.s
-
-.PHONY : src/queue.s
-
-# target to generate assembly for a file
-src/queue.c.s:
-	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/queue.c.s
-.PHONY : src/queue.c.s
 
 src/scfiles.o: src/scfiles.c.o
 
@@ -585,15 +585,15 @@ help:
 	@echo "... src/direttore.o"
 	@echo "... src/direttore.i"
 	@echo "... src/direttore.s"
+	@echo "... src/list.o"
+	@echo "... src/list.i"
+	@echo "... src/list.s"
 	@echo "... src/log.o"
 	@echo "... src/log.i"
 	@echo "... src/log.s"
 	@echo "... src/notifier.o"
 	@echo "... src/notifier.i"
 	@echo "... src/notifier.s"
-	@echo "... src/queue.o"
-	@echo "... src/queue.i"
-	@echo "... src/queue.s"
 	@echo "... src/scfiles.o"
 	@echo "... src/scfiles.i"
 	@echo "... src/scfiles.s"
