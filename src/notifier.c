@@ -11,34 +11,34 @@ void *notifier_thread_fun(void *args) {
     cassiere_t *ca = no->cassiere;
 
     //Attendo l'intervallo
-    MINUS1(msleep(ca->interval), perror("msleep"); return NULL)
+    MINUS1ERR(msleep(ca->interval), return NULL)
 
-    PTH(err, pthread_mutex_lock(&(no->mutex)), perror("lock"); return NULL)
+    PTHERR(err, pthread_mutex_lock(&(no->mutex)), return NULL)
     while(no->state != notifier_quit) {
         //Aspetto di essere attivato dal cassiere
         while(no->state == notifier_pause) {
-            PTH(err, pthread_cond_wait(&(no->paused), &(no->mutex)), perror("cond wait"); return NULL)
+            PTHERR(err, pthread_cond_wait(&(no->paused), &(no->mutex)), return NULL)
         }
         //Controllo se sono stato attivato perchè il supermercato sta chiudendo
         if (no->state == notifier_run) {
-            PTH(err, pthread_mutex_unlock(&(no->mutex)), perror("unlock"); return NULL)
+            PTHERR(err, pthread_mutex_unlock(&(no->mutex)), return NULL)
 
             //Prendo la lunghezza della coda
-            PTH(err, pthread_mutex_lock(&(ca->mutex)), perror("lock"); return NULL)
+            PTHERR(err, pthread_mutex_lock(&(ca->mutex)), return NULL)
             queue_len = (ca->queue)->size;
-            PTH(err, pthread_mutex_unlock(&(ca->mutex)), perror("unlock"); return NULL)
+            PTHERR(err, pthread_mutex_unlock(&(ca->mutex)), return NULL)
 
             //Invio al direttore il numero di clienti in coda
-            MINUS1(notify(ca->id, queue_len), perror("notify"))
+            MINUS1ERR(notify(ca->id, queue_len), return NULL)
 
             DEBUG("Notificatore %ld: ho inviato una notifica\n", ca->id);
             //Attendo l'intervallo
-            MINUS1(msleep(ca->interval), perror("msleep"); return NULL)
+            MINUS1ERR(msleep(ca->interval), return NULL)
 
-            PTH(err, pthread_mutex_lock(&(no->mutex)), perror("lock"); return NULL)
+            PTHERR(err, pthread_mutex_lock(&(no->mutex)), return NULL)
         }
     }
-    PTH(err, pthread_mutex_unlock(&(no->mutex)), perror("unlock"); return NULL)
+    PTHERR(err, pthread_mutex_unlock(&(no->mutex)), return NULL)
     DEBUG("Notificatore %ld: termino\n", ca->id);
     return 0;
 }

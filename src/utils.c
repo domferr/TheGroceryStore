@@ -1,7 +1,5 @@
-#define _POSIX_C_SOURCE 200809L
-
-#include <stdlib.h>
 #include "../include/utils.h"
+#include <stdlib.h>
 
 #define LONG1E9 1000000000L //1e9
 

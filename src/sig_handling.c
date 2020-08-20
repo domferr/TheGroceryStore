@@ -3,7 +3,6 @@
 #include "../include/scfiles.h"
 #include <signal.h>
 #include <pthread.h>
-#include <unistd.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -27,13 +26,13 @@ int handle_signals(void* (*thread_fun)(void*), void* args) {
 void *thread_sig_handler_fun(void *args) {
     int sig, err, *h_pipe = (int*) args;
     sigset_t set;
-    MINUS1(sigemptyset(&set), perror("sigemptyset"); return NULL)
-    MINUS1(sigaddset(&set, SIGINT), perror("sigaddset"); return NULL)
-    MINUS1(sigaddset(&set, SIGQUIT), perror("sigaddset"); return NULL)
-    MINUS1(sigaddset(&set, SIGHUP), perror("sigaddset"); return NULL)
+    MINUS1ERR(sigemptyset(&set), return NULL)
+    MINUS1ERR(sigaddset(&set, SIGINT), return NULL)
+    MINUS1ERR(sigaddset(&set, SIGQUIT), return NULL)
+    MINUS1ERR(sigaddset(&set, SIGHUP), return NULL)
     //Aspetta sul set che arrivi uno dei segnali di cui sopra
-    PTH(err, sigwait(&set, &sig), perror("sigwait"); return NULL)
+    PTHERR(err, sigwait(&set, &sig), return NULL)
     //Invio il segnale sulla pipe e termino
-    MINUS1(writen(h_pipe[1], &sig, sizeof(int)), perror("writen"); return NULL)
+    MINUS1ERR(writen(h_pipe[1], &sig, sizeof(int)), return NULL)
     return 0;
 }

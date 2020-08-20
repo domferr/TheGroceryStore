@@ -17,7 +17,6 @@
 #define DEFAULT_CONFIG_FILE "./config.txt"
 #define ARG_CONFIG_FILE "-c"
 
-#define ERROR_READ_CONFIG_FILE "Impossibile leggere il file di configurazione"
 #define MESSAGE_VALID_CONFIG_FILE "File di configurazione: "
 
 #define CASSA_APERTA 0
@@ -74,26 +73,26 @@ int main(int argc, char **args) {
     //Eseguo il parsing del nome del file di configurazione
     char *config_file_path = parse_args(argc, args);
     //Leggo il file di configurazione
-    EQNULL(config = load_config(config_file_path), perror(ERROR_READ_CONFIG_FILE); exit(EXIT_FAILURE))
+    EQNULLERR(config = load_config(config_file_path), exit(EXIT_FAILURE))
     if (!validate(config)) {
         free_config(config);
         exit(EXIT_FAILURE);
     }
     printf(MESSAGE_VALID_CONFIG_FILE);
     print_config(config);
-    EQNULL(casse = malloc(sizeof(int) * config->k), perror("calloc"); exit(EXIT_FAILURE))
+    EQNULLERR(casse = malloc(sizeof(int) * config->k), exit(EXIT_FAILURE))
     casse_attive = config->ka;
     for (i = 0; i < config->k; i++) {
         casse[i] = i < config->ka ? CASSA_APERTA:CASSA_CHIUSA;   //le prime ka casse sono aperte
     }
     //Lancio il processo supermercato
-    MINUS1(fork_store(config_file_path, &pid_store), perror("fork_store"); exit(EXIT_FAILURE))
+    MINUS1ERR(fork_store(config_file_path, &pid_store), exit(EXIT_FAILURE))
     DEBUG("DIRETTORE: %s\n", "Connesso con il supermercato via socket AF_UNIX");
     //Gestione dei segnali mediante thread apposito
-    MINUS1(pipe(sigh_pipe), perror("pipe"); exit(EXIT_FAILURE))
-    MINUS1(handle_signals(&thread_sig_handler_fun, (void*)sigh_pipe), perror("handle_signals"); exit(EXIT_FAILURE))
+    MINUS1ERR(pipe(sigh_pipe), exit(EXIT_FAILURE))
+    MINUS1ERR(handle_signals(&thread_sig_handler_fun, (void*)sigh_pipe), exit(EXIT_FAILURE))
     //Creo una connessione con il supermercato via socket AF_UNIX
-    MINUS1(fd_store = accept_socket_conn(), perror("accept_socket_conn"); exit(EXIT_FAILURE))
+    MINUS1ERR(fd_store = accept_socket_conn(), exit(EXIT_FAILURE))
 
     FD_ZERO(&set);  //azzero il set
     FD_SET(fd_store, &set); //imposto il descrittore per comunicare con il supermercato via socket AF_UNIX
@@ -103,40 +102,34 @@ int main(int argc, char **args) {
     //a seguito di una terminazione imprevista del processo supermercato
     while (1) {
         rd_set = set;
-        MINUS1(select(fd_store+1, &rd_set, NULL, NULL, NULL), perror("select"); exit(EXIT_FAILURE))
+        MINUS1ERR(select(fd_store+1, &rd_set, NULL, NULL, NULL), exit(EXIT_FAILURE))
         if (FD_ISSET(sigh_pipe[0], &rd_set)) {
-            MINUS1(readn(sigh_pipe[0], &sig_arrived, sizeof(int)), perror("readn"); exit(EXIT_FAILURE))
-            MINUS1(kill(pid_store, sig_arrived), perror("kill"); exit(EXIT_FAILURE))
+            MINUS1ERR(readn(sigh_pipe[0], &sig_arrived, sizeof(int)), exit(EXIT_FAILURE))
+            MINUS1ERR(kill(pid_store, sig_arrived), exit(EXIT_FAILURE))
             break;
         } else {
-            MINUS1(err = readn(fd_store, &msg_hdr, sizeof(msg_header_t)), perror("readn"); exit(EXIT_FAILURE))
+            MINUS1ERR(err = readn(fd_store, &msg_hdr, sizeof(msg_header_t)), exit(EXIT_FAILURE))
             if (err == 0) { //EOF quindi il processo supermercato è terminato in maniera imprevista!
-                //PTH(err, pthread_kill(sig_handler_thread, SIGINT), perror("pthread_kill"); exit(EXIT_FAILURE))
                 break;
             } else {    //altrimenti gestisco il messaggio ricevuto
                 switch (msg_hdr) {
                     case head_notify: //Ricevuta notifica. Eseguo algoritmo di apertura/chiusura cassa ed eventualmente apro/chiudo una cassa
                         //leggo idcassa e numero di clienti in coda
-                        MINUS1(readn(fd_store, &i, sizeof(int)), return -1)
-                        MINUS1(readn(fd_store, &param2, sizeof(int)), return -1)
+                        MINUS1ERR(readn(fd_store, &i, sizeof(int)), exit(EXIT_FAILURE))
+                        MINUS1ERR(readn(fd_store, &param2, sizeof(int)), exit(EXIT_FAILURE))
                         DEBUG("Ho ricevuto che nella cassa %d ci sono %d clienti in coda\n", i, param2);
                         //Potrei aver chiuso la cassa mentre ricevevo questa notifica quindi aggiorno solo se la cassa è aperta
-                        if (casse[i] != CASSA_CHIUSA)
+                        if (casse[i] != CASSA_CHIUSA) {
                             casse[i] = param2;
-                        MINUS1(handle_notification(fd_store, config, casse, &casse_attive), perror("handle_notification"); exit(EXIT_FAILURE))
-                        /*printf("\r%s: [ ", "Clienti in coda");
-                        for (i = 0; i < config->k; i++) {
-                            printf("%d ", casse[i]);
+                            MINUS1ERR(handle_notification(fd_store, config, casse, &casse_attive), exit(EXIT_FAILURE))
                         }
-                        printf("]        Casse aperte: %d        Casse chiuse: %d        ", casse_attive, (config->k - casse_attive));
-                        fflush(stdout);*/
                         break;
                     case head_ask_exit: //Ricevuta richiesta per uscire dal supermercato. Dò sempre il permesso
                         //leggo l'id del cliente che vuole uscire
-                        MINUS1(readn(fd_store, &i, sizeof(int)), return -1)
+                        MINUS1ERR(readn(fd_store, &i, sizeof(int)), exit(EXIT_FAILURE))
                         DEBUG("%s\n","Ho ricevuto una richiesta di uscita da parte di un cliente");
                         //rispondo facendo uscire il cliente
-                        MINUS1(handle_ask_exit(fd_store, i), perror("handle_ask_exit"); exit(EXIT_FAILURE))
+                        MINUS1ERR(handle_ask_exit(fd_store, i), exit(EXIT_FAILURE))
                         break;
                     default:
                         break;
@@ -147,20 +140,8 @@ int main(int argc, char **args) {
     //chiudo i file descriptors
     close(sigh_pipe[0]);
     close(sigh_pipe[1]);
-    /*printf("\nChiusura del supermercato in corso...\n");
-    switch (sig_arrived) {
-        case SIGINT:
-        case SIGQUIT:
-            printf("Tutti i clienti devono uscire senza fare acquisti\n");
-            break;
-        case SIGHUP:
-            printf("Tutti i clienti verranno fatti uscire ma possono terminare gli acquisti\n");
-            break;
-        default:
-            break;
-    }*/
     //attendo il processo supermercato
-    MINUS1(waitpid(pid_store, &err, 0), perror("waitpid"); exit(EXIT_FAILURE))
+    MINUS1ERR(waitpid(pid_store, &err, 0), exit(EXIT_FAILURE))
     close(fd_store);
     //memory cleanup
     free_config(config);

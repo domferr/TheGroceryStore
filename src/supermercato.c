@@ -20,7 +20,7 @@
 static thread_pool_t *run_clients(store_t *store, config_t *config, cassiere_t **casse);
 static thread_pool_t *run_cassieri(store_t *store, config_t *config);
 
-static pthread_mutex_t mtx_skt = PTHREAD_MUTEX_INITIALIZER; //Mutex per comunicare con il direttore in mutua esclusiome
+static pthread_mutex_t mtx_skt = PTHREAD_MUTEX_INITIALIZER; //Mutex per comunicare con il direttore in mutua esclusione
 static int fd_skt;  //descrittore per comunicazione via socket af_unix con il direttore
 
 int main(int argc, char **args) {
@@ -41,29 +41,29 @@ int main(int argc, char **args) {
     }
 
     //Gestione dei segnali mediante thread apposito
-    MINUS1(pipe(sigh_pipe), perror("pipe"); exit(EXIT_FAILURE))
-    MINUS1(handle_signals(&thread_sig_handler_fun, (void*)sigh_pipe), perror("handle_signals"); exit(EXIT_FAILURE))
+    MINUS1ERR(pipe(sigh_pipe), exit(EXIT_FAILURE))
+    MINUS1ERR(handle_signals(&thread_sig_handler_fun, (void*)sigh_pipe), exit(EXIT_FAILURE))
     //Stabilisco connessione via socket AF_UNIX con il direttore
-    MINUS1(fd_skt = connect_via_socket(), perror("connect_via_socket"); exit(EXIT_FAILURE))
+    MINUS1ERR(fd_skt = connect_via_socket(), exit(EXIT_FAILURE))
     DEBUG("%s\n", "Connesso con il direttore via socket AF_UNIX");
     //Leggo file di configurazione
-    EQNULL(config = load_config(args[1]), perror("load_config"); exit(EXIT_FAILURE))
+    EQNULLERR(config = load_config(args[1]), exit(EXIT_FAILURE))
     if (!validate(config)) exit(EXIT_FAILURE);
 
     FD_ZERO(&set);  //azzero il set
     FD_SET(fd_skt, &set); //imposto il descrittore per comunicare con il supermercato via socket AF_UNIX
     FD_SET(sigh_pipe[0], &set); //imposto il descrittore per comunicare via pipe con il thread signal handler
 
-    EQNULL(store = store_create(config->c, config->e), perror("store create"); exit(EXIT_FAILURE))
-    EQNULL(cassieri_pool = run_cassieri(store, config), perror("run cassieri"); exit(EXIT_FAILURE))
-    EQNULL(clients_pool = run_clients(store, config, (cassiere_t **) cassieri_pool->args), perror("run clients"); exit(EXIT_FAILURE))
+    EQNULLERR(store = store_create(config->c, config->e), exit(EXIT_FAILURE))
+    EQNULLERR(cassieri_pool = run_cassieri(store, config), exit(EXIT_FAILURE))
+    EQNULLERR(clients_pool = run_clients(store, config, (cassiere_t **) cassieri_pool->args), exit(EXIT_FAILURE))
 
     while (run) {
         rd_set = set;
-        MINUS1(select(fd_skt+1, &rd_set, NULL, NULL, NULL), perror("select"); exit(EXIT_FAILURE))
+        MINUS1ERR(select(fd_skt+1, &rd_set, NULL, NULL, NULL), exit(EXIT_FAILURE))
         if (FD_ISSET(sigh_pipe[0], &rd_set)) {
             run = 0;
-            MINUS1(readn(sigh_pipe[0], &param1, sizeof(int)), perror("readn"); exit(EXIT_FAILURE))
+            MINUS1ERR(readn(sigh_pipe[0], &param1, sizeof(int)), exit(EXIT_FAILURE))
             switch (param1) {
                 case SIGINT:
                 case SIGQUIT:
@@ -76,26 +76,26 @@ int main(int argc, char **args) {
                     break;
             }
         } else {
-            MINUS1(err = readn(fd_skt, &msg_hdr, sizeof(msg_header_t)), perror("readn"); exit(EXIT_FAILURE))
+            MINUS1ERR(err = readn(fd_skt, &msg_hdr, sizeof(msg_header_t)), exit(EXIT_FAILURE))
             if (err == 0) { //EOF quindi il processo direttore è terminato!
                 run = 0;
                 closing_state = closed_fast_state;  //terminazione imprevista quindi chiusura rapida
             }
             switch (msg_hdr) {
                 case head_open:
-                    MINUS1(readn(fd_skt, &param1, sizeof(int)), perror("readn"); exit(EXIT_FAILURE))
+                    MINUS1ERR(readn(fd_skt, &param1, sizeof(int)), exit(EXIT_FAILURE))
                     DEBUG("Il direttore dice di aprire la cassa %d\n", param1);
-                    MINUS1(set_cassa_state(cassieri_pool->args[param1], 1), perror("set cassa state"); exit(EXIT_FAILURE))
+                    MINUS1ERR(set_cassa_state(cassieri_pool->args[param1], 1), exit(EXIT_FAILURE))
                     break;
                 case head_close:
-                    MINUS1(readn(fd_skt, &param1, sizeof(int)), perror("readn"); exit(EXIT_FAILURE))
+                    MINUS1ERR(readn(fd_skt, &param1, sizeof(int)), exit(EXIT_FAILURE))
                     DEBUG("Il direttore dice di chiudere la cassa %d\n", param1);
-                    MINUS1(set_cassa_state(cassieri_pool->args[param1], 0), perror("set cassa state"); exit(EXIT_FAILURE))
+                    MINUS1ERR(set_cassa_state(cassieri_pool->args[param1], 0), exit(EXIT_FAILURE))
                     break;
                 case head_can_exit:
-                    MINUS1(readn(fd_skt, &param1, sizeof(int)), perror("readn"); exit(EXIT_FAILURE))
-                    MINUS1(readn(fd_skt, &param2, sizeof(int)), perror("readn"); exit(EXIT_FAILURE))
-                    MINUS1(set_exit_permission((clients_pool->args)[param1], param2), perror("set exit permission"); exit(EXIT_FAILURE))
+                    MINUS1ERR(readn(fd_skt, &param1, sizeof(int)), exit(EXIT_FAILURE))
+                    MINUS1ERR(readn(fd_skt, &param2, sizeof(int)), exit(EXIT_FAILURE))
+                    MINUS1ERR(set_exit_permission((clients_pool->args)[param1], param2), exit(EXIT_FAILURE))
                     if (param2) {
                         DEBUG("Il direttore dice che il cliente %d può uscire\n", param1)
                     } else {
@@ -109,43 +109,43 @@ int main(int argc, char **args) {
     }
 
     //chiudo il supermercato e blocco gli ingressi
-    MINUS1(close_store(store, closing_state), perror("close_store"); exit(EXIT_FAILURE))
+    MINUS1ERR(close_store(store, closing_state), exit(EXIT_FAILURE))
     //sveglio i clienti in attesa di uscita permettendogli di uscire
     for (i = 0; i < clients_pool->size; ++i) {
-        MINUS1(set_exit_permission((clients_pool->args)[i], 1), perror("set exit permission"); exit(EXIT_FAILURE))
+        MINUS1ERR(set_exit_permission((clients_pool->args)[i], 1), exit(EXIT_FAILURE))
     }
     //sveglio tutti i cassieri che sono dormienti
     for (i = 0; i < cassieri_pool->size; ++i) {
-        MINUS1(cassiere_wake_up(cassieri_pool->args[i]), perror("cassiere quit"); exit(EXIT_FAILURE))
+        MINUS1ERR(cassiere_wake_up(cassieri_pool->args[i]), exit(EXIT_FAILURE))
     }
     //join thread cassieri e thread clienti
-    MINUS1(thread_pool_join(cassieri_pool), perror("join cassieri threads"); exit(EXIT_FAILURE))
+    MINUS1ERR(thread_pool_join(cassieri_pool), exit(EXIT_FAILURE))
     DEBUG("%s\n","Tutti i cassieri sono terminati")
-    MINUS1(thread_pool_join(clients_pool), perror("join clients threads"); exit(EXIT_FAILURE))
+    MINUS1ERR(thread_pool_join(clients_pool), exit(EXIT_FAILURE))
     DEBUG("%s\n","Tutti i clienti sono terminati")
-    PTH(err, pthread_mutex_lock(&mtx_skt), perror("lock"); exit(EXIT_FAILURE))
+    PTHERR(err, pthread_mutex_lock(&mtx_skt), exit(EXIT_FAILURE))
     close(fd_skt);
-    PTH(err, pthread_mutex_unlock(&mtx_skt), perror("unlock"); exit(EXIT_FAILURE))
+    PTHERR(err, pthread_mutex_unlock(&mtx_skt), exit(EXIT_FAILURE))
     close(sigh_pipe[0]);
     close(sigh_pipe[1]);
     //cleanup
-    EQNULL(clients_stats = queue_create(), perror("queue create"); exit(EXIT_FAILURE))
+    EQNULLERR(clients_stats = queue_create(), exit(EXIT_FAILURE))
     for (i = 0; i < clients_pool->size; ++i) {
-        MINUS1(client_destroy(clients_pool->args[i]), perror("client destroy"); exit(EXIT_FAILURE))
+        MINUS1ERR(client_destroy(clients_pool->args[i]), exit(EXIT_FAILURE))
         merge(clients_stats, clients_pool->retvalues[i]);
     }
-    MINUS1(thread_pool_free(clients_pool), perror("thread pool free"); exit(EXIT_FAILURE))
+    MINUS1ERR(thread_pool_free(clients_pool), exit(EXIT_FAILURE))
     //Scrivo il file di log
-    MINUS1(write_log(config->logfilename, clients_stats, (cassa_log_t**) cassieri_pool->retvalues, config->k), perror("write log"); exit(EXIT_FAILURE))
+    MINUS1ERR(write_log(config->logfilename, clients_stats, (cassa_log_t**) cassieri_pool->retvalues, config->k), exit(EXIT_FAILURE))
     for (i = 0; i < cassieri_pool->size; ++i) {
-        MINUS1(cassiere_destroy(cassieri_pool->args[i]), perror("cassiere destroy"); exit(EXIT_FAILURE))
-        MINUS1(destroy_cassa_log(cassieri_pool->retvalues[i]), perror("cassa log destroy"); exit(EXIT_FAILURE))
+        MINUS1ERR(cassiere_destroy(cassieri_pool->args[i]), exit(EXIT_FAILURE))
+        MINUS1ERR(destroy_cassa_log(cassieri_pool->retvalues[i]), exit(EXIT_FAILURE))
     }
-    MINUS1(thread_pool_free(cassieri_pool), perror("thread pool free"); exit(EXIT_FAILURE))
-    MINUS1(queue_destroy(clients_stats, &free), perror("queue destroy"); exit(EXIT_FAILURE))
-    MINUS1(store_destroy(store), perror("store destroy"); exit(EXIT_FAILURE))
+    MINUS1ERR(thread_pool_free(cassieri_pool), exit(EXIT_FAILURE))
+    MINUS1ERR(queue_destroy(clients_stats, &free), exit(EXIT_FAILURE))
+    MINUS1ERR(store_destroy(store), exit(EXIT_FAILURE))
     free_config(config);
-    PTH(err, pthread_mutex_destroy(&mtx_skt), return -1)
+    PTHERR(err, pthread_mutex_destroy(&mtx_skt), exit(EXIT_FAILURE))
     DEBUG("%s\n", "Supermercato: Termino!")
     return 0;
 }

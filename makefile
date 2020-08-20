@@ -107,7 +107,7 @@ test2: $(CONFIGTEST2FILE) all
 	@-chmod +x ./analisi.sh;
 	@echo "Running Test 2"
 	@$(BINDIR)/direttore -c $< & sleep 5; kill -s 1 $$!; wait $$!
-	@./analisi.sh
+	@./analisi.sh $(LOGFILE)
 
 clean:
 	rm -f $(TARGETS)
