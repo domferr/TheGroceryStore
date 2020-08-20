@@ -1,7 +1,7 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include "../include/log.h"
 #include "../include/utils.h"
+#include "../include/log.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 /**
  * Scrive le statistiche di un cliente entrato nel supermercato. Ritorna 0 se la scrittura è avvenuta con successo, -1

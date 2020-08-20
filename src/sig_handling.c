@@ -5,12 +5,14 @@
 #include <pthread.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <string.h>
 
 int handle_signals(void* (*thread_fun)(void*), void* args) {
     int err;
     pthread_t handler;
     sigset_t set;
-    struct sigaction sa = {0};  //Ignoro SIGPIPE
+    struct sigaction sa;  //Ignoro SIGPIPE
+    memset(&sa, 0, sizeof(sa));
     sa.sa_handler = SIG_IGN;
     MINUS1(sigaction(SIGPIPE, &sa, NULL), return -1)
     MINUS1(sigfillset(&set), return -1)

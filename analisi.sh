@@ -1,1 +1,6 @@
-echo Prima o poi farò questo script di analisi. Per il momento devi accontentarti di questa semplice ed inutile stampa sul terminale.
+#!/bin/bash
+
+if [ $# -ne 1 ]; then
+  echo "Usage: ${0} <logfile>"
+  exit
+fi
