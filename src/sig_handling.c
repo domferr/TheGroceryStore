@@ -5,6 +5,7 @@
 #include <pthread.h>
 #include <stdio.h>
 #include <string.h>
+#include <fcntl.h>
 
 int handle_signals(void* (*thread_fun)(void*), void* args) {
     int err;
@@ -33,7 +34,7 @@ void *thread_sig_handler_fun(void *args) {
     //Aspetta sul set che arrivi uno dei segnali di cui sopra
     PTHERR(err, sigwait(&set, &sig), return NULL)
     //Invio il segnale sulla pipe e termino
-    MINUS1ERR(writen(h_pipe[1], &sig, sizeof(int)), return NULL)
-    printf("Arrivato sig\n");
+    if(fcntl(h_pipe[1], F_GETFL) >= 0)
+        MINUS1ERR(writen(h_pipe[1], &sig, sizeof(int)), return NULL)
     return 0;
 }

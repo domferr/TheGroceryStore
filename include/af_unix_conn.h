@@ -1,7 +1,7 @@
 #ifndef AF_UNIX_CONN_H
 #define AF_UNIX_CONN_H
 
-#define CONN_INTERVAL 1000  //intervallo di tempo tra due tentativi di connessione
+#define CONN_TIMEOUT 10000  //Massimo tempo, espresso in millisecondi, per avviare una connessione socket af unix
 #define UNIX_PATH_MAX 108
 #define SOCKNAME "./sockfile.sock"
 

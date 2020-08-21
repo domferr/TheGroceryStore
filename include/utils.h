@@ -56,6 +56,11 @@
 #define MS_TO_NANOSEC(ms) (((ms)%1000L)*1000000L)
 
 /**
+ * Quanti microsecondi ci sono nei millisecondi specificati
+ */
+#define MS_TO_USEC(ms) (((ms) % 1000L) * 1000L)
+
+/**
  * Genera numero random tra min (incluso) e max (non incluso)
  */
 #define RANDOM(seed_ptr, min, max) ((rand_r(&(seed_ptr))%((max)-(min))) + (min))

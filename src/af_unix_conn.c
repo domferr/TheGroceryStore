@@ -4,18 +4,31 @@
 #include <string.h>
 #include <sys/socket.h>
 #include <sys/un.h>
+#include <sys/select.h>
 #include <unistd.h>
 #include <stdarg.h>
+#include <stdio.h>
 
 int accept_socket_conn(void) {
-    int fd_skt, fd_store;
+    int fd_skt, fd_store, err;
+    struct timeval timeout = {MS_TO_SEC(CONN_TIMEOUT), MS_TO_USEC(CONN_TIMEOUT)};
+    fd_set set;
     struct sockaddr_un sa;
     strncpy(sa.sun_path, SOCKNAME, UNIX_PATH_MAX);
     sa.sun_family = AF_UNIX;
+
     MINUS1(fd_skt = socket(AF_UNIX, SOCK_STREAM, 0), return -1)
     MINUS1(bind(fd_skt, (struct sockaddr *) &sa, sizeof(sa)), return -1)
     MINUS1(listen(fd_skt, SOMAXCONN), return -1)
-    MINUS1(fd_store = accept(fd_skt, NULL, 0), return -1)
+    FD_ZERO(&set);
+    FD_SET(fd_skt, &set);
+    MINUS1(err = select(fd_skt + 1, &set, NULL, NULL, &timeout), return -1)
+    if (err == 0) {
+        errno = ETIMEDOUT;
+        fd_store = -1;
+    } else {
+        MINUS1(fd_store = accept(fd_skt, NULL, 0), return -1)
+    }
     close(fd_skt);
     unlink(SOCKNAME);
 
@@ -31,7 +44,7 @@ int connect_via_socket(void) {
     //Avvia una connessione con il direttore via socket AF_UNIX
     while (connect(fd_skt, (struct sockaddr *) &sa, sizeof(sa)) == -1 ) {
         if (errno == ENOENT) {
-            MINUS1(msleep(CONN_INTERVAL),return -1) /* sock ancora non esiste, aspetto CONN_INTERVAL millisecondi e poi riprovo */
+            MINUS1(msleep(1000L),return -1) /* sock ancora non esiste, aspetto CONN_INTERVAL millisecondi e poi riprovo */
         } else {
             return -1;
         }
