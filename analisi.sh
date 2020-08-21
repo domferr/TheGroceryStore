@@ -29,10 +29,27 @@ while read -r -a line; do
     ("[Cassiere "*) # La riga indica un log di un cassiere
       cassaid=${line[0]#[Cassiere }
       if [ $cassaid -eq 0 ]; then # Stampo il titolo della colonna
-        echo "|  CASSIERE  |"
+        echo " ___________________________________________________________________________________________________"
+        echo "|   CASSA   | PRODOTTI ELABORATI | CLIENTI SERVITI | T. T. APERTURA | T. MEDIO SERVIZIO |  CHIUSURE |"
       fi
-      printf "| %6s%4s |\n" "$cassaid" ""
-      echo "${line[1]}";;
+      len=${#line[@]}
+      # clienti serviti
+      line[1]=${line[1]#*: }
+      # prodotti elaborati
+      line[2]=${line[2]#*: }
+      # numero di chiusure
+      line[3]=${line[3]#*: }
+      if [ $len -eq 6 ]; then # se la cassa è stata aperta almeno una volta
+        line[4]=${line[4]#*: }
+        line[5]=${line[5]#*: }
+        avgtime="9.300"
+        opentime="4.800"
+      else
+        avgtime="0.000"
+        opentime="0.000"
+      fi
+      printf "|%6s%5s|%12d%8s|%10d%7s|%11s%5s|%12s%7s|%6d%5s|\n" \
+        "$cassaid" "" "${line[2]}" "" "${line[1]}" "" "$opentime" "" "$avgtime" "" "${line[3]}" "";;
     (*)
       echo "${line[0]}";;
   esac

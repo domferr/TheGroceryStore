@@ -104,6 +104,8 @@ void *cassiere_thread_fun(void *args) {
             }
             DEBUG("Cassiere %ld: cassa chiusa, clienti in coda %d DOPO\n", ca->id, ca->queue->size)
             log_cassa_closed(cassa_log);
+            open_start.tv_nsec = 0;
+            open_start.tv_sec = 0;
             //Aspetto fino a quando il supermercato chiude o quando il direttore apre la cassa
             while (ISOPEN(st_state) && !ca->isopen) {
                 PTHERR(err, pthread_cond_wait(&(ca->waiting), &(ca->mutex)), return NULL)
@@ -123,7 +125,6 @@ void *cassiere_thread_fun(void *args) {
     DEBUG("Cassiere %ld: gestisco clienti rimasti in coda\n", ca->id)
     PTHERR(err, pthread_mutex_lock(&(ca->mutex)), return NULL)
     while(ca->queue->size > 0) {
-        DEBUG("size: %d - %p\n", ca->queue->size, (void*)ca->queue->head)
         client = get_next_client(ca, st_state != closed_fast_state);
         if (st_state == closed_fast_state) {    //Chiusura veloce quindi non lo servo e lo sveglio soltanto
             MINUS1ERR(wakeup_client(client, 0), return NULL)
@@ -135,8 +136,8 @@ void *cassiere_thread_fun(void *args) {
             MINUS1ERR(wakeup_client(client, 1), return NULL)
         }
     }
-    //Se la cassa era aperta ed il supermercato in chiusura, scrivo il log
-    if (ca->isopen && st_state == closed_state) {
+    //Se la cassa era aperta, scrivo il log
+    if (open_start.tv_sec != 0 || open_start.tv_nsec != 0) {
         MINUS1ERR(opening_time = elapsed_time(&open_start), return NULL)
         MINUS1ERR(log_cassa_opening_time(cassa_log, opening_time), return NULL)
     }
