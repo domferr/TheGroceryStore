@@ -6,8 +6,8 @@
  * Le operazioni NON sono thread safe in quanto non vengono svolte in mutua esclusione.
  */
 
-#ifndef QUEUE_H
-#define QUEUE_H
+#ifndef LIST_H
+#define LIST_H
 
 /**
  * Struttura che rappresenta un nodo della coda
@@ -94,4 +94,4 @@ void clear(list_t *queue, void (*free_fun)(void*));
  */
 void merge(list_t *q1, list_t *q2);
 
-#endif //QUEUE_H
+#endif //LIST_H

@@ -1,6 +1,7 @@
 #ifndef LOG_H
 #define LOG_H
 
+#include "utils.h"
 #include "list.h"
 #include <stdio.h>
 
@@ -11,6 +12,7 @@ typedef struct {
     list_t *opened;         //Tempi di apertura della cassa per ogni apertura
     int closed_counter;     //Quante volte è stata chiusa la cassa
     int products_counter;   //Quanti prodotti sono stati acquistati tramite questa cassa
+    struct timespec open_start; //Istante il cui la cassa è stata aperta l'ultima volta
 } cassa_log_t;
 
 /**
@@ -60,15 +62,18 @@ int log_client_served(cassa_log_t *cassa_log, long time, int products);
  * @param cassa_log puntatore alla struttura del log del cassiere
  * @param time quanto tempo è stata aperta la cassa. Espresso in millisecondi
  * @return 0 in caso di successo, -1 altrimenti ed imposta errno
- */
-int log_cassa_opening_time(cassa_log_t *cassa_log, long time);
+ */ //TODO aggiornare questa doc
+int log_cassa_open(cassa_log_t *cassa_log);
 
 /**
  * Aggiorna il log del cassiere incrementando il contatore delle chiusure della cassa.
  *
  * @param cassa_log puntatore alla struttura del log del cassiere
- */
-void log_cassa_closed(cassa_log_t *cassa_log);
+ */ //TODO aggiornare questa doc
+int log_cassa_closed(cassa_log_t *cassa_log);
+
+//TODO fare questa doc
+int log_cassa_store_closed(cassa_log_t *cassa_log);
 
 /**
  * Scrive il file di log. Ritorna -1 se è avvenuto un errore ed imposta errno. In caso di scrittura avvenuta con successo,

@@ -1,4 +1,4 @@
-#define DEBUGGING 1
+#define DEBUGGING 0
 #include "../include/sig_handling.h"
 #include "../include/config.h"
 #include "../include/utils.h"

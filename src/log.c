@@ -21,7 +21,7 @@ static int write_client_stats(void *elem, void *args);
  * @param elem elemento della lista, ovvero un valore di tipo long che rappresenta un tempo espresso in millisecondi
  * @param args argomenti aggiuntivi, ovvero il file sul quale scrivere il log
  * @return 0 in caso di successo, -1 altrimenti ed imposta errno
- */
+ */ //TODO aggiornare questa doc
 static int print_ms(void *elem, void *args);
 
 /** Statistiche di un cliente entrato nel supermercato */
@@ -54,6 +54,8 @@ cassa_log_t *alloc_cassa_log(size_t id) {
     log->products_counter = 0;
     EQNULL(log->served = queue_create(), return NULL)
     EQNULL(log->opened = queue_create(), return NULL)
+    log->open_start.tv_sec = 0;
+    log->open_start.tv_nsec = 0;
     return log;
 }
 
@@ -73,16 +75,35 @@ int log_client_served(cassa_log_t *cassa_log, long time, int products) {
     return 0;
 }
 
-int log_cassa_opening_time(cassa_log_t *cassa_log, long time) {
-    long *value = (long*) malloc(sizeof(long));
-    *value = time;
-    EQNULL(value, return -1)
-    MINUS1(push(cassa_log->opened, value), return -1)
+int log_cassa_open(cassa_log_t *cassa_log) {
+    if ((cassa_log->open_start).tv_sec == 0 && (cassa_log->open_start).tv_nsec == 0)
+        MINUS1(clock_gettime(CLOCK_MONOTONIC, &(cassa_log->open_start)), return -1)
     return 0;
 }
 
-void log_cassa_closed(cassa_log_t *cassa_log) {
+//TODO fare questa doc
+static int push_cassa_opening_time(cassa_log_t *cassa_log) {
+    long *time;
+    if ((cassa_log->open_start).tv_sec != 0 || (cassa_log->open_start).tv_nsec != 0) {
+        EQNULL(time = (long *) malloc(sizeof(long)), return -1)
+        MINUS1(*time = elapsed_time(&(cassa_log->open_start)), return -1)
+        MINUS1(push(cassa_log->opened, time), return -1)
+        (cassa_log->open_start).tv_nsec = 0;
+        (cassa_log->open_start).tv_sec = 0;
+    }
+    return 0;
+}
+
+int log_cassa_closed(cassa_log_t *cassa_log) {
     cassa_log->closed_counter++;
+    //Se ho preso il tempo significa che è stata aperta quindi calcolo tempo di apertura
+    MINUS1(push_cassa_opening_time(cassa_log), return -1)
+    return 0;
+}
+
+int log_cassa_store_closed(cassa_log_t *cassa_log) {
+    MINUS1(push_cassa_opening_time(cassa_log), return -1)
+    return 0;
 }
 
 int write_log(char *filename, list_t *clients_stats, cassa_log_t **cassieri_stats, int k) {

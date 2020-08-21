@@ -34,5 +34,6 @@ void *thread_sig_handler_fun(void *args) {
     PTHERR(err, sigwait(&set, &sig), return NULL)
     //Invio il segnale sulla pipe e termino
     MINUS1ERR(writen(h_pipe[1], &sig, sizeof(int)), return NULL)
+    printf("Arrivato sig\n");
     return 0;
 }

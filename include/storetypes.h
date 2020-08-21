@@ -2,6 +2,7 @@
 #define STORETYPES_H
 
 #include "list.h"
+#include "log.h"
 #include <pthread.h>
 
 typedef enum {
@@ -64,6 +65,7 @@ typedef struct {
     pthread_mutex_t mutex;
     pthread_cond_t noclients;   //il cassiere aspetta su questa variabile di condizione quando non ci sono clienti
     pthread_cond_t waiting;     //il cassiere attende su questa variabile di condizione quando la cassa viene chiusa
+    cassa_log_t *cassa_log;     //log della cassa
     int isopen;
     int product_service_time;   //quanto impiega a gestire un singolo prodotto
     int fixed_service_time;     //tempo fisso per la gestione di un cliente
