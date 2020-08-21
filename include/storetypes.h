@@ -21,6 +21,7 @@ typedef struct {
     int clients_outside;        //Numero di clienti usciti dal supermercato
     int group_size;             //Parametro e
     int can_enter;              //Vale tanto quanto il numero di clienti che possono entrare
+    int clients_counter;        //Numero di clienti entrati nel supermercato
 } store_t;
 
 /**

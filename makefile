@@ -104,7 +104,7 @@ test1: $(CONFIGTEST1FILE) all
 
 # lancio del secondo test. Necessario che il file di configurazione sia stato creato e che l'eseguibile sia stato generato
 test2: $(CONFIGTEST2FILE) all
-	@-chmod +x ./analisi.sh;
+	@chmod +x ./analisi.sh;
 	@echo "Running Test 2"
 	@$(BINDIR)/direttore -c $< & sleep 25; kill -s 1 $$!; wait $$!
 	@./analisi.sh $(LOGFILE)

@@ -128,12 +128,15 @@ int write_log(char *filename, list_t *clients_stats, cassa_log_t **cassieri_stat
 
 static int write_client_stats(void *elem, void *args) {
     client_stats_t *cl_stats = (client_stats_t*) elem;
-    fprintf((FILE*)args, "[Cliente %d] tempo di permanenza: %ldms, prodotti acquistati: %d, code cambiate: %d, tempo in coda: %ldms\n", cl_stats->id, cl_stats->time_in_store, cl_stats->products, cl_stats->queue_counter, cl_stats->time_in_queue);
+    double time_in_store = (float)(cl_stats->time_in_store) / 1000;
+    double time_in_queue = (float)(cl_stats->time_in_queue) / 1000;
+    fprintf((FILE*)args, "[Cliente %d] tempo di permanenza: %.3fs, prodotti acquistati: %d, code cambiate: %d, tempo in coda: %.3fs\n", cl_stats->id, time_in_store, cl_stats->products, cl_stats->queue_counter, time_in_queue);
     return 0;
 }
 
 static int print_ms(void *elem, void *args) {
     long *value = (long*) elem;
-    fprintf((FILE*)args, " %ldms", *value);
+    double seconds = (double)(*value)/1000;
+    fprintf((FILE*)args, " %.3fs", seconds);
     return 0;
 }

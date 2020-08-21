@@ -14,6 +14,7 @@ store_t *store_create(size_t c, size_t e) {
     store->group_size = e;
     store->can_enter = c;
     store->state = open_state;
+    store->clients_counter = 0;
     PTH(err, pthread_mutex_init(&(store->store_mtx), NULL), return NULL)
     PTH(err, pthread_cond_init(&(store->entrance), NULL), return NULL)
 
@@ -49,8 +50,7 @@ int close_store(store_t *store, store_state closing_state) {
 }
 
 int enter_store(store_t *store) {
-    int err;
-    static int client_id = 0;
+    int err, id = 0;
     PTH(err, pthread_mutex_lock(&(store->store_mtx)), return -1)
     while(ISOPEN(store->state) && store->can_enter == 0) {
         PTH(err, pthread_cond_wait(&(store->entrance), &(store->store_mtx)), return -1)
@@ -59,13 +59,12 @@ int enter_store(store_t *store) {
     if (ISOPEN(store->state)) {
         store->can_enter--;
         store->clients_outside--;
-        client_id++;// = store->total_clients;
+        store->clients_counter++;
+        id = store->clients_counter;
         DEBUG("Entro, ne possono entrare altri %d\n", store->can_enter);
-    } else {
-        client_id = 0;
     }
     PTH(err, pthread_mutex_unlock(&(store->store_mtx)), return -1)
-    return client_id;
+    return id;
 }
 
 int leave_store(store_t *store) {

@@ -107,11 +107,6 @@
     </key>
   </component>
   <component name="RunManager">
-    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="Run" type="CLionNativeAppRunConfigurationType" PROGRAM_PARAMS="-c ../config.txt" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="TheGroceryStore" TARGET_NAME="all" CONFIG_NAME="all" version="1" RUN_PATH="$PROJECT_DIR$/bin/direttore">
       <method v="2">
         <option name="CLION.COMPOUND.BUILD" enabled="true" />
@@ -152,7 +147,8 @@
       <workItem from="1597397681214" duration="45770000" />
       <workItem from="1597737757113" duration="11774000" />
       <workItem from="1597823527339" duration="14585000" />
-      <workItem from="1597851972651" duration="27010000" />
+      <workItem from="1597851972651" duration="31467000" />
+      <workItem from="1597998718549" duration="6632000" />
     </task>
     <servers />
   </component>
