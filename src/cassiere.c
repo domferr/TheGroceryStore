@@ -97,13 +97,12 @@ void *cassiere_thread_fun(void *args) {
                 MINUS1ERR(log_cassa_closed(cassa_log), return NULL)
             }
         } else {
-            DEBUG("Cassiere %ld: cassa chiusa, clienti in coda %d PRIMA\n", ca->id, ca->queue->size)
             //Avvisa tutti i clienti in coda che la cassa è chiusa
             while(ca->queue->size > 0) {
                 client = get_next_client(ca, 0);
                 MINUS1ERR(wakeup_client(client, 0), return NULL)
             }
-            DEBUG("Cassiere %ld: cassa chiusa, clienti in coda %d DOPO\n", ca->id, ca->queue->size)
+            DEBUG("Cassiere %ld: cassa chiusa\n", ca->id)
             //Aspetto fino a quando il supermercato chiude o quando il direttore apre la cassa
             while (ISOPEN(st_state) && !ca->isopen) {
                 PTHERR(err, pthread_cond_wait(&(ca->waiting), &(ca->mutex)), return NULL)

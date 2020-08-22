@@ -2,7 +2,9 @@
  * Header file per una unbounded double linked list FIFO. Ogni nodo è rappresentato dalla struct node_t. Ogni nodo
  * possiede un elemento generico, il puntatore al suo successore ed il puntatore al nodo che lo precede. Quando non vi
  * è un successore, il puntatore del successore è nullo. Quando non vi è un precedessore, il puntatore del predecessore
- * è nullo. La lista fornisce operazioni di aggiunta (push) e rimozione (pop).
+ * è nullo. La lista fornisce operazioni di aggiunta (push) e rimozione (pop). E' possibile accodare due liste con la
+ * funzione append. Per ordinare e fondere due o k liste vengono fornite le funzioni merg_sort e mergesort_k_lists, le
+ * quali svolgono l'algoritmo mergesort rispettivamente per due liste e per k liste.
  * Le operazioni NON sono thread safe in quanto non vengono svolte in mutua esclusione.
  */
 
@@ -94,6 +96,18 @@ void clear(list_t *list, void (*free_fun)(void*));
  */
 void append(list_t *l1, list_t *l2);
 
+/**
+ * Esegue l'algoritmo merge sort. Le due liste passate per argomento devono essere ordinate in senso crescente, ovvero
+ * che il primo elemento aggiunto è minore del secondo aggiunto e così via. La lista risultante è la lista puntata dal
+ * puntatore first. Il puntatore second perde di significato a seguito della chiamata di questa funzione e non deve
+ * essere riutilizzato in quanto viene liberata la memoria occupata dalla lista puntata da second. Ritorna 0 in caso di
+ * successo, -1 altrimenti ed imposta errno.
+ *
+ * @param first prima lista
+ * @param second seconda lista
+ * @param compare funzione utilizzata per comparare gli elementi delle due liste tra loro
+ * @return 0 in caso di successo, -1 altrimenti ed imposta errno
+ */
 int mergesort(list_t *first, list_t *second, int (*compare)(void*, void*));
 
 /**

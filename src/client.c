@@ -99,8 +99,6 @@ void *client_thread_fun(void *args) {
             MINUS1ERR(clock_gettime(CLOCK_MONOTONIC, &store_entrance), return NULL)
             DEBUG("[Thread Cliente %ld] Cliente %d: sono entrato nel supermercato\n", cl->id, client_id)
             MINUS1ERR(clq->products = get_products(cl), return NULL)
-            if (clq->is_enqueued)   //TODO rimuovere questo printf di log
-                printf("%ld: NON VA BENEEEEEEEEEE---------------------------------------Servito: %d\n", cl->id, clq->served);
             //Reset del cliente in coda
             clq->served = 0;
             clq->processing = 0;
@@ -154,8 +152,6 @@ void *client_thread_fun(void *args) {
         MINUS1ERR(get_store_state(cl->store, &st_state), return NULL)
     }
     DEBUG("[Thread Cliente %ld] termino\n", cl->id)
-    if (clq->is_enqueued)   //TODO rimuovere printf di debug
-        printf("%ld: IN CODAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n", cl->id);
     MINUS1ERR(destroy_client_in_queue(clq), return NULL)
     return stats;
 }

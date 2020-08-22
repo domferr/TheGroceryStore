@@ -110,10 +110,10 @@ $(CONFIGTEST2FILE):
 	@echo "T = 200"  	>>$@
 	@echo "P = 100"  	>>$@
 	@echo "S = 20"  	>>$@
-	@echo "KT = 3"  	>>$@
-	@echo "KA = 5"  	>>$@
-	@echo "S1 = 5"  	>>$@
-	@echo "S2 = 3"  	>>$@
+	@echo "KT = 10"  	>>$@
+	@echo "KA = 6"  	>>$@
+	@echo "S1 = 3"  	>>$@
+	@echo "S2 = 5"  	>>$@
 	@echo "D = 500"  	>>$@
 	@echo "L = $(LOGFILE)" >>$@
 

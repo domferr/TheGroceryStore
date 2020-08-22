@@ -1,16 +1,44 @@
-/**
- * Implementazione di una double linked list FIFO.
- */
-
 #include "../include/list.h"
 #include <stdlib.h>
 #include <errno.h>
 #include <stdio.h>
 
-//TODO fare questa doc
+/**
+ * Aggiunge il nodo passato per argomento in coda alla lista specificata.
+ *
+ * @param list lista alla quale aggiungere in coda
+ * @param node nodo da aggiungere
+ */
 static void add_tail(list_t *list, node_t *node);
+
+/**
+ * Aggiunge il nodo passato per argomento in testa alla lista specificata.
+ *
+ * @param list lista alla quale aggiungere in testa
+ * @param node nodo da aggiungere
+ */
 static void add_head(list_t *list, node_t *node);
+
+/**
+ * Rimuove dalla lista il nodo passato per argomento. In caso di successo, ritorna l'elemento che era contenuto nel nodo
+ * rimosso. In caso di fallimento ritorna NULL ed imposta errno.
+ *
+ * @param list lista dalla quale rimuovere il nodo
+ * @param node nodo da rimuovere
+ * @return l'elemento contenuto nel nodo rimosso oppure NULL in caso di errore ed imposta errno
+ */
 static void *remove_node(list_t *list, node_t *node);
+
+/**
+ * Itera ricorsivamente tutta la lista chiamando la funzione passata per argomento per ogni elemento della lista. Ritorna
+ * 0 in caso di successo, -1 altrimenti ed imposta errno. L'iterazione viene fatta in maniera FIFO: il primo elemento
+ * entrato nella lista è il primo elemento acceduto dall'iterazione.
+ *
+ * @param node nodo da cui partire
+ * @param fun funzione da applicare ad ogni elemento della lista. Deve ritornare 0 in caso di successo, -1 altrimenti
+ * @param args argomenti aggiuntivi se presenti, altrimenti NULL
+ * @return 0 in caso di successo, -1 altrimenti ed imposta errno
+ */
 static int internal_foreach(node_t *node, int (*fun)(void*, void*), void *args);
 
 list_t *list_create(void) {

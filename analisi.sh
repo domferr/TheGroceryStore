@@ -17,8 +17,8 @@ while read -r -a line; do
   "[Cliente "*)
     clientid=${line[0]#"[Cliente "}
     if [ $clientid -eq 1 ]; then # Stampo il titolo della colonna prima del primo cliente
-      echo " _________________________________________________________________________"
-      echo "| CLIENTE  | PRODOTTI |   TEMPO TOTALE   |   TEMPO IN CODA  | C. VISITATE |"
+      echo " _____________________________________________________________________"
+      echo "| CLIENTE  | PRODOTTI |  TEMPO TOTALE  |  TEMPO IN CODA | C. VISITATE |"
     fi
     # tempo di permanenza
     line[1]=${line[1]#*: }
@@ -28,13 +28,13 @@ while read -r -a line; do
     line[3]=${line[3]#*: }
     # tempo speso in coda
     line[4]=${line[4]#*: }
-    printf "|%6d%4s|%6d%4s|%12s%6s|%12s%6s|%7d%6s|\n" \
+    printf "|%6d%4s|%6d%4s|%11s%5s|%11s%5s|%7d%6s|\n" \
       "$clientid" "" "${line[2]}" "" "${line[1]}" "" "${line[4]}" "" "${line[3]}" ""
     ;;
   "[Cassiere "*)
     cassaid=${line[0]#"[Cassiere "}
     if [ $cassaid -eq 0 ]; then # Stampo il titolo della colonna prima del primo cassiere
-      echo " __________________________________________________________________________________________"
+      echo " _____________________________________________________________________________________"
       echo "| CASSA | PRODOTTI ELAB. | C. SERVITI | T. T. APERTURA | T. MEDIO SERVIZIO | CHIUSURE |"
     fi
     len=${#line[@]}
@@ -61,7 +61,7 @@ while read -r -a line; do
       line[5]=${line[5]//"s"/"+"}
       avgtime=$(echo "scale = 3; (${line[5]}0)/${line[1]}" | bc)
     fi
-    printf "|%4s%3s|%9d%7s|%7d%5s|%10s s%4s|%11s s%6s|%5d%4s|\n" \
+    printf "|%4s%3s|%9d%7s|%7d%5s|%10s s%4s|%11s s%6s|%6d%4s|\n" \
       "$cassaid" "" "${line[2]}" "" "${line[1]}" "" "$opentime" "" "$avgtime" "" "${line[3]}" ""
     ;;
   *)

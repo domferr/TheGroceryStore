@@ -92,7 +92,16 @@ int log_cassa_store_closed(cassa_log_t *cassa_log);
  */
 int write_log(char *filename, list_t *clients_stats, cassa_log_t **cassieri_stats, int k);
 
-//TODO fare questa doc
+/**
+ * Confronta due statistiche di due clienti. La statistica del cliente con l'identificatore più piccolo è la statistica
+ * più "piccola" o che in generale viene prima. Questa funzione ritorna un valore negativo oppure uguale a zero oppure
+ * positivo rispettivamente se la prima statistica è minore oppure uguale oppure maggiore della seconda.
+ *
+ * @param first statistica di un cliente
+ * @param second statistica di un altro cliente
+ * @return un valore negativo oppure uguale a zero oppure positivo rispettivamente se la prima statistica è minore
+ * oppure uguale oppure maggiore della seconda
+ */
 int compare_client_stats(void *first, void *second);
 
 #endif //LOG_H

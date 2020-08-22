@@ -229,6 +229,10 @@
       <screen x="0" y="0" width="1536" height="864" />
     </state>
     <state x="0" y="0" width="1169" height="583" key="dock-window-1/0.0.1536.864@0.0.1536.864" timestamp="1596107162491" />
+    <state x="350" y="88" key="editAsTableFormatDialogDimension" timestamp="1598122389413">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state x="350" y="88" key="editAsTableFormatDialogDimension/0.0.1536.864@0.0.1536.864" timestamp="1598122389413" />
     <state x="454" y="337" width="628" height="206" key="makefile.clean.confirm.dialog" timestamp="1596203990022">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
@@ -237,10 +241,10 @@
       <screen x="0" y="0" width="1536" height="864" />
     </state>
     <state x="694" y="202" key="refactoring.ChangeSignatureDialog/0.0.1536.864@0.0.1536.864" timestamp="1598021107343" />
-    <state x="426" y="197" key="run.anything.popup" timestamp="1598109159437">
+    <state x="426" y="197" key="run.anything.popup" timestamp="1598130660980">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state x="426" y="197" key="run.anything.popup/0.0.1536.864@0.0.1536.864" timestamp="1598109159437" />
+    <state x="426" y="197" key="run.anything.popup/0.0.1536.864@0.0.1536.864" timestamp="1598130660980" />
     <state x="431" y="182" width="672" height="678" key="search.everywhere.popup" timestamp="1598007502062">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
