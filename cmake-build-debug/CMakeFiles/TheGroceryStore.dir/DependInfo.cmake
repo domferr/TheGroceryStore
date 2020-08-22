@@ -4,6 +4,8 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_C
+  "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/libs/list/src/list.c" "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/cmake-build-debug/CMakeFiles/TheGroceryStore.dir/libs/list/src/list.c.o"
+  "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/libs/utils/src/utils.c" "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/cmake-build-debug/CMakeFiles/TheGroceryStore.dir/libs/utils/src/utils.c.o"
   "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/af_unix_conn.c" "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/cmake-build-debug/CMakeFiles/TheGroceryStore.dir/src/af_unix_conn.c.o"
   "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/cassa_queue.c" "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/cmake-build-debug/CMakeFiles/TheGroceryStore.dir/src/cassa_queue.c.o"
   "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/cassiere.c" "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/cmake-build-debug/CMakeFiles/TheGroceryStore.dir/src/cassiere.c.o"
@@ -11,7 +13,6 @@ set(CMAKE_DEPENDS_CHECK_C
   "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/client_in_queue.c" "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/cmake-build-debug/CMakeFiles/TheGroceryStore.dir/src/client_in_queue.c.o"
   "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/config.c" "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/cmake-build-debug/CMakeFiles/TheGroceryStore.dir/src/config.c.o"
   "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/direttore.c" "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/cmake-build-debug/CMakeFiles/TheGroceryStore.dir/src/direttore.c.o"
-  "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/list.c" "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/cmake-build-debug/CMakeFiles/TheGroceryStore.dir/src/list.c.o"
   "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/log.c" "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/cmake-build-debug/CMakeFiles/TheGroceryStore.dir/src/log.c.o"
   "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/notifier.c" "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/cmake-build-debug/CMakeFiles/TheGroceryStore.dir/src/notifier.c.o"
   "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/scfiles.c" "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/cmake-build-debug/CMakeFiles/TheGroceryStore.dir/src/scfiles.c.o"
@@ -19,7 +20,6 @@ set(CMAKE_DEPENDS_CHECK_C
   "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/store.c" "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/cmake-build-debug/CMakeFiles/TheGroceryStore.dir/src/store.c.o"
   "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/supermercato.c" "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/cmake-build-debug/CMakeFiles/TheGroceryStore.dir/src/supermercato.c.o"
   "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/threadpool.c" "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/cmake-build-debug/CMakeFiles/TheGroceryStore.dir/src/threadpool.c.o"
-  "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/utils.c" "/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/cmake-build-debug/CMakeFiles/TheGroceryStore.dir/src/utils.c.o"
   )
 set(CMAKE_C_COMPILER_ID "GNU")
 

@@ -1,8 +1,8 @@
 #ifndef LOG_H
 #define LOG_H
 
-#include "utils.h"
-#include "list.h"
+#include "../libs/utils/include/utils.h"
+#include "../libs/list/include/list.h"
 #include <stdio.h>
 
 /** Statistiche di una cassa del supermercato */

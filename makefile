@@ -8,17 +8,21 @@ SRCDIR  	= ./src
 INCDIR		= ./include
 OBJDIR   	= ./obj
 BINDIR   	= ./bin
+LIBDIR      = ./libs
 
 INCLUDES 	= -I $(INCDIR)
-LDFLAGS 	= -L.
-LIBS    	= -lpthread
+LDFLAGS 	= -L $(LIBDIR)
+#librerie usate dal processo direttore
+LIBSDIRETT  = -lpthread -lutils
+#librerie usate dal processo supermercato
+LIBSSUPERM  = -lpthread -llist -lutils
 
 #dipendenze in comune
-OBJS_SHARED = 	$(OBJDIR)/utils.o			\
-              	$(OBJDIR)/config.o			\
+OBJS_SHARED = 	$(OBJDIR)/config.o			\
              	$(OBJDIR)/scfiles.o			\
              	$(OBJDIR)/af_unix_conn.o	\
-              	$(OBJDIR)/sig_handling.o
+              	$(OBJDIR)/sig_handling.o	\
+              	$(LIBDIR)/libutils.so
 #dipendenze per l'eseguibile del supermercato
 OBJS_SUPERM	= 	$(OBJDIR)/supermercato.o	\
 				$(OBJDIR)/threadpool.o		\
@@ -27,9 +31,9 @@ OBJS_SUPERM	= 	$(OBJDIR)/supermercato.o	\
 				$(OBJDIR)/cassiere.o		\
 				$(OBJDIR)/client_in_queue.o	\
 				$(OBJDIR)/notifier.o		\
-				$(OBJDIR)/list.o			\
 				$(OBJDIR)/cassa_queue.o		\
 				$(OBJDIR)/log.o				\
+				$(LIBDIR)/liblist.so		\
 				$(OBJS_SHARED)
 # dipendenze per l'eseguibile del direttore
 OBJS_DIRETT	=	$(OBJDIR)/direttore.o		\
@@ -61,11 +65,23 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.c
 
 # da .c ad eseguibile del supermercato
 $(BINDIR)/supermercato: $(OBJS_SUPERM)
-	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $^ $(LDFLAGS) $(LIBS)
+	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $^ $(LDFLAGS) $(LIBSSUPERM)
 
 # da .c ad eseguibile del direttore
 $(BINDIR)/direttore: $(OBJS_DIRETT)
-	$(CC) $(CFLAGS) $(INCLUDES) $(LDFLAGS) -o $@ $^ $(LIBS)
+	$(CC) $(CFLAGS) $(INCLUDES) $(LDFLAGS) -o $@ $^ $(LIBSDIRETT)
+
+$(LIBDIR)/list/list.o: $(LIBDIR)/list/src/list.c $(LIBDIR)/list/include/list.h
+	$(CC) $(CFLAGS) $(INCLUDES) -c -fPIC -o $@ $<
+
+$(LIBDIR)/utils/utils.o: $(LIBDIR)/utils/src/utils.c $(LIBDIR)/utils/include/utils.h
+	$(CC) $(CFLAGS) $(INCLUDES) -c -fPIC -o $@ $<
+
+$(LIBDIR)/liblist.so: $(LIBDIR)/list/list.o
+	$(CC) -shared -o $@ $<
+
+$(LIBDIR)/libutils.so: $(LIBDIR)/utils/utils.o
+	$(CC) -shared -o $@ $<
 
 # scrittura del file di configurazione per il test1
 $(CONFIGTEST1FILE):
@@ -113,4 +129,4 @@ clean:
 	rm -f $(TARGETS)
 
 cleanall: clean
-	\rm -f $(OBJDIR)/*.o *~ *.a *.sock $(CONFIGTEST1FILE) $(CONFIGTEST2FILE)
+	\rm -f $(OBJDIR)/*.o $(LIBDIR)/*/*.o $(LIBDIR)/*.so *~ *.a *.sock $(CONFIGTEST1FILE) $(CONFIGTEST2FILE)

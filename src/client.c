@@ -1,5 +1,5 @@
 #define DEBUGGING 0
-#include "../include/utils.h"
+#include "../libs/utils/include/utils.h"
 #include "../include/store.h"
 #include "../include/client.h"
 #include "../include/config.h"
@@ -9,32 +9,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-client_t *alloc_client(size_t id, store_t *store, cassiere_t **casse, int t, int p, int s, int k) {
-    int err;
-    client_t *client = (client_t*) malloc(sizeof(client_t));
-    EQNULL(client, return NULL)
 
-    client->store = store;
-    client->id = id;
-    client->casse = casse;
-    client->k = k;
-    client->t = t;
-    client->p = p;
-    client->s = s;
-    client->can_exit = 0;
-    PTH(err, pthread_mutex_init(&(client->mutex), NULL), return NULL)
-    PTH(err, pthread_cond_init(&(client->exit_permission), NULL), return NULL)
-
-    return client;
-}
-
-int client_destroy(client_t *client) {
-    int err;
-    PTH(err, pthread_mutex_destroy(&(client->mutex)), return -1)
-    PTH(err, pthread_cond_destroy(&(client->exit_permission)), return -1)
-    free(client);
-    return 0;
-}
 
 /**
  * Rimane il attesa che arrivi una risposta alla richiesta di uscita dal supermercato. Chiamata bloccante.
@@ -74,6 +49,33 @@ static int get_products(client_t *cl);
  */
 static int wait_in_queue(client_t *cl, client_in_queue_t *clq, cassiere_t *cassiere, cassiere_t *better_cass, store_state *st_state);
 
+client_t *alloc_client(size_t id, store_t *store, cassiere_t **casse, int t, int p, int s, int k) {
+    int err;
+    client_t *client = (client_t*) malloc(sizeof(client_t));
+    EQNULL(client, return NULL)
+
+    client->store = store;
+    client->id = id;
+    client->casse = casse;
+    client->k = k;
+    client->t = t;
+    client->p = p;
+    client->s = s;
+    client->can_exit = 0;
+    PTH(err, pthread_mutex_init(&(client->mutex), NULL), return NULL)
+    PTH(err, pthread_cond_init(&(client->exit_permission), NULL), return NULL)
+
+    return client;
+}
+
+int client_destroy(client_t *client) {
+    int err;
+    PTH(err, pthread_mutex_destroy(&(client->mutex)), return -1)
+    PTH(err, pthread_cond_destroy(&(client->exit_permission)), return -1)
+    free(client);
+    return 0;
+}
+
 void *client_thread_fun(void *args) {
     client_t *cl = (client_t *) args;
     int client_id, err, change_queue, queue_counter, enqueued;
@@ -84,7 +86,7 @@ void *client_thread_fun(void *args) {
     client_in_queue_t *clq;
     cassiere_t *cassiere = NULL, *better_cass = NULL;
 
-    EQNULLERR(stats = queue_create(), return NULL)
+    EQNULLERR(stats = list_create(), return NULL)
     EQNULLERR(clq = alloc_client_in_queue(), return NULL)
 
     MINUS1ERR(get_store_state(cl->store, &st_state), return NULL)
@@ -97,7 +99,7 @@ void *client_thread_fun(void *args) {
             MINUS1ERR(clock_gettime(CLOCK_MONOTONIC, &store_entrance), return NULL)
             DEBUG("[Thread Cliente %ld] Cliente %d: sono entrato nel supermercato\n", cl->id, client_id)
             MINUS1ERR(clq->products = get_products(cl), return NULL)
-            if (clq->is_enqueued)
+            if (clq->is_enqueued)   //TODO rimuovere questo printf di log
                 printf("%ld: NON VA BENEEEEEEEEEE---------------------------------------Servito: %d\n", cl->id, clq->served);
             //Reset del cliente in coda
             clq->served = 0;
@@ -134,7 +136,7 @@ void *client_thread_fun(void *args) {
                 //Sono fuori dalla coda quindi posso accedere senza lock
                 if (clq->served) {
                     MINUS1ERR(time_in_queue = elapsed_time(&queue_entrance), return NULL)
-                    DEBUG("[Thread Cliente %ld] Cliente %d: Sono stato servito. Sono in coda: %d\n", cl->id, client_id, clq->is_enqueued)
+                    DEBUG("[Thread Cliente %ld] Cliente %d: Sono stato servito\n", cl->id, client_id, clq->is_enqueued)
                 }
             } else if (clq->products == 0 && ISOPEN(st_state)) {    //Chiedo permesso di uscita al direttore
                 time_in_queue = 0;
@@ -152,7 +154,7 @@ void *client_thread_fun(void *args) {
         MINUS1ERR(get_store_state(cl->store, &st_state), return NULL)
     }
     DEBUG("[Thread Cliente %ld] termino\n", cl->id)
-    if (clq->is_enqueued)
+    if (clq->is_enqueued)   //TODO rimuovere printf di debug
         printf("%ld: IN CODAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n", cl->id);
     MINUS1ERR(destroy_client_in_queue(clq), return NULL)
     return stats;
@@ -204,13 +206,14 @@ static int wait_in_queue(client_t *cl, client_in_queue_t *clq, cassiere_t *cassi
             MINUS1(get_store_state(cl->store, st_state), return -1)
             PTH(err, pthread_mutex_lock(&(cassiere)->mutex), return -1)
             //Se non sono stato servito e la cassa è aperta, faccio l'algoritmo di cambio cassa
+            //Il supermercato deve essere aperto e il cassiere non deve processarmi
             if (*st_state != closed_fast_state && !clq->processing && !clq->served && cassiere->isopen) {
                 MINUS1(cost = get_queue_cost(cassiere, clq), return -1)
                 PTH(err, pthread_mutex_unlock(&(cassiere)->mutex), return -1)
                 EQNULL(better_cass = get_best_queue(cl->casse, cl->k, cassiere, cost), return -1)
                 MINUS1(get_store_state(cl->store, st_state), return -1)
                 PTH(err, pthread_mutex_lock(&(cassiere)->mutex), return -1)
-                //Se il supermercato è chiuso e il cassiere non mi sta processando allora esco
+                //Se il supermercato non è chiuso velocemente e il cassiere non mi sta processando
                 if (*st_state != closed_fast_state && !clq->processing) {
                     //Cambio coda se intanto la cassa è stata chiusa oppure se ho trovato una cassa migliore
                     change_queue = !cassiere->isopen || (!clq->served && cassiere != better_cass);

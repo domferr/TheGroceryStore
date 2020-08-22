@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include "../include/client_in_queue.h"
-#include "../include/utils.h"
+#include "../libs/utils/include/utils.h"
 
 client_in_queue_t *alloc_client_in_queue(void) {
     int err;

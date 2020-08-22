@@ -123,6 +123,60 @@ TheGroceryStore/fast:
 	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/build
 .PHONY : TheGroceryStore/fast
 
+libs/list/src/list.o: libs/list/src/list.c.o
+
+.PHONY : libs/list/src/list.o
+
+# target to build an object file
+libs/list/src/list.c.o:
+	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/libs/list/src/list.c.o
+.PHONY : libs/list/src/list.c.o
+
+libs/list/src/list.i: libs/list/src/list.c.i
+
+.PHONY : libs/list/src/list.i
+
+# target to preprocess a source file
+libs/list/src/list.c.i:
+	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/libs/list/src/list.c.i
+.PHONY : libs/list/src/list.c.i
+
+libs/list/src/list.s: libs/list/src/list.c.s
+
+.PHONY : libs/list/src/list.s
+
+# target to generate assembly for a file
+libs/list/src/list.c.s:
+	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/libs/list/src/list.c.s
+.PHONY : libs/list/src/list.c.s
+
+libs/utils/src/utils.o: libs/utils/src/utils.c.o
+
+.PHONY : libs/utils/src/utils.o
+
+# target to build an object file
+libs/utils/src/utils.c.o:
+	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/libs/utils/src/utils.c.o
+.PHONY : libs/utils/src/utils.c.o
+
+libs/utils/src/utils.i: libs/utils/src/utils.c.i
+
+.PHONY : libs/utils/src/utils.i
+
+# target to preprocess a source file
+libs/utils/src/utils.c.i:
+	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/libs/utils/src/utils.c.i
+.PHONY : libs/utils/src/utils.c.i
+
+libs/utils/src/utils.s: libs/utils/src/utils.c.s
+
+.PHONY : libs/utils/src/utils.s
+
+# target to generate assembly for a file
+libs/utils/src/utils.c.s:
+	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/libs/utils/src/utils.c.s
+.PHONY : libs/utils/src/utils.c.s
+
 src/af_unix_conn.o: src/af_unix_conn.c.o
 
 .PHONY : src/af_unix_conn.o
@@ -311,33 +365,6 @@ src/direttore.s: src/direttore.c.s
 src/direttore.c.s:
 	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/direttore.c.s
 .PHONY : src/direttore.c.s
-
-src/list.o: src/list.c.o
-
-.PHONY : src/list.o
-
-# target to build an object file
-src/list.c.o:
-	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/list.c.o
-.PHONY : src/list.c.o
-
-src/list.i: src/list.c.i
-
-.PHONY : src/list.i
-
-# target to preprocess a source file
-src/list.c.i:
-	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/list.c.i
-.PHONY : src/list.c.i
-
-src/list.s: src/list.c.s
-
-.PHONY : src/list.s
-
-# target to generate assembly for a file
-src/list.c.s:
-	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/list.c.s
-.PHONY : src/list.c.s
 
 src/log.o: src/log.c.o
 
@@ -528,33 +555,6 @@ src/threadpool.c.s:
 	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/threadpool.c.s
 .PHONY : src/threadpool.c.s
 
-src/utils.o: src/utils.c.o
-
-.PHONY : src/utils.o
-
-# target to build an object file
-src/utils.c.o:
-	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/utils.c.o
-.PHONY : src/utils.c.o
-
-src/utils.i: src/utils.c.i
-
-.PHONY : src/utils.i
-
-# target to preprocess a source file
-src/utils.c.i:
-	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/utils.c.i
-.PHONY : src/utils.c.i
-
-src/utils.s: src/utils.c.s
-
-.PHONY : src/utils.s
-
-# target to generate assembly for a file
-src/utils.c.s:
-	$(MAKE) -f CMakeFiles/TheGroceryStore.dir/build.make CMakeFiles/TheGroceryStore.dir/src/utils.c.s
-.PHONY : src/utils.c.s
-
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -564,6 +564,12 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... TheGroceryStore"
 	@echo "... edit_cache"
+	@echo "... libs/list/src/list.o"
+	@echo "... libs/list/src/list.i"
+	@echo "... libs/list/src/list.s"
+	@echo "... libs/utils/src/utils.o"
+	@echo "... libs/utils/src/utils.i"
+	@echo "... libs/utils/src/utils.s"
 	@echo "... src/af_unix_conn.o"
 	@echo "... src/af_unix_conn.i"
 	@echo "... src/af_unix_conn.s"
@@ -585,9 +591,6 @@ help:
 	@echo "... src/direttore.o"
 	@echo "... src/direttore.i"
 	@echo "... src/direttore.s"
-	@echo "... src/list.o"
-	@echo "... src/list.i"
-	@echo "... src/list.s"
 	@echo "... src/log.o"
 	@echo "... src/log.i"
 	@echo "... src/log.s"
@@ -609,9 +612,6 @@ help:
 	@echo "... src/threadpool.o"
 	@echo "... src/threadpool.i"
 	@echo "... src/threadpool.s"
-	@echo "... src/utils.o"
-	@echo "... src/utils.i"
-	@echo "... src/utils.s"
 .PHONY : help
 
 

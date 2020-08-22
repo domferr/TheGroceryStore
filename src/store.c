@@ -1,6 +1,6 @@
 #define DEBUGGING 0
 #include "../include/store.h"
-#include "../include/utils.h"
+#include "../libs/utils/include/utils.h"
 #include <stdlib.h>
 #include <stdio.h>
 

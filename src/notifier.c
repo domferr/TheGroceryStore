@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "../include/notifier.h"
-#include "../include/utils.h"
+#include "../libs/utils/include/utils.h"
 #include "../include/store.h"
 
 void *notifier_thread_fun(void *args) {

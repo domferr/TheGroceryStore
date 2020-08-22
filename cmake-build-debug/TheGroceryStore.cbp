@@ -96,9 +96,6 @@
 		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/include/config.h">
 			<Option target="TheGroceryStore"/>
 		</Unit>
-		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/include/list.h">
-			<Option target="TheGroceryStore"/>
-		</Unit>
 		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/include/log.h">
 			<Option target="TheGroceryStore"/>
 		</Unit>
@@ -120,7 +117,16 @@
 		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/include/threadpool.h">
 			<Option target="TheGroceryStore"/>
 		</Unit>
-		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/include/utils.h">
+		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/libs/list/include/list.h">
+			<Option target="TheGroceryStore"/>
+		</Unit>
+		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/libs/list/src/list.c">
+			<Option target="TheGroceryStore"/>
+		</Unit>
+		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/libs/utils/include/utils.h">
+			<Option target="TheGroceryStore"/>
+		</Unit>
+		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/libs/utils/src/utils.c">
 			<Option target="TheGroceryStore"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/af_unix_conn.c">
@@ -144,9 +150,6 @@
 		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/direttore.c">
 			<Option target="TheGroceryStore"/>
 		</Unit>
-		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/list.c">
-			<Option target="TheGroceryStore"/>
-		</Unit>
 		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/log.c">
 			<Option target="TheGroceryStore"/>
 		</Unit>
@@ -166,9 +169,6 @@
 			<Option target="TheGroceryStore"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/threadpool.c">
-			<Option target="TheGroceryStore"/>
-		</Unit>
-		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/src/utils.c">
 			<Option target="TheGroceryStore"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/Domenico/Documents/GitHub/TheGroceryStore/CMakeLists.txt">

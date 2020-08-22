@@ -101,9 +101,11 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\Domenico\Documents\GitHub\TheGroceryStore\include" />
-      <recent name="C:\Users\Domenico\Documents\GitHub\TheGroceryStore\bin" />
-      <recent name="C:\Users\Domenico\CLionProjects\TheGroceryStore\src" />
+      <recent name="C:\Users\Domenico\Documents\GitHub\TheGroceryStore\libs\utils\src" />
+      <recent name="C:\Users\Domenico\Documents\GitHub\TheGroceryStore\libs\list\src" />
+      <recent name="C:\Users\Domenico\Documents\GitHub\TheGroceryStore\libs\utils\include" />
+      <recent name="C:\Users\Domenico\Documents\GitHub\TheGroceryStore\lib\list\include" />
+      <recent name="C:\Users\Domenico\Documents\GitHub\TheGroceryStore\lib\list\src" />
     </key>
   </component>
   <component name="RunManager">

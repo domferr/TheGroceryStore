@@ -1,7 +1,7 @@
 #define DEBUGGING 0
 #include "../include/sig_handling.h"
 #include "../include/config.h"
-#include "../include/utils.h"
+#include "../libs/utils/include/utils.h"
 #include "../include/af_unix_conn.h"
 #include "../include/scfiles.h"
 #include "../include/store.h"
@@ -131,7 +131,7 @@ int main(int argc, char **args) {
     close(sigh_pipe[0]);
     close(sigh_pipe[1]);
     //cleanup dei clienti e prendo le loro statistiche
-    EQNULLERR(clients_stats = queue_create(), exit(EXIT_FAILURE))
+    EQNULLERR(clients_stats = list_create(), exit(EXIT_FAILURE))
     for (i = 0; i < clients_pool->size; ++i) {
         MINUS1ERR(client_destroy(clients_pool->args[i]), exit(EXIT_FAILURE))
         merge(clients_stats, clients_pool->retvalues[i]);
@@ -146,7 +146,7 @@ int main(int argc, char **args) {
         MINUS1ERR(destroy_cassa_log(cassieri_pool->retvalues[i]), exit(EXIT_FAILURE))
     }
     MINUS1ERR(thread_pool_free(cassieri_pool), exit(EXIT_FAILURE))
-    MINUS1ERR(queue_destroy(clients_stats, &free), exit(EXIT_FAILURE))
+    MINUS1ERR(list_destroy(clients_stats, &free), exit(EXIT_FAILURE))
     MINUS1ERR(store_destroy(store), exit(EXIT_FAILURE))
     free_config(config);
     PTHERR(err, pthread_mutex_destroy(&mtx_skt), exit(EXIT_FAILURE))

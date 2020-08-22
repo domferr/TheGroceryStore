@@ -1,7 +1,6 @@
 #ifndef STORETYPES_H
 #define STORETYPES_H
 
-#include "list.h"
 #include "log.h"
 #include <pthread.h>
 

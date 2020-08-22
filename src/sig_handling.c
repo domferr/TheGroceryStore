@@ -1,5 +1,5 @@
 #include "../include/sig_handling.h"
-#include "../include/utils.h"
+#include "../libs/utils/include/utils.h"
 #include "../include/scfiles.h"
 #include <signal.h>
 #include <pthread.h>

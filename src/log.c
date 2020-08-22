@@ -1,4 +1,4 @@
-#include "../include/utils.h"
+#include "../libs/utils/include/utils.h"
 #include "../include/log.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -62,16 +62,16 @@ cassa_log_t *alloc_cassa_log(size_t id) {
     log->id = id;
     log->closed_counter = 0;
     log->products_counter = 0;
-    EQNULL(log->served = queue_create(), return NULL)
-    EQNULL(log->opened = queue_create(), return NULL)
+    EQNULL(log->served = list_create(), return NULL)
+    EQNULL(log->opened = list_create(), return NULL)
     log->open_start.tv_sec = 0;
     log->open_start.tv_nsec = 0;
     return log;
 }
 
 int destroy_cassa_log(cassa_log_t *log) {
-    MINUS1(queue_destroy(log->served, &free), return -1)
-    MINUS1(queue_destroy(log->opened, &free), return -1)
+    MINUS1(list_destroy(log->served, &free), return -1)
+    MINUS1(list_destroy(log->opened, &free), return -1)
     free(log);
     return 0;
 }
