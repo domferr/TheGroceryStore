@@ -71,15 +71,19 @@ $(BINDIR)/supermercato: $(OBJS_SUPERM)
 $(BINDIR)/direttore: $(OBJS_DIRETT)
 	$(CC) $(CFLAGS) $(INCLUDES) $(LDFLAGS) -o $@ $^ $(LIBSDIRETT)
 
+# .o della libreria della lista
 $(LIBDIR)/list/list.o: $(LIBDIR)/list/src/list.c $(LIBDIR)/list/include/list.h
 	$(CC) $(CFLAGS) $(INCLUDES) -c -fPIC -o $@ $<
 
+# .o della libreria delle utilities
 $(LIBDIR)/utils/utils.o: $(LIBDIR)/utils/src/utils.c $(LIBDIR)/utils/include/utils.h
 	$(CC) $(CFLAGS) $(INCLUDES) -c -fPIC -o $@ $<
 
+# generazione della libreria condivisa delle liste
 $(LIBDIR)/liblist.so: $(LIBDIR)/list/list.o
 	$(CC) -shared -o $@ $<
 
+# generazione della libreria condivisa delle utilities
 $(LIBDIR)/libutils.so: $(LIBDIR)/utils/utils.o
 	$(CC) -shared -o $@ $<
 
@@ -129,4 +133,4 @@ clean:
 	rm -f $(TARGETS)
 
 cleanall: clean
-	\rm -f $(OBJDIR)/*.o $(LIBDIR)/*/*.o $(LIBDIR)/*.so *~ *.a *.sock $(CONFIGTEST1FILE) $(CONFIGTEST2FILE)
+	\rm -f $(OBJDIR)/*.o $(LIBDIR)/*/*.o $(LIBDIR)/*.so *~ *.a *.sock $(LOGFILE) $(CONFIGTEST1FILE) $(CONFIGTEST2FILE)

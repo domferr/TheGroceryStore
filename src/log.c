@@ -144,6 +144,10 @@ int write_log(char *filename, list_t *clients_stats, cassa_log_t **cassieri_stat
     return 0;
 }
 
+int compare_client_stats(void *first, void *second) {
+    return ((client_stats_t*) first)->id - ((client_stats_t*) second)->id;
+}
+
 static int push_cassa_opening_time(cassa_log_t *cassa_log) {
     long *time;
     if ((cassa_log->open_start).tv_sec != 0 || (cassa_log->open_start).tv_nsec != 0) {

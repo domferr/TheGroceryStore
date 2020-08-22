@@ -92,6 +92,22 @@ void clear(list_t *list, void (*free_fun)(void*));
  * @param l1 prima lista alla quale appendere la seconda lista
  * @param l2 seconda lista
  */
-void merge(list_t *l1, list_t *l2);
+void append(list_t *l1, list_t *l2);
+
+int mergesort(list_t *first, list_t *second, int (*compare)(void*, void*));
+
+/**
+ * Fonde in una sola lista k liste passate per argomento. Ognuna delle k liste deve essere ordinata. Ritorna la lista
+ * risultante oppure NULL in caso di errore. Dopo la chiamata di questa funzione i puntatori alle k liste non devono
+ * essere riutilizzati perchè perdono di significato e deve essere usato solo il puntatore ritornato.
+ *
+ * @param lists array di k liste
+ * @param k quante liste devono essere fuse
+ * @param compare funzione da utilizzare per confrontare due elementi della lista. Ritorna un valore meno di zero oppure
+ * uguale a zero oppure maggiore di zero rispettivamente se il primo valore è minore oppure uguale oppure maggiore del
+ * secondo valore
+ * @return lista risultante oppure NULL in caso di errore
+ */
+list_t *mergesort_k_lists(list_t **lists, int k, int (*compare)(void*, void*));
 
 #endif //LIST_H

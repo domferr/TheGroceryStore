@@ -130,16 +130,16 @@ int main(int argc, char **args) {
     PTHERR(err, pthread_mutex_unlock(&mtx_skt), exit(EXIT_FAILURE))
     close(sigh_pipe[0]);
     close(sigh_pipe[1]);
-    //cleanup dei clienti e prendo le loro statistiche
-    EQNULLERR(clients_stats = list_create(), exit(EXIT_FAILURE))
-    for (i = 0; i < clients_pool->size; ++i) {
-        MINUS1ERR(client_destroy(clients_pool->args[i]), exit(EXIT_FAILURE))
-        merge(clients_stats, clients_pool->retvalues[i]);
-    }
-    MINUS1ERR(thread_pool_free(clients_pool), exit(EXIT_FAILURE))
     //Scrivo il file di log
+    clients_stats = mergesort_k_lists((list_t**) clients_pool->retvalues, clients_pool->size, &compare_client_stats);
+    EQNULLERR(clients_stats, exit(EXIT_FAILURE))
     MINUS1ERR(write_log(config->logfilename, clients_stats, (cassa_log_t**) cassieri_pool->retvalues, config->k), exit(EXIT_FAILURE))
     DEBUG("%s\n", "Ho scritto il file di log!")
+    //cleanup dei clienti
+    for (i = 0; i < clients_pool->size; i++) {
+        MINUS1ERR(client_destroy(clients_pool->args[i]), exit(EXIT_FAILURE))
+    }
+    MINUS1ERR(thread_pool_free(clients_pool), exit(EXIT_FAILURE))
     //cleanup
     for (i = 0; i < cassieri_pool->size; ++i) {
         MINUS1ERR(cassiere_destroy(cassieri_pool->args[i]), exit(EXIT_FAILURE))

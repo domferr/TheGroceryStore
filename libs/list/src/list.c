@@ -4,7 +4,13 @@
 
 #include "../include/list.h"
 #include <stdlib.h>
+#include <errno.h>
+#include <stdio.h>
 
+//TODO fare questa doc
+static void add_tail(list_t *list, node_t *node);
+static void add_head(list_t *list, node_t *node);
+static void *remove_node(list_t *list, node_t *node);
 static int internal_foreach(node_t *node, int (*fun)(void*, void*), void *args);
 
 list_t *list_create(void) {
@@ -23,25 +29,44 @@ int list_destroy(list_t *list, void (*free_fun)(void *)) {
     return 0;
 }
 
+static void add_head(list_t *list, node_t *node) {
+    if (node != NULL) {
+        node->prev = NULL;
+        node->next = list->head;
+        if (list->head == NULL) {
+            list->tail = node;
+        } else {
+            (list->head)->prev = node;
+        }
+        list->head = node;
+        list->size++;
+    }
+}
+
+static void add_tail(list_t *list, node_t *node) {
+    if (node != NULL) {
+        node->next = NULL;
+        node->prev = list->tail;
+        if (list->tail == NULL) {
+            list->head = node;
+        } else {
+            list->tail->next = node;
+        }
+        list->tail = node;
+        list->size++;
+    }
+}
+
 int push(list_t *list, void *elem) {
     node_t *node = (node_t *) malloc(sizeof(node_t));
     if (node == NULL)
         return -1;
     node->elem = elem;
-    node->prev = NULL;
-    node->next = list->head;
-    if (list->head == NULL) {
-        list->tail = node;
-    } else {
-        (list->head)->prev = node;
-    }
-
-    list->head = node;
-    list->size++;
+    add_head(list, node);
     return 0;
 }
 
-static void *remove_n(list_t *list, node_t *node) {
+static void *remove_node(list_t *list, node_t *node) {
     void *elem = NULL;
     node_t *prev_node;
     node_t *next_node;
@@ -64,7 +89,7 @@ static void *remove_n(list_t *list, node_t *node) {
 }
 
 void *pop(list_t *list) {
-    return remove_n(list, list->tail);
+    return remove_node(list, list->tail);
 }
 
 void clear(list_t *list, void (*free_fun)(void*)) {
@@ -89,18 +114,66 @@ static int internal_foreach(node_t *node, int (*fun)(void*, void*), void *args) 
     return 0;
 }
 
-void merge(list_t *l1, list_t *l2) {
+void append(list_t *l1, list_t *l2) {
     if (l1 && l2) {
-        if (l2->head) { //se l2 ha almeno un elemento
-            l2->head->prev = l1->tail;
-            if (l1->tail) { //se l1 ha almeno un elemento
-                l1->tail->next = l2->head;
-            } else {    //Se l1 è vuoto
-                l1->head = l2->head;
-            }
-            l1->tail = l2->tail;
-        }
-        l1->size += l2->size;
+        add_tail(l1, l2->head);
         free(l2);
     }
+}
+
+int mergesort(list_t *first, list_t *second, int (*compare)(void*, void*)) {
+    if (!first || !second || !compare) {
+        errno = EINVAL;
+        return -1;
+    }
+    node_t *n1 = first->tail, *n2 = second->tail, *curr;
+    list_t merged = {NULL, NULL, 0};
+
+    while(n1 != NULL || n2 != NULL) {
+        curr = NULL;
+        if (n1 == NULL) {
+            curr = n2;
+            n2 = n2->prev;
+        } else if (n2 == NULL) {
+            curr = n1;
+            n1 = n1->prev;
+        } else if (compare(n1->elem, n2->elem) <= 0) {  //il primo è minore o uguale al secondo
+            curr = n1;
+            n1 = n1->prev;
+        } else {
+            curr = n2;
+            n2 = n2->prev;
+        }
+        add_head(&merged, curr);
+    }
+
+    first->head = merged.head;
+    first->tail = merged.tail;
+    first->size = merged.size;
+    free(second);
+    return 0;
+}
+
+list_t *mergesort_k_lists(list_t **lists, int k, int (*compare)(void*, void*)) {
+    int i, j, last = k-1;
+    int total = 0;
+    for(i=0; i<k; i++) {
+        total += lists[i]->size;
+    }
+    i = 0;
+    while (last != 0) {
+        j = last;
+        i = 0;
+        while(i < j) {
+            if (mergesort(lists[i], lists[j], compare) == -1)
+                return NULL;
+            j--;
+            i++;
+            if (i >= j)
+                last = j;
+        }
+    }
+    if (total != lists[0]->size)
+        printf("MERGE SORT SBAGLIATOOOOOOOO\n");
+    return lists[0];
 }

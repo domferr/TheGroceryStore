@@ -92,4 +92,7 @@ int log_cassa_store_closed(cassa_log_t *cassa_log);
  */
 int write_log(char *filename, list_t *clients_stats, cassa_log_t **cassieri_stats, int k);
 
+//TODO fare questa doc
+int compare_client_stats(void *first, void *second);
+
 #endif //LOG_H
