@@ -1,8 +1,8 @@
 CC		= gcc -std=c99
-CFLAGS	= -g -Wall -pedantic -Wextra \
-			-Wwrite-strings -Wstrict-prototypes -Wold-style-definition \
-			-Wformat=2 -Wno-unused-parameter -Wshadow \
-			-Wredundant-decls -Wnested-externs -Wmissing-include-dirs
+CFLAGS	= -g -Wall -pedantic -D_POSIX_C_SOURCE=200809L -Wextra \
+		-Wwrite-strings -Wstrict-prototypes -Wold-style-definition \
+		-Wformat=2 -Wno-unused-parameter -Wshadow \
+		-Wredundant-decls -Wnested-externs -Wmissing-include-dirs
 
 SRCDIR  	= ./src
 INCDIR		= ./include

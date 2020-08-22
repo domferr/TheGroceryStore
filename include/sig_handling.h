@@ -1,7 +1,6 @@
 #ifndef SIG_HANDLER_H
 #define SIG_HANDLER_H
 
-#define _POSIX_C_SOURCE 200809L
 #include <pthread.h>
 
 /**
