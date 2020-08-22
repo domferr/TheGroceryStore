@@ -105,7 +105,9 @@ int join_queue(cassiere_t *cassiere, client_in_queue_t *clq, struct timespec *qu
 }
 
 void leave_queue(cassiere_t *cassiere, client_in_queue_t *clq) {
-    dequeue(cassiere, clq);
+    if (clq->is_enqueued && !clq->processing) {
+        dequeue(cassiere, clq);
+    }
 }
 
 client_in_queue_t *get_next_client(cassiere_t *cassiere, int processing) {
