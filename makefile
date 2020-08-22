@@ -77,9 +77,9 @@ $(CONFIGTEST1FILE):
 	@echo "S = 30"  	>>$@
 	@echo "KT = 2"  	>>$@
 	@echo "KA = 2"  	>>$@
-	@echo "D = 500"  	>>$@
 	@echo "S1 = 1"  	>>$@
 	@echo "S2 = 4"  	>>$@
+	@echo "D = 500"  	>>$@
 	@echo "L = $(LOGFILE)" >>$@
 
 # scrittura del file di configurazione per il test2

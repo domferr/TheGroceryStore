@@ -15,14 +15,24 @@
 static int write_client_stats(void *elem, void *args);
 
 /**
- * Scrive un long sul file descriptor passato. Il valore viene scritto seguito dalla stringa "ms". Questa funzione è
- * eseguita per ogni elemento della lista quindi il valore di ritorno è importante per evitare errori in cascata.
+ * Scrive un valore in secondi con al più 3 cifre decimali sul file descriptor passato. Il valore viene scritto seguito
+ * dalla stringa "s". Questa funzione è eseguita per ogni elemento della lista quindi il valore di ritorno è importante
+ * per evitare errori in cascata.
  *
  * @param elem elemento della lista, ovvero un valore di tipo long che rappresenta un tempo espresso in millisecondi
+ * e la sua conversione in secondi con al più 3 cifre decimali verrà scritta sul log.
  * @param args argomenti aggiuntivi, ovvero il file sul quale scrivere il log
  * @return 0 in caso di successo, -1 altrimenti ed imposta errno
- */ //TODO aggiornare questa doc
+ */
 static int print_ms(void *elem, void *args);
+
+/**
+ * Aggiorna il log con il tempo di apertura della cassa.
+ *
+ * @param cassa_log puntatore al log della cassa
+ * @return 0 in caso di successo, -1 altrimenti ed imposta errno
+ */
+static int push_cassa_opening_time(cassa_log_t *cassa_log);
 
 /** Statistiche di un cliente entrato nel supermercato */
 typedef struct {
@@ -81,19 +91,6 @@ int log_cassa_open(cassa_log_t *cassa_log) {
     return 0;
 }
 
-//TODO fare questa doc
-static int push_cassa_opening_time(cassa_log_t *cassa_log) {
-    long *time;
-    if ((cassa_log->open_start).tv_sec != 0 || (cassa_log->open_start).tv_nsec != 0) {
-        EQNULL(time = (long *) malloc(sizeof(long)), return -1)
-        MINUS1(*time = elapsed_time(&(cassa_log->open_start)), return -1)
-        MINUS1(push(cassa_log->opened, time), return -1)
-        (cassa_log->open_start).tv_nsec = 0;
-        (cassa_log->open_start).tv_sec = 0;
-    }
-    return 0;
-}
-
 int log_cassa_closed(cassa_log_t *cassa_log) {
     cassa_log->closed_counter++;
     //Se ho preso il tempo significa che è stata aperta quindi calcolo tempo di apertura
@@ -144,6 +141,18 @@ int write_log(char *filename, list_t *clients_stats, cassa_log_t **cassieri_stat
     fprintf(out_file, "Numero di prodotti acquistati: %d\n", total_products);
 
     fclose(out_file);
+    return 0;
+}
+
+static int push_cassa_opening_time(cassa_log_t *cassa_log) {
+    long *time;
+    if ((cassa_log->open_start).tv_sec != 0 || (cassa_log->open_start).tv_nsec != 0) {
+        EQNULL(time = (long *) malloc(sizeof(long)), return -1)
+        MINUS1(*time = elapsed_time(&(cassa_log->open_start)), return -1)
+        MINUS1(push(cassa_log->opened, time), return -1)
+        (cassa_log->open_start).tv_nsec = 0;
+        (cassa_log->open_start).tv_sec = 0;
+    }
     return 0;
 }
 

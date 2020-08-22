@@ -56,23 +56,28 @@ int destroy_cassa_log(cassa_log_t *log);
 int log_client_served(cassa_log_t *cassa_log, long time, int products);
 
 /**
- * Aggiorna il log del cassiere con il tempo di apertura della cassa. Ritorna 0 in caso di successo, -1 altrimenti ed
- * imposta errno.
+ * Prende il tempo di apertura della cassa. Ritorna 0 in caso di successo, -1 altrimenti ed imposta errno.
  *
  * @param cassa_log puntatore alla struttura del log del cassiere
- * @param time quanto tempo è stata aperta la cassa. Espresso in millisecondi
  * @return 0 in caso di successo, -1 altrimenti ed imposta errno
- */ //TODO aggiornare questa doc
+ */
 int log_cassa_open(cassa_log_t *cassa_log);
 
 /**
- * Aggiorna il log del cassiere incrementando il contatore delle chiusure della cassa.
+ * Aggiorna il log del cassiere incrementando il contatore delle chiusure della cassa e calcolando quanto tempo la cassa
+ * è stata aperta (se mai è stata aperta).
  *
  * @param cassa_log puntatore alla struttura del log del cassiere
- */ //TODO aggiornare questa doc
+ */
 int log_cassa_closed(cassa_log_t *cassa_log);
 
-//TODO fare questa doc
+/**
+ * Aggiorna il log nel caso in cui il supermercato viene chiuso. Ritorna 0 in caso di successo, -1 altrimenti ed imposta
+ * errno.
+ *
+ * @param cassa_log puntatore alla struttura del log del cassiere
+ * @return 0 in caso di successo, -1 altrimenti ed imposta errno
+ */
 int log_cassa_store_closed(cassa_log_t *cassa_log);
 
 /**
