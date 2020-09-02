@@ -70,6 +70,7 @@ void *cassiere_thread_fun(void *args) {
     store_state st_state;
     notifier_t *notifier = alloc_notifier(ca, ca->isopen);
     EQNULLERR(notifier, return NULL)
+    //lancio thread notificatore
     PTHERR(err, pthread_create(&th_notifier, NULL, &notifier_thread_fun, notifier), return NULL)
     EQNULLERR(cassa_log = ca->cassa_log, return NULL)
 

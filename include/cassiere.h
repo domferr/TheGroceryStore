@@ -3,6 +3,7 @@
 
 #include "storetypes.h"
 
+//Quanto tempo impiega il cassiere indicato a servire il cliente specificato. Espresso in millisecondi
 #define SERVICE_TIME(ca, clq) ((ca)->fixed_service_time + ((ca)->product_service_time * (clq)->products))
 
 /**

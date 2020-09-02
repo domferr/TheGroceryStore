@@ -3,7 +3,19 @@
 #include "../include/cassiere.h"
 #include <stdlib.h>
 
+/**
+ * Inserisce il cliente specificato nella coda del cassiere specificato.
+ *
+ * @param cassiere cassiere a cui accodare il cliente
+ * @param clq cliente che vuole accodarsi
+ */
 static void enqueue(cassiere_t *cassiere, client_in_queue_t *clq);
+
+/**
+ * Rimuove il cliente specificato dalla coda del cassiere specificato.
+ * @param cassiere cassiere da cui rimuovere il cliente
+ * @param clq cliente da rimuovere
+ */
 static void dequeue(cassiere_t *cassiere, client_in_queue_t *clq);
 
 cassa_queue_t *cassa_queue_create(void) {

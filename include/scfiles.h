@@ -3,6 +3,12 @@
 
 #include <sys/types.h>
 
+/** Implementazione di readn e writen (by R. Stevens et al.)
+ * http://didawiki.di.unipi.it/doku.php/informatica/sol/laboratorio20/esercitazionib/readnwriten
+ * (tratto da “Advanced Programming In the UNIX Environment” by W. Richard Stevens
+ * and Stephen A. Rago, 2013, 3rd Edition, Addison-Wesley)
+ * */
+
 /**
  * Legge "n" bytes da un descrittore di bytes.
  * (tratto da “Advanced Programming In the UNIX Environment” by W. Richard Stevens

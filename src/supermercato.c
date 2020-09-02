@@ -17,11 +17,29 @@
 #include <signal.h>
 #include <sys/select.h>
 
+/**
+ * Lancia i thread clienti e ne ritorna il thread pool creato
+ *
+ * @param store puntatore alla struttura dati del supermercato
+ * @param config puntatore alla struttura dati di configurazione
+ * @param casse array di cassieri
+ * @return threadpool creato oppure NULL in caso di errore ed imposta errno
+ */
 static thread_pool_t *run_clients(store_t *store, config_t *config, cassiere_t **casse);
+
+/**
+ * Lancia i thread cassieri e ne ritorna il thread pool creato
+ *
+ * @param store puntatore alla struttura dati del supermercato
+ * @param config puntatore alla struttura dati di configurazione
+ * @return threadpool creato oppure NULL in caso di errore ed imposta errno
+ */
 static thread_pool_t *run_cassieri(store_t *store, config_t *config);
 
-static pthread_mutex_t mtx_skt = PTHREAD_MUTEX_INITIALIZER; //Mutex per comunicare con il direttore in mutua esclusione
-static int fd_skt;  //descrittore per comunicazione via socket af_unix con il direttore
+//mutex per comunicare con il direttore in mutua esclusione
+static pthread_mutex_t mtx_skt = PTHREAD_MUTEX_INITIALIZER;
+//descrittore per comunicazione via socket af_unix con il direttore
+static int fd_skt;
 
 int main(int argc, char **args) {
     int err, sigh_pipe[2], run = 1, param1, param2;

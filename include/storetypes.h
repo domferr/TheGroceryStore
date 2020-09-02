@@ -1,3 +1,7 @@
+/**
+ * Header file con tutti i tipi utilizzati dal processo supermercato
+ */
+
 #ifndef STORETYPES_H
 #define STORETYPES_H
 

@@ -19,7 +19,8 @@ typedef enum {
 
 /**
  * Crea un socket AF_UNIX ed accetta una connessione su di esso. Ritorna il file descriptor del client che ha accettato
- * la connessione e chiude il socket.
+ * la connessione e chiude il socket. Se scade il timeout allora la funzione ritorna -1. Questo può avvenire ad esempio
+ * nel caso in cui il processo supermercato termini prima ancora che venga stabilita una connessione via socket.
  *
  * @return file descriptor del client che ha accettato la connessione, -1 in caso di errore e imposta errno
  */

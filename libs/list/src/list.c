@@ -155,7 +155,7 @@ int mergesort(list_t *first, list_t *second, int (*compare)(void*, void*)) {
         return -1;
     }
     node_t *n1 = first->tail, *n2 = second->tail, *curr;
-    list_t merged = {NULL, NULL, 0};
+    list_t merged = {NULL, NULL, 0};    //usata solo per ricordare la testa, la coda e la dimensione
 
     while(n1 != NULL || n2 != NULL) {
         curr = NULL;
@@ -184,11 +184,7 @@ int mergesort(list_t *first, list_t *second, int (*compare)(void*, void*)) {
 
 list_t *mergesort_k_lists(list_t **lists, int k, int (*compare)(void*, void*)) {
     int i, j, last = k-1;
-    int total = 0;
-    for(i=0; i<k; i++) {
-        total += lists[i]->size;
-    }
-    i = 0;
+
     while (last != 0) {
         j = last;
         i = 0;
@@ -201,7 +197,6 @@ list_t *mergesort_k_lists(list_t **lists, int k, int (*compare)(void*, void*)) {
                 last = j;
         }
     }
-    if (total != lists[0]->size)
-        printf("MERGE SORT SBAGLIATOOOOOOOO\n");
+
     return lists[0];
 }

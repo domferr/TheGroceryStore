@@ -22,6 +22,7 @@ int accept_socket_conn(void) {
     MINUS1(listen(fd_skt, SOMAXCONN), return -1)
     FD_ZERO(&set);
     FD_SET(fd_skt, &set);
+    //aspetto che si connetta il supermercato ma se scade il timeout termino
     MINUS1(err = select(fd_skt + 1, &set, NULL, NULL, &timeout), return -1)
     if (err == 0) {
         errno = ETIMEDOUT;

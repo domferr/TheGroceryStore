@@ -9,8 +9,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-
-
 /**
  * Rimane il attesa che arrivi una risposta alla richiesta di uscita dal supermercato. Chiamata bloccante.
  *

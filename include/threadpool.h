@@ -15,8 +15,8 @@ typedef struct {
     size_t size;        //numero di thread nel pool
     pthread_t *threads; //array di threads
     pthread_mutex_t mtx;
-    void **args;
-    void **retvalues;
+    void **args;        //argomenti passati
+    void **retvalues;   //valori di ritorno
 } thread_pool_t;
 
 /**
